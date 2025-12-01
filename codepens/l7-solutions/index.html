@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L7 Solutions - Complete Business Framework</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #b91c1c 0%, #1d4ed8 50%, #000000 100%);
+        }
+        .commandment-card {
+            transition: all 0.3s ease;
+        }
+        .commandment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .pricing-card {
+            transition: all 0.3s ease;
+        }
+        .pricing-card:hover {
+            transform: scale(1.03);
+        }
+        .flow-step {
+            position: relative;
+        }
+        .flow-step:not(:last-child):after {
+            content: "";
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 20px;
+            background: #1d4ed8;
+        }
+        @media (max-width: 768px) {
+            .flow-step:not(:last-child):after {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <h1 class="text-4xl font-bold">L7 SOLUTIONS</h1>
+                    <p class="text-xl mt-2">Complete Business Framework & Operations Guide</p>
+                </div>
+                <div class="bg-white rounded-lg p-4 shadow-lg text-center">
+                    <p class="text-gray-800 font-semibold">Contact Us</p>
+                    <p class="text-red-600 font-bold">Luckie Goggins</p>
+                    <p class="text-blue-600">+1 (770) 309-2516</p>
+                    <p class="text-gray-600">INFO@L7SINC.com</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- How to BOIL Content -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">HOW TO B.O.I.L. THIS CONTENT</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="bg-red-100 border-l-4 border-red-600 p-4 rounded">
+                    <h3 class="font-bold text-red-800">FRAME FOR POSTING</h3>
+                    <p class="text-gray-700">(RED, WHITE, BLK) Individual Frame Group</p>
+                </div>
+                <div class="bg-blue-100 border-l-4 border-blue-600 p-4 rounded">
+                    <h3 class="font-bold text-blue-800">TRADEMARK FACTORY</h3>
+                    <p class="text-gray-700">Approval GA Publication - DBA (Via SWYFT Filings)</p>
+                </div>
+                <div class="bg-gray-100 border-l-4 border-gray-600 p-4 rounded">
+                    <h3 class="font-bold text-gray-800">I.P. ATTORNEY REVIEW</h3>
+                    <p class="text-gray-700">Legal protection for your assets</p>
+                </div>
+                <div class="bg-yellow-100 border-l-4 border-yellow-600 p-4 rounded">
+                    <h3 class="font-bold text-yellow-800">USAGE</h3>
+                    <p class="text-gray-700">Onboarding: Team, Members, Partners, Slideshows</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10 Commandments Section -->
+    <section class="py-12 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">THE 10 COMMANDMENTS OF ADVANCEMENT</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                <!-- Commandment 1 -->
+                <div class="commandment-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-red-600 text-4xl mb-4">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">AVERAGE HOUR</h3>
+                    <p class="text-gray-600">8-16 calls/day (8 hour workday) 11 AM-7 PM EST</p>
+                </div>
+                
+                <!-- Commandment 2 -->
+                <div class="commandment-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-blue-600 text-4xl mb-4">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">AVAILABILITY</h3>
+                    <p class="text-gray-600">What time do you have? Access to resources, tools, and information?</p>
+                </div>
+                
+                <!-- Commandment 3 -->
+                <div class="commandment-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-green-600 text-4xl mb-4">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">AGENDA</h3>
+                    <p class="text-gray-600">What does the individual want out of this transaction?</p>
+                </div>
+                
+                <!-- Commandment 4 -->
+                <div class="commandment-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-purple-600 text-4xl mb-4">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">ACCOUNTABILITY</h3>
+                    <p class="text-gray-600">Will you follow through?</p>
+                </div>
+                
+                <!-- Commandment 5 -->
+                <div class="commandment-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-yellow-600 text-4xl mb-4">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">ASSISTANCE</h3>
+                    <p class="text-gray-600">Can you be a team player?</p>
+                </div>
+                
+                <!-- Commandment 6 -->
+                <div class="commandment-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-red-600 text-4xl mb-4">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">ASSESSMENT</h3>
+                    <p class="text-gray-600">What is your specialty, value, or skills?</p>
+                </div>
+                
+                <!-- Commandment 7 -->
+                <div class="commandment-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-blue-600 text-4xl mb-4">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">AWARENESS</h3>
+                    <p class="text-gray-600">Conscious about your situation and resources</p>
+                </div>
+                
+                <!-- Commandment 8 -->
+                <div class="commandment-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-green-600 text-4xl mb-4">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">ACKNOWLEDGEMENT</h3>
+                    <p class="text-gray-600">Communicate honesty to yourself and others</p>
+                </div>
+                
+                <!-- Commandment 9 -->
+                <div class="commandment-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-purple-600 text-4xl mb-4">
+                        <i class="fas fa-running"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">ACTION</h3>
+                    <p class="text-gray-600">Just do it! Done is better than perfect!</p>
+                </div>
+                
+                <!-- Commandment 10 -->
+                <div class="commandment-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-yellow-600 text-4xl mb-4">
+                        <i class="fas fa-file-signature"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">ONBOARDING</h3>
+                    <p class="text-gray-600">Make L7S Team Members sign - Service Agreement</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800">ABOUT L7 SOLUTIONS</h2>
+                <div class="w-24 h-1 bg-red-600 mx-auto mt-4"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">BUSINESS • EDUCATION • OPPORTUNITY</h3>
+                    <p class="text-gray-600 mb-6">
+                        L7 Solutions is a For-Profit Corporation of Independent Advisors and Brokers that provide B2B Asset Matchmaking Services. We offer Document Preparation Services to Start Up Businesses for Registration and Restructuring for Existing Entities. The network of relationships over the last 6 years of being in business built-up a community where we provide access to our subscribers and members to receive Benefits and Mentorship Services.
+                    </p>
+                    
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">OUR MISSION</h3>
+                    <p class="text-gray-600">
+                        To provide a foundation for Business Entities, Entrepreneurs, Engineers, and the Everyday People who have a Dream to Create a Business, a Movement, a Legacy, a Community while giving them the tools, resources, education, and access to the Value other industry leaders have paved the way to and provide support for those individuals and group that seek SOLUTIONS for their SITUATIONS to complete their Dreams and Goals.
+                    </p>
+                </div>
+                
+                <div class="bg-gray-100 p-8 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-bold mb-6 text-center text-gray-800">HOW WE SERVE</h3>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-bold text-lg mb-2 text-red-600">SITUATION:</h4>
+                        <p class="text-gray-700 mb-2">I WANT TO START A BUSINESS OR GET MY BUSINESS ORGANIZED!</p>
+                        <h4 class="font-bold text-lg mb-2 text-blue-600">SOLUTION:</h4>
+                        <p class="text-gray-700">1. B5X - BULLET-PROOF BUSINESS BRAND & BOARD BUILDOUT [BUSINESS REGISTRATION & RESTRUCTURING]</p>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-bold text-lg mb-2 text-red-600">SITUATION:</h4>
+                        <p class="text-gray-700 mb-2">I WANT HELP WITH MY EDUCATION, COACHING, COMMUNITY AND TO NOT GO AT IT ALONE AS A BUSINESS OWNER / ENTREPRENEUR.</p>
+                        <h4 class="font-bold text-lg mb-2 text-blue-600">SOLUTION:</h4>
+                        <p class="text-gray-700">2. THE FOUNDATION CLUB [EDUCATION COMMUNITY & PRIVATE MENTORSHIP]</p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold text-lg mb-2 text-red-600">SITUATION:</h4>
+                        <p class="text-gray-700 mb-2">I WANT ACCESS TO RESOURCES, SaaS, SOP, AND ERP ASSETS TO IMPROVE MY BUSINESS ON MY OWN. "I DON'T NEED NO MAN"</p>
+                        <h4 class="font-bold text-lg mb-2 text-blue-600">SOLUTION:</h4>
+                        <p class="text-gray-700">3. B.E.T. ON YOU [DIY] OPPORTUNITY PROGRAM [SUBSCRIPTION PRODUCT WITHOUT MEMBERSHIP]</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Flow Chart -->
+    <section class="py-12 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">HOW IT WORKS! SERVICE FLOW CHART</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <!-- Step 1 -->
+                <div class="flow-step bg-white p-6 rounded-lg shadow-md text-center">
+                    <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-red-600 text-2xl font-bold">1</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">START</h3>
+                    <p class="text-gray-600">SAY HELLO</p>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="flow-step bg-white p-6 rounded-lg shadow-md text-center">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-blue-600 text-2xl font-bold">2</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">CONSULTATION</h3>
+                    <p class="text-gray-600">FIND THE PROBLEMS</p>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="flow-step bg-white p-6 rounded-lg shadow-md text-center">
+                    <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-green-600 text-2xl font-bold">3</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">SELECT SERVICE</h3>
+                    <p class="text-gray-600">PICK A SOLUTION</p>
+                </div>
+                
+                <!-- Step 4 -->
+                <div class="flow-step bg-white p-6 rounded-lg shadow-md text-center">
+                    <div class="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-yellow-600 text-2xl font-bold">4</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">KYC INTAKE FORM</h3>
+                    <p class="text-gray-600">COLLECT INFO ASANA POWERED</p>
+                </div>
+                
+                <!-- Step 5 -->
+                <div class="flow-step bg-white p-6 rounded-lg shadow-md text-center">
+                    <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-purple-600 text-2xl font-bold">5</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">DOCUSIGN</h3>
+                    <p class="text-gray-600">AGREE TO SERVICE</p>
+                </div>
+                
+                <!-- Step 6 -->
+                <div class="flow-step bg-white p-6 rounded-lg shadow-md text-center">
+                    <div class="bg-pink-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-pink-600 text-2xl font-bold">6</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">INVOICE</h3>
+                    <p class="text-gray-600">COLLECT PAYMENTS</p>
+                </div>
+                
+                <!-- Step 7 -->
+                <div class="flow-step bg-white p-6 rounded-lg shadow-md text-center">
+                    <div class="bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-indigo-600 text-2xl font-bold">7</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">SALES RECEIPT</h3>
+                    <p class="text-gray-600">CONFIRMATION OF SERVICE/ CONSIDERATION</p>
+                </div>
+                
+                <!-- Step 8 -->
+                <div class="flow-step bg-white p-6 rounded-lg shadow-md text-center">
+                    <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-red-600 text-2xl font-bold">8</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">MEMBERSHIP</h3>
+                    <p class="text-gray-600">CONFIRM CLIENT'S INFO FOR RECORDKEEPING</p>
+                </div>
+                
+                <!-- Step 9 -->
+                <div class="flow-step bg-white p-6 rounded-lg shadow-md text-center">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-blue-600 text-2xl font-bold">9</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">FULFILLMENT</h3>
+                    <p class="text-gray-600">SEND TO PARTNERS FOR SERVICE FULFILLMENT</p>
+                </div>
+                
+                <!-- Step 10 -->
+                <div class="flow-step bg-white p-6 rounded-lg shadow-md text-center">
+                    <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-green-600 text-2xl font-bold">10</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">SCHEDULE 30</h3>
+                    <p class="text-gray-600">FOR FOLLOW UPS 30 BUSINESS DAYS OUT</p>
+                </div>
+                
+                <!-- Step 11 -->
+                <div class="flow-step bg-white p-6 rounded-lg shadow-md text-center">
+                    <div class="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-yellow-600 text-2xl font-bold">11</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">BENEFITS</h3>
+                    <p class="text-gray-600">ACCESS TO RESOURCES</p>
+                </div>
+                
+                <!-- Step 12 -->
+                <div class="flow-step bg-white p-6 rounded-lg shadow-md text-center">
+                    <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-purple-600 text-2xl font-bold">12</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">TESTIMONIALS</h3>
+                    <p class="text-gray-600">SHARE THE EXPERIENCE</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Guide -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">PRICING GUIDE</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Members Rates -->
+                <div class="pricing-card bg-red-50 p-6 rounded-lg shadow-md">
+                    <div class="bg-red-600 text-white py-2 px-4 rounded-t-lg -mt-6 -mx-6 mb-4">
+                        <h3 class="font-bold text-lg text-center">MEMBERS RATES</h3>
+                    </div>
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="text-left py-2">Business Type</th>
+                                <th class="text-center py-2">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="py-2">DBA Creation</td>
+                                <td class="text-center font-bold">$370.00</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2">LLC Creation</td>
+                                <td class="text-center font-bold">$1,160.00</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2">S-Corp Creation</td>
+                                <td class="text-center font-bold">$1,560.00</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2">C-Corp Creation</td>
+                                <td class="text-center font-bold">$1,560.00</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2">Non-Profit Creation</td>
+                                <td class="text-center font-bold">$1,560.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Partner Rates -->
+                <div class="pricing-card bg-blue-50 p-6 rounded-lg shadow-md">
+                    <div class="bg-blue-600 text-white py-2 px-4 rounded-t-lg -mt-6 -mx-6 mb-4">
+                        <h3 class="font-bold text-lg text-center">PARTNER RATES</h3>
+                    </div>
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="text-left py-2">Business Type</th>
+                                <th class="text-center py-2">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="py-2">DBA Creation</td>
+                                <td class="text-center font-bold">$275.00</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2">LLC Creation</td>
+                                <td class="text-center font-bold">$870.00</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2">S-Corp Creation</td>
+                                <td class="text-center font-bold">$1,170.00</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2">C-Corp Creation</td>
+                                <td class="text-center font-bold">$1,170.00</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2">Non-Profit Creation</td>
+                                <td class="text-center font-bold">$1,170.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Retail Rates -->
+                <div class="pricing-card bg-gray-100 p-6 rounded-lg shadow-md">
+                    <div class="bg-gray-800 text-white py-2 px-4 rounded-t-lg -mt-6 -mx-6 mb-4">
+                        <h3 class="font-bold text-lg text-center">RETAIL RATES</h3>
+                    </div>
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="text-left py-2">Business Type</th>
+                                <th class="text-center py-2">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="py-2">DBA Creation</td>
+                                <td class="text-center font-bold">$460.00</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2">LLC Creation</td>
+                                <td class="text-center font-bold">$1,450.00</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2">S-Corp Creation</td>
+                                <td class="text-center font-bold">$1,950.00</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2">C-Corp Creation</td>
+                                <td class="text-center font-bold">$1,950.00</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2">Non-Profit Creation</td>
+                                <td class="text-center font-bold">$1,950.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detailed Business Process Flow -->
+    <section class="py-12 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">DETAILED BUSINESS PROCESS FLOW</h2>
+            
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold mb-4 text-red-600">Initial Contact & Consultation:</h3>
+                    <ul class="list-disc pl-6 space-y-2 text-gray-700">
+                        <li>Book a Call/Appointment P.E.R. (Pre-Enrollment Review) - Consultation to Select Service</li>
+                    </ul>
+                </div>
+                
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold mb-4 text-blue-600">Service Selection Options:</h3>
+                    <ol class="list-decimal pl-6 space-y-4 text-gray-700">
+                        <li class="font-semibold">"Building Better Business Brands" - Business Startups | Restructure Existing</li>
+                        <li class="font-semibold">"The Foundation Club" - Membership Enrollment</li>
+                        <li class="font-semibold">"B.E.T. ON YOU" - Opportunity Program (Business Education Training)</li>
+                    </ol>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-green-600">Process Flow:</h3>
+                    <ul class="list-disc pl-6 space-y-2 text-gray-700">
+                        <li>Create a Custom Game Plan</li>
+                        <li>Choose Membership Pricing Tier: Standard, Elite, Ultimate</li>
+                        <li>Choose Payment Options: Credit/Debit, ACH, Email Invoice, BTC, Venmo, CashApp, Zelle Wire</li>
+                        <li>Offer to Sell G.A.M.E. Plan Consultation Blueprint for Personal Use/D.I.Y.</li>
+                        <li>DocuSign: Service Agreement NDA, Non-Complete, Payment Schedule</li>
+                        <li>Onboarding Process - C.R.M. Client Portal Login, Confirm Members Info for Record Keeping</li>
+                        <li>Third Party Service Processing (Allow 5-8 Business Days for Processing)</li>
+                        <li>Create a Schedule and Timeline for Milestones</li>
+                        <li>Alert Notifications - Alerts and Notifications via Text/Email</li>
+                        <li>Community App Confirmed Access to Resources</li>
+                        <li>Share Your Experience - Leave a Review! Google Review, Trust Pilot, BBB.org, FB Page, Yelp</li>
+                        <li>Ask About the Referral Program</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="gradient-bg text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">L7 SOLUTIONS</h3>
+                    <p>Business • Education • Opportunity</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">CONTACT</h3>
+                    <p class="mb-2">Website: L7SINC.com</p>
+                    <p class="mb-2">Email: INFO@L7SINC.com | ADMIN@L7SINC.com</p>
+                    <p>Point of Contact: Luckie Goggins +1 (770) 309-2516</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">QUICK LINKS</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:underline">Services</a></li>
+                        <li><a href="#" class="hover:underline">Pricing</a></li>
+                        <li><a href="#" class="hover:underline">Process Flow</a></li>
+                        <li><a href="#" class="hover:underline">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-400 mt-8 pt-8 text-center">
+                <p>&copy; 2023 L7 Solutions. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple animation for pricing cards on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const pricingCards = document.querySelectorAll('.pricing-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'scale(1)';
+                    }
+                });
+            }, {threshold: 0.1});
+            
+            pricingCards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.95)';
+                card.style.transition = 'all 0.5s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>
