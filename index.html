@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xlrdtech Portfolio</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent: #38bdf8;
+            --hover-accent: #0ea5e9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--accent), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            width: 90%;
+            max-width: 1200px;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            color: var(--accent);
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .links {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        a.button {
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            background-color: rgba(56, 189, 248, 0.1);
+            color: var(--accent);
+            font-weight: 600;
+            transition: all 0.2s;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        a.button:hover {
+            background-color: var(--accent);
+            color: var(--bg-color);
+        }
+
+        .status-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 99px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>lllllllllllll.link</h1>
+        <p class="subtitle">xlrdtech Project Index</p>
+    </header>
+
+    <div class="grid-container">
+        
+        <!-- Web UI -->
+        <div class="card">
+            <div>
+                <span class="status-badge">AI Agent</span>
+                <h2>web-ui</h2>
+                <p>Run AI Agent in your browser. A web-based interface for interacting with AI agents.</p>
+            </div>
+            <div class="links">
+                <a href="https://github.com/xlrdtech/web-ui" class="button" target="_blank">GitHub</a>
+                <!-- Add Deployment Link Here -->
+            </div>
+        </div>
+
+        <!-- Vy LLaVA Vision -->
+        <div class="card">
+            <div>
+                <span class="status-badge">AI Vision</span>
+                <h2>vy-llava-vision</h2>
+                <p>A new version of Vy AI assistant powered by LLaVA with advanced visual understanding capabilities.</p>
+            </div>
+            <div class="links">
+                <a href="https://github.com/xlrdtech/vy-llava-vision" class="button" target="_blank">GitHub</a>
+            </div>
+        </div>
+
+        <!-- Sitehero -->
+        <div class="card">
+            <div>
+                <span class="status-badge">Web</span>
+                <h2>sitehero</h2>
+                <p>Web project. (Update description via PR)</p>
+            </div>
+            <div class="links">
+                <a href="https://github.com/xlrdtech/sitehero" class="button" target="_blank">GitHub</a>
+            </div>
+        </div>
+
+        <!-- w2552w -->
+        <div class="card">
+            <div>
+                <span class="status-badge">Content</span>
+                <h2>w2552w</h2>
+                <p>52weeks.dev updates. Tracking progress and content for the 52 weeks challenge.</p>
+            </div>
+            <div class="links">
+                <a href="https://github.com/xlrdtech/w2552w" class="button" target="_blank">GitHub</a>
+            </div>
+        </div>
+
+        <!-- Week52 -->
+        <div class="card">
+            <div>
+                <span class="status-badge">TypeScript</span>
+                <h2>week52</h2>
+                <p>TypeScript project related to 52weeks.dev.</p>
+            </div>
+            <div class="links">
+                <a href="https://github.com/xlrdtech/week52" class="button" target="_blank">GitHub</a>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
