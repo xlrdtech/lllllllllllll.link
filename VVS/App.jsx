@@ -100,7 +100,14 @@ const App = () => {
           
           {/* Animated Mesh/Grid Overlay */}
           <div className="absolute inset-0 opacity-10 pointer-events-none">
-             <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg"></svg>
+             <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M0 40L40 0H20L0 20M40 40V20L20 40" stroke="white" strokeWidth="1" fill="none"/>
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+             </svg>
           </div>
 
           <div className="absolute inset-0 pointer-events-none z-10">
@@ -168,7 +175,7 @@ const App = () => {
                   onChange={(e) => setVariationCount(parseInt(e.target.value))}
                   className="w-full h-2 rounded-lg appearance-none cursor-pointer range-lg bg-gray-700"
                   style={{
-                    background: `linear-gradientto-right, #f59e0b 0%, #f59e0b ${percentage}%, rgba(255,255,255,0.1) ${percentage}%, rgba(255,255,255,0.1) 100%)`
+                    background: `linear-gradient(to right, #f59e0b 0%, #f59e0b ${percentage}%, rgba(255,255,255,0.1) ${percentage}%, rgba(255,255,255,0.1) 100%)`
                   }}
                 />
               </div>
