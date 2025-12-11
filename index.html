@@ -194,8 +194,8 @@
         /* Gallery */
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* Slightly wider for web views */
+            gap: 2rem;
             margin-top: 4rem;
         }
 
@@ -203,65 +203,75 @@
             position: relative;
             background: var(--card-bg);
             overflow: hidden;
-            aspect-ratio: 16 / 9; /* Changed to landscape for project previews */
-            text-decoration: none;
-            color: var(--text-color);
-            display: block;
+            aspect-ratio: 16 / 10; 
+            border: 1px solid var(--border-color);
+            transition: border-color 0.3s ease, transform 0.3s ease;
         }
 
-        .gallery-item img {
+        .gallery-item:hover {
+            border-color: var(--text-color);
+            transform: translateY(-5px);
+        }
+
+        /* The Live Web View */
+        .gallery-item iframe {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            transition: transform 0.8s var(--easing), opacity 0.5s var(--easing);
-            opacity: 0.6;
+            border: none;
+            /* Optional: Pointer events none to prevent interacting with the iframe content (scrolling etc) inside the card.
+               This ensures the click goes to the overlay link. */
+            pointer-events: none; 
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+            background: #fff; /* White bg for iframes to prevent transparent body issues */
         }
 
-        .gallery-item:hover img {
-            transform: scale(1.05);
-            opacity: 0.3; 
+        .gallery-item:hover iframe {
+            opacity: 1;
+        }
+
+        /* Clickable Overlay */
+        .gallery-overlay-link {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20; /* Above iframe */
+            background: rgba(0,0,0,0.1);
+            transition: background 0.3s ease;
+        }
+        
+        .gallery-item:hover .gallery-overlay-link {
+            background: rgba(0,0,0,0.0); /* Clear on hover to see site better */
         }
 
         /* Project Title Overlay */
-        .gallery-item-title {
+        .gallery-item-info {
             position: absolute;
-            bottom: 2rem;
-            left: 2rem;
-            font-size: 1.5rem;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            z-index: 25;
+            pointer-events: none;
+        }
+
+        .gallery-item-title {
+            font-size: 1.25rem;
             font-weight: 500;
-            z-index: 10;
+            color: #fff; /* Always white for readability over video/iframe */
             text-transform: uppercase;
             letter-spacing: -0.02em;
         }
         
         .gallery-item-subtitle {
-            position: absolute;
-            bottom: 3.5rem; /* Above title */
-            left: 2rem;
-            font-size: 0.8rem;
-            color: var(--text-muted);
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.7);
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            z-index: 10;
-        }
-
-        /* Hover Overlay "View" Text */
-        .gallery-item::after {
-            content: "EXPLORE";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: var(--text-color);
-            font-size: 0.9rem;
-            letter-spacing: 0.2em;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .gallery-item:hover::after {
-            opacity: 1;
+            margin-bottom: 0.25rem;
         }
 
         /* Badge */
@@ -422,104 +432,103 @@
 
     <script>
         // --- 1. PROJECT DATA INJECTION ---
-        // Using the Cloudinary images as stylistic covers for the projects
+        // Using IFRAMES to show live web views of each project
         const projects = [
             {
                 title: "Terrence x Collab",
                 subtitle: "Fashion Portfolio",
-                url: "./terrence-collab/",
-                image: "https://res.cloudinary.com/dlqudkksg/image/upload/generated-image-2025-12-11_dvdpv3.png"
+                url: "./terrence-collab/"
             },
             {
                 title: "L7S Hero",
                 subtitle: "Business Solutions",
-                url: "./l7shero/",
-                image: "https://res.cloudinary.com/dlqudkksg/image/upload/generated-image-2025-12-11_1_ebi5vl.png"
+                url: "./l7shero/"
             },
             {
                 title: "VVS",
                 subtitle: "React Application",
-                url: "./VVS/",
-                image: "https://res.cloudinary.com/dlqudkksg/image/upload/generated-image-2025-12-11_3_nepzmd.png"
+                url: "./VVS/"
             },
             {
                 title: "Sylo",
                 subtitle: "Web Experience",
-                url: "./sylo/",
-                image: "https://res.cloudinary.com/dlqudkksg/image/upload/generated-image-2025-12-11_6_rwzyiu.png"
+                url: "./sylo/"
             },
             {
                 title: "AutoPhone",
                 subtitle: "Telephony App",
-                url: "./autophone/",
-                image: "https://res.cloudinary.com/dlqudkksg/image/upload/generated-image-2025-12-11_12_pmojhi.png"
+                url: "./autophone/"
             },
              {
                 title: "BuzyCred",
                 subtitle: "Financial Dashboard",
-                url: "./buzycred/",
-                image: "https://res.cloudinary.com/dlqudkksg/image/upload/generated-image-2025-12-11_16_fjwrqt.png"
+                url: "./buzycred/"
             },
             {
                 title: "God SOP Dashboard",
                 subtitle: "Internal Tools",
-                url: "./god-sop-dashboard/",
-                image: "https://res.cloudinary.com/dlqudkksg/image/upload/generated-image-2025-12-11_22_jf4dnb.png"
+                url: "./god-sop-dashboard/"
             },
             {
                 title: "Online Viewer",
                 subtitle: "Utility",
-                url: "./online-viewer-net/",
-                image: "https://res.cloudinary.com/dlqudkksg/image/upload/generated-image-2025-12-11_35_wcwunz.png"
+                url: "./online-viewer-net/"
             },
             {
                 title: "PBLD",
                 subtitle: "Construction Tech",
-                url: "./pbld/",
-                image: "https://res.cloudinary.com/dlqudkksg/image/upload/generated-image-2025-12-11_40_ymler5.png"
+                url: "./pbld/"
             },
              {
                 title: "Apple Vision Pro UI",
                 subtitle: "CodePen Experiment",
-                url: "./codepens/apple-vision-pro-ui/",
-                image: "https://res.cloudinary.com/dlqudkksg/image/upload/generated-image-2025-12-11_44_rlajo5.png"
+                url: "./codepens/apple-vision-pro-ui/"
             },
             {
                 title: "Beast Hero",
                 subtitle: "CodePen Experiment",
-                url: "./codepens/beast-hero/",
-                image: "https://res.cloudinary.com/dlqudkksg/image/upload/generated-image-2025-12-11_15_nuovox.png"
+                url: "./codepens/beast-hero/"
             },
             {
                 title: "Space Anomaly",
                 subtitle: "CodePen Experiment",
-                url: "./codepens/space-anomaly/",
-                image: "https://res.cloudinary.com/dlqudkksg/image/upload/generated-image-2025-12-11_26_ibos7p.png"
+                url: "./codepens/space-anomaly/"
             },
              {
                 title: "Skeuomorphism Dark",
                 subtitle: "CodePen Experiment",
-                url: "./codepens/skeuomorphism-dark/",
-                image: "https://res.cloudinary.com/dlqudkksg/image/upload/generated-image-2025-12-11_29_rlhgel.png"
+                url: "./codepens/skeuomorphism-dark/"
             }
         ];
 
         const gallery = document.getElementById('gallery');
         
         projects.forEach((proj, i) => {
-            const link = document.createElement('a');
-            link.className = 'gallery-item reveal';
-            link.href = proj.url;
+            const div = document.createElement('div');
+            div.className = 'gallery-item reveal';
             
             // Randomly make some items span 2 columns if screen is wide
             if(window.innerWidth > 768 && (i === 0 || i === 4 || i === 8)) {
-                link.style.gridColumn = "span 2";
+                div.style.gridColumn = "span 2";
             }
             
-            const img = document.createElement('img');
-            img.src = proj.image;
-            img.loading = "lazy";
-            img.alt = proj.title;
+            // 1. Create Iframe for "Web View"
+            const iframe = document.createElement('iframe');
+            iframe.src = proj.url;
+            iframe.title = proj.title;
+            iframe.loading = "lazy";
+            // sandbox to prevent scripts in iframes from taking over top window, but allow scripts to run inside
+            iframe.sandbox = "allow-scripts allow-same-origin allow-forms"; 
+            
+            // 2. Create Overlay Link (for clicking)
+            const link = document.createElement('a');
+            link.href = proj.url;
+            link.className = 'gallery-overlay-link';
+            link.setAttribute('aria-label', `View project: ${proj.title}`);
+            
+            // 3. Info Container
+            const info = document.createElement('div');
+            info.className = 'gallery-item-info';
             
             const subtitle = document.createElement('div');
             subtitle.className = 'gallery-item-subtitle';
@@ -529,10 +538,15 @@
             title.className = 'gallery-item-title';
             title.textContent = proj.title;
             
-            link.appendChild(img);
-            link.appendChild(subtitle);
-            link.appendChild(title);
-            gallery.appendChild(link);
+            info.appendChild(subtitle);
+            info.appendChild(title);
+            
+            // Append all
+            div.appendChild(iframe);
+            div.appendChild(link);
+            div.appendChild(info);
+            
+            gallery.appendChild(div);
         });
 
         // --- 2. SMOOTH MOMENTUM SCROLLING ---
