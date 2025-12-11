@@ -184,19 +184,83 @@
             background: #111;
             overflow: hidden;
             aspect-ratio: 1; 
+            cursor: pointer; /* Pointer to indicate clickability */
         }
 
         .gallery-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.8s var(--easing);
+            transition: transform 0.8s var(--easing), opacity 0.5s var(--easing);
             opacity: 0.8;
         }
 
         .gallery-item:hover img {
             transform: scale(1.1);
+            opacity: 0.4; /* Darken image slightly */
+        }
+
+        /* Hover Overlay "View" Text */
+        .gallery-item::after {
+            content: "VIEW";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .gallery-item:hover::after {
             opacity: 1;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s var(--easing);
+        }
+
+        .lightbox.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            transform: scale(0.95);
+            transition: transform 0.4s var(--easing);
+        }
+
+        .lightbox.active img {
+            transform: scale(1);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 10001;
         }
 
         /* Process */
@@ -283,6 +347,12 @@
 <body>
 
     <div class="badge">Status: Pitch Deck // Ready</div>
+
+    <!-- LIGHTBOX OVERLAY -->
+    <div id="lightbox" class="lightbox">
+        <div class="lightbox-close">&times;</div>
+        <img id="lightbox-img" src="" alt="Full View">
+    </div>
 
     <!-- SMOOTH SCROLL WRAPPER -->
     <div class="scroll-container" id="scroll-wrapper">
@@ -427,7 +497,11 @@
         ];
 
         const gallery = document.getElementById('gallery');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxClose = document.querySelector('.lightbox-close');
         
+        // Populate Gallery
         imageUrls.forEach((url, i) => {
             const div = document.createElement('div');
             div.className = 'gallery-item reveal';
@@ -442,8 +516,25 @@
             img.loading = "lazy";
             img.alt = "Design Concept";
             
+            // Click to Open Lightbox
+            div.addEventListener('click', () => {
+                lightboxImg.src = url;
+                lightbox.classList.add('active');
+            });
+
             div.appendChild(img);
             gallery.appendChild(div);
+        });
+
+        // Close Lightbox
+        lightboxClose.addEventListener('click', () => {
+            lightbox.classList.remove('active');
+        });
+        
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                lightbox.classList.remove('active');
+            }
         });
 
         // --- 2. SMOOTH MOMENTUM SCROLLING ---
