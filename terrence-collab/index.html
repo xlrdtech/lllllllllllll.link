@@ -7,11 +7,26 @@
     <style>
         /* --- 1. RESET & VARIABLES --- */
         :root {
+            /* Dark Mode (Default) */
             --bg-color: #050505;
             --text-color: #ffffff;
+            --text-muted: #ccc;
             --accent-color: #333;
+            --card-bg: #111;
+            --hover-bg: #0a0a0a;
+            --border-color: #222;
             --font-main: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             --easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        :root.light-mode {
+            --bg-color: #ffffff;
+            --text-color: #111111;
+            --text-muted: #666;
+            --accent-color: #e5e5e5;
+            --card-bg: #f5f5f5;
+            --hover-bg: #fafafa;
+            --border-color: #e0e0e0;
         }
 
         *, *::before, *::after {
@@ -28,6 +43,7 @@
             overflow-x: hidden; /* Prevent horizontal scroll */
             -webkit-font-smoothing: antialiased;
             overscroll-behavior: none; /* enhance momentum feel */
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         /* --- 2. SMOOTH SCROLL CONTAINER --- */
@@ -74,12 +90,12 @@
         .text-body {
             font-size: clamp(1rem, 1.2vw, 1.35rem);
             line-height: 1.6;
-            color: #ccc; 
+            color: var(--text-muted); 
             max-width: 50ch;
         }
 
         .text-accent {
-            color: #fff;
+            color: var(--text-color); /* Was #fff, now adaptive */
             font-weight: 500;
         }
 
@@ -109,11 +125,11 @@
         /* --- 5. SECTIONS --- */
         section {
             padding: 8vh 0;
-            border-bottom: 1px solid #1a1a1a;
+            border-bottom: 1px solid var(--border-color);
             position: relative;
         }
 
-        /* Hero */
+        /* Hero - Force Dark Mode Style for Video Contrast */
         .hero {
             height: 95vh;
             display: flex;
@@ -124,7 +140,12 @@
             overflow: hidden;
             background: #000;
             border-bottom: none; 
+            color: #fff; /* Always white text on video */
         }
+        
+        /* Ensure specific hero text stays white even in light mode */
+        .hero .text-body { color: #ccc; } 
+        .hero .hero-meta { color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.3); }
 
         /* Video Background Styles */
         .video-wrapper {
@@ -181,7 +202,7 @@
 
         .gallery-item {
             position: relative;
-            background: #111;
+            background: var(--card-bg);
             overflow: hidden;
             aspect-ratio: 1; 
             cursor: pointer; /* Pointer to indicate clickability */
@@ -207,7 +228,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #fff;
+            color: var(--text-color);
             font-size: 0.9rem;
             letter-spacing: 0.2em;
             opacity: 0;
@@ -269,15 +290,15 @@
             justify-content: space-between;
             align-items: flex-start;
             padding: 3rem 0;
-            border-top: 1px solid #222;
+            border-top: 1px solid var(--border-color);
             transition: background 0.3s;
         }
         
         .process-row:hover {
-            background: #0a0a0a;
+            background: var(--hover-bg);
         }
 
-        .process-num { font-size: 1rem; color: #444; width: 10%; }
+        .process-num { font-size: 1rem; color: #666; width: 10%; }
         .process-content { width: 80%; }
         .process-title { font-size: 2.5rem; margin-bottom: 0.5rem; }
 
@@ -305,25 +326,25 @@
         }
 
         .btn-primary {
-            background: #fff;
-            color: #000;
+            background: var(--text-color);
+            color: var(--bg-color);
         }
         
         .btn-primary:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(255,255,255,0.1);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
 
         .btn-outline {
             background: transparent;
-            border: 1px solid #333;
-            color: #fff;
+            border: 1px solid var(--accent-color);
+            color: var(--text-color);
         }
 
         .btn-outline:hover {
-            border-color: #fff;
-            background: #fff;
-            color: #000;
+            border-color: var(--text-color);
+            background: var(--text-color);
+            color: var(--bg-color);
         }
 
         /* Badge */
@@ -340,6 +361,61 @@
             text-transform: uppercase;
             letter-spacing: 0.1em;
             z-index: 999;
+            color: #fff;
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 14rem; /* Positioned to the left of the badge (badge is at right: 2rem, width approx 150px) */
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            background: #fff;
+            color: #000;
+        }
+        
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .sun-icon { display: none; }
+        .moon-icon { display: block; }
+        
+        /* Light mode toggle state */
+        :root.light-mode .theme-toggle {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(0,0,0,0.1);
+            color: #000;
+        }
+        
+        :root.light-mode .theme-toggle:hover {
+            background: #000;
+            color: #fff;
+        }
+        
+        :root.light-mode .sun-icon { display: block; }
+        :root.light-mode .moon-icon { display: none; }
+        
+        :root.light-mode .badge {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(0,0,0,0.1);
+            color: #000;
         }
 
     </style>
@@ -347,6 +423,12 @@
 <body>
 
     <div class="badge">Status: Pitch Deck // Ready</div>
+
+    <!-- Theme Toggle -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme">
+        <svg class="sun-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+        <svg class="moon-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+    </button>
 
     <!-- LIGHTBOX OVERLAY -->
     <div id="lightbox" class="lightbox">
@@ -631,6 +713,26 @@
             document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         }, 100);
 
+        // --- 4. THEME TOGGLE ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const rootElement = document.documentElement; // Target <html> to set class on root
+        
+        // Check for saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            rootElement.classList.add('light-mode');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            rootElement.classList.toggle('light-mode');
+            
+            // Save preference
+            if (rootElement.classList.contains('light-mode')) {
+                localStorage.setItem('theme', 'light');
+            } else {
+                localStorage.setItem('theme', 'dark');
+            }
+        });
     </script>
 </body>
 </html>
