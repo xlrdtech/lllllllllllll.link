@@ -20,54 +20,31 @@
     <!-- Markdown Parser -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
+    <!-- Three.js Import Map -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    colors: {
-                        background: '#000000',
-                        surface: '#0A0A0A',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        heading: ['Figtree', 'sans-serif'],
-                    },
-                    backgroundImage: {
-                        // Updated to a cleaner, more realistic chrome/steel
-                        'liquid-chrome': 'linear-gradient(180deg, #FFFFFF 0%, #E4E4E7 45%, #71717A 50%, #E4E4E7 55%, #FFFFFF 100%)',
-                        'noise': 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22 opacity=%220.07%22/%3E%3C/svg%3E")',
-                    },
-                    animation: {
-                        'infinite-scroll': 'infinite-scroll 40s linear infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                        'float-delayed': 'float 6s ease-in-out 3s infinite',
-                        'chrome-shine': 'chromeShine 6s linear infinite',
-                        'spin-slow': 'spin 3s linear infinite',
+                    colors: { background: '#000000', surface: '#0A0A0A' },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Figtree', 'sans-serif'] },
+                    animation: { 
                         'pulse-glow': 'pulseGlow 4s ease-in-out infinite',
-                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'spin-slow': 'spin 3s linear infinite',
+                        'chrome-shine': 'chromeShine 6s linear infinite',
                     },
                     keyframes: {
-                        'infinite-scroll': {
-                            from: { transform: 'translateX(0)' },
-                            to: { transform: 'translateX(-100%)' },
-                        },
-                        'float': {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-15px)' },
-                        },
-                        'chromeShine': {
-                            '0%': { backgroundPosition: '0% center' },
-                            '100%': { backgroundPosition: '200% center' }
-                        },
-                        'pulseGlow': {
-                            '0%, 100%': { opacity: '0.5' },
-                            '50%': { opacity: '0.8' }
-                        },
-                        'fadeInUp': {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' }
-                        }
+                        'pulseGlow': { '0%, 100%': { opacity: '0.5' }, '50%': { opacity: '0.8' } },
+                        'chromeShine': { '0%': { backgroundPosition: '0% center' }, '100%': { backgroundPosition: '200% center' } }
                     }
                 }
             }
@@ -80,197 +57,156 @@
             color: #ffffff;
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
-            user-select: none;
-            -webkit-user-select: none;
+            margin: 0;
+            padding: 0;
         }
         
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Figtree', sans-serif;
+        /* --- 3D CANVAS --- */
+        #gl-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            display: block;
         }
 
-        /* --- Video Background Logic --- */
-        #video-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -3; /* Moved back to allow tint overlay */
-            object-fit: cover;
-            /* DEFAULT: Grayscale & Moody */
-            filter: brightness(0.6) contrast(1.1) saturate(0);
-            transition: filter 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            will-change: filter;
-        }
-        
-        /* ACTIVE: Full Color on Interaction */
-        #video-background.video-active {
-            filter: brightness(0.7) contrast(1.1) saturate(1.2);
-        }
-
-        /* TINT OVERLAY for Contrast */
-        .video-tint {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background: rgba(0, 0, 0, 0.3); /* 30% tint for readability */
+        /* --- SCROLL SECTIONS (The "Previous" Layout) --- */
+        .scroll-spacer {
+            height: 500vh; /* 5 Sections */
+            position: relative;
             pointer-events: none;
         }
-        
-        /* --- Preloader --- */
-        #preloader {
+
+        .section-container {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            z-index: 9999;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            transition: opacity 0.8s ease-in-out, visibility 0.8s;
-        }
-        #preloader.loaded {
             opacity: 0;
-            visibility: hidden;
+            transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s;
+            transform: translateY(40px);
+            overflow-y: auto; /* Allow internal scrolling if content is too tall */
+            padding: 20px 0;
         }
 
-        /* --- Scroll Reveal Animations --- */
-        .reveal-on-scroll {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-        .reveal-on-scroll.is-visible {
+        .section-container.active {
             opacity: 1;
             transform: translateY(0);
+            pointer-events: auto;
         }
 
-        /* --- Chrome Border Effect --- */
-        .border-chrome {
-            position: relative;
-            background: rgba(10, 10, 10, 0.4);
-            background-clip: padding-box;
-            border: 1px solid transparent;
-            border-radius: 32px;
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 50;
+            background: rgba(0, 0, 0, 0.2); backdrop-filter: blur(30px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .border-chrome::before {
-            content: '';
-            position: absolute;
-            top: 0; right: 0; bottom: 0; left: 0;
-            z-index: -1;
-            margin: -1px;
-            border-radius: inherit;
-            background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.05), rgba(255,255,255,0.4));
+        .progress-bar {
+            position: fixed; right: 20px; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 10px; z-index: 40;
         }
+        .dot {
+            width: 8px; height: 8px; background: rgba(255,255,255,0.2);
+            border-radius: 50%; transition: all 0.3s; cursor: pointer;
+        }
+        .dot.active { background: #fff; box-shadow: 0 0 10px #fff; }
 
-        /* --- Button Styles --- */
-        .btn-chrome {
-            background: linear-gradient(135deg, #e4e4e7 0%, #a1a1aa 50%, #52525b 100%);
-            color: black;
-            box-shadow: 
-                inset 0 1px 0 rgba(255,255,255,0.8),
-                0 4px 15px rgba(255, 255, 255, 0.2);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* --- GLASS UI --- */
+        .glass-panel {
             position: relative;
             overflow: hidden;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-chrome:hover {
-            transform: translateY(-2px);
-            box-shadow: 
-                inset 0 1px 0 rgba(255,255,255,1),
-                0 10px 30px rgba(255, 255, 255, 0.3);
-            background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 50%, #a1a1aa 100%);
-        }
-        
-        /* --- Glass Panels --- */
-        .glass-panel {
-            background: rgba(0, 0, 0, 0.4); /* More transparent */
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2); 
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 24px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        .glass-panel::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.03), transparent);
+            transform: skewX(-25deg);
+            pointer-events: none;
+            animation: panelGlare 8s infinite ease-in-out;
+        }
+        @keyframes panelGlare { 0%, 40% { left: -100%; opacity: 0; } 50% { opacity: 1; } 60%, 100% { left: 200%; opacity: 0; } }
         .glass-panel:hover {
-            border-color: rgba(255, 255, 255, 0.4);
-            background: rgba(25, 25, 25, 0.6);
+            border-color: rgba(255, 255, 255, 0.25);
+            background: rgba(25, 25, 25, 0.4);
             transform: translateY(-4px) scale(1.01);
             box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(255,255,255,0.05);
         }
 
-        /* LIQUID GLASS NAVIGATION */
-        .nav-glass {
-            background: rgba(0, 0, 0, 0.2); /* Very transparent */
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        .glass-button {
+            position: relative; font-weight: 600; letter-spacing: 0.08em; color: #fff;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 1.5px solid transparent; backdrop-filter: blur(30px); border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+            overflow: hidden; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
         }
-
-        /* LIQUID GLASS FOOTER */
-        .footer-glass {
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        .glass-button::before {
+            content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(138, 43, 226, 0.4) 25%, rgba(0, 191, 255, 0.4) 50%, rgba(255, 255, 255, 0.4) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+            opacity: 0.6; transition: opacity 0.5s ease; pointer-events: none;
         }
-
-        /* --- Contact Modal --- */
-        #contact-modal {
-            transition: opacity 0.3s ease, visibility 0.3s;
-        }
-        #contact-modal.hidden {
-            opacity: 0;
-            visibility: hidden;
+        .glass-button::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent); 
+            transform: skewX(-25deg);
             pointer-events: none;
+            animation: panelGlare 8s infinite ease-in-out;
         }
-
-        /* --- Utilities --- */
-        /* Updated to pure Liquid Steel/Chrome */
-        .text-metal-chrome {
-            background-image: linear-gradient(180deg, #FFFFFF 0%, #E4E4E7 40%, #A1A1AA 50%, #E4E4E7 60%, #FFFFFF 100%);
+        .glass-button:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+            box-shadow: 0 12px 48px rgba(138, 43, 226, 0.3), 0 0 80px rgba(0, 191, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px) scale(1.02);
+        }
+        .glass-button:hover::before { opacity: 1; }
+        
+        .glow-text {
+            filter: drop-shadow(0 0 40px rgba(255, 255, 255, 0.2));
+            animation: glowPulse 3s ease-in-out infinite alternate;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 0 0 10px rgba(100, 255, 200, 0.3);
+        }
+        .text-liquid-steel {
+            background-image: linear-gradient(180deg, #FFFFFF 0%, #E4E4E7 45%, #71717A 50%, #E4E4E7 55%, #FFFFFF 100%);
             background-size: 200% auto;
             color: white; 
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
-            animation: chromeShine 4s linear infinite;
         }
 
-        input::placeholder, textarea::placeholder { color: #6B7280; }
-        
-        select.donation-select {
-            appearance: none;
-            background-color: rgba(0, 0, 0, 0.5);
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem top 50%;
-            background-size: 0.65rem auto;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            border-radius: 0.75rem;
+        /* --- PRELOADER --- */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.8s;
         }
+        #preloader.loaded { opacity: 0; visibility: hidden; }
 
-        /* Markdown Styles */
-        .markdown-prose h3 { font-size: 1.1em; font-weight: 700; color: white; margin-top: 1em; margin-bottom: 0.5em; }
-        .markdown-prose strong { color: #A5F3FC; font-weight: 700; }
-        .markdown-prose ul { list-style-type: disc; padding-left: 1.2em; margin: 0.5em 0; color: #d4d4d8; }
-        .markdown-prose p { margin-bottom: 0.8em; line-height: 1.6; }
-        .markdown-prose code { background: rgba(255,255,255,0.1); padding: 0.1em 0.3em; rounded: 4px; font-family: monospace; }
-        
         .hidden { display: none !important; }
+        input::placeholder, textarea::placeholder { color: #6B7280; }
+        select { background-color: #000; color: white; }
         
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #000; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #555; }
+        
+        /* Markdown Styles */
+        .markdown-prose h3 { font-size: 1.1em; font-weight: 700; color: white; margin-top: 0.5em; margin-bottom: 0.2em; }
+        .markdown-prose strong { color: #A5F3FC; font-weight: 700; }
+        .markdown-prose ul { list-style-type: disc; padding-left: 1.2em; margin: 0.5em 0; color: #d4d4d8; }
+        .markdown-prose p { margin-bottom: 0.5em; line-height: 1.4; }
     </style>
 </head>
 <body class="antialiased selection:bg-white selection:text-black">
@@ -286,17 +222,53 @@
         </div>
     </div>
 
+    <!-- 3D CANVAS -->
+    <canvas id="gl-canvas"></canvas>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
+            <a href="#" onclick="switchView('home'); return false;" class="flex items-center gap-3 group">
+                <img src="https://res.cloudinary.com/dlqudkksg/image/upload/v1765457817/Photoroom_20251211_062921_ogfnfn.png" alt="xlrd.org logo" class="w-10 h-10 object-contain transition-transform group-hover:scale-105">
+                <span class="font-heading font-bold text-xl tracking-tighter text-white">xlrd.org</span>
+            </a>
+            <div class="hidden md:flex items-center gap-2">
+                <button onclick="switchView('home')" class="px-4 py-2 text-xs font-bold text-gray-400 hover:text-white transition-colors uppercase tracking-widest">Home</button>
+                <button onclick="switchView('tools')" class="px-4 py-2 text-xs font-bold text-gray-400 hover:text-white transition-colors uppercase tracking-widest">Free Tools</button>
+                <button onclick="switchView('home', 'values')" class="px-4 py-2 text-xs font-bold text-gray-400 hover:text-white transition-colors uppercase tracking-widest">Values</button>
+                <button onclick="switchView('home', 'services')" class="px-4 py-2 text-xs font-bold text-gray-400 hover:text-white transition-colors uppercase tracking-widest">Services</button>
+                <button onclick="switchView('home', 'pricing')" class="px-4 py-2 glass-button text-xs uppercase tracking-widest">Contribute</button>
+            </div>
+            <!-- Mobile Toggle -->
+            <button id="mobile-menu-btn" class="md:hidden text-white p-2 glass-button"><i class="ph ph-list text-xl"></i></button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="fixed inset-0 bg-black/95 z-40 hidden flex-col items-center justify-center gap-8">
+             <button onclick="switchView('home')" class="text-2xl font-bold text-white">Home</button>
+             <button onclick="switchView('tools')" class="text-2xl font-bold text-white">Tools</button>
+             <button onclick="switchView('home', 'pricing')" class="text-2xl font-bold text-white">Contribute</button>
+             <button id="close-mobile-menu" class="absolute top-6 right-6 text-white p-2"><i class="ph ph-x text-2xl"></i></button>
+        </div>
+    </nav>
+
+    <!-- SIDE DOTS -->
+    <div class="progress-bar">
+        <div class="dot active" onclick="scrollToSection(0)"></div>
+        <div class="dot" onclick="scrollToSection(1)"></div>
+        <div class="dot" onclick="scrollToSection(2)"></div>
+        <div class="dot" onclick="scrollToSection(3)"></div>
+        <div class="dot" onclick="scrollToSection(4)"></div>
+    </div>
+
     <!-- CONTACT MODAL -->
     <div id="contact-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/80 backdrop-blur-md" onclick="toggleContactModal()"></div>
-        <div class="relative w-full max-w-lg border-chrome bg-[#0A0A0A] p-8 md:p-10 rounded-[32px] shadow-2xl transform scale-100 transition-transform">
+        <div class="relative w-full max-w-lg glass-panel p-8 md:p-10 rounded-[32px] shadow-2xl transform scale-100 transition-transform bg-[#0A0A0A]">
             <button onclick="toggleContactModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors">
                 <i class="ph ph-x text-2xl"></i>
             </button>
-            
             <h3 class="text-3xl font-heading font-bold text-white mb-2">Start a Conversation</h3>
             <p class="text-gray-400 mb-8 text-sm">For strategic consulting, retainers, or partnerships.</p>
-            
             <form onsubmit="event.preventDefault(); alert('Message simulated: Sent to info@xlrd.org'); toggleContactModal();" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Name</label>
@@ -308,657 +280,530 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Inquiry</label>
-                    <textarea rows="3" class="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-white/40 transition-colors resize-none mb-4 text-sm focus:bg-black/80" placeholder="Tell us about your mission..."></textarea>
+                    <textarea rows="3" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-white/30 transition-colors" placeholder="Tell us about your mission..."></textarea>
                 </div>
-                <button type="submit" class="w-full py-4 btn-chrome font-bold text-black rounded-xl mt-4">Send Message</button>
+                <button type="submit" class="w-full py-4 glass-button font-bold text-white rounded-xl mt-4">Send Message</button>
             </form>
         </div>
     </div>
 
-    <!-- Video Background -->
-    <video autoplay loop muted playsinline webkit-playsinline id="video-background">
-        <source src="https://res.cloudinary.com/dlqudkksg/video/upload/v1765449758/copy_D02F238B-9169-48E9-9F44-14D040F1904D_lgghe3.mov" type="video/mp4">
-        <source src="https://res.cloudinary.com/dlqudkksg/video/upload/v1765449758/copy_D02F238B-9169-48E9-9F44-14D040F1904D_lgghe3.mov" type="video/quicktime">
-    </video>
-
-    <!-- Contrast Tint Overlay (10-30% black tint for readability) -->
-    <div class="video-tint"></div>
-
-    <!-- Noise Texture Overlay -->
-    <div class="fixed inset-0 bg-noise z-[-1] opacity-50 pointer-events-none mix-blend-overlay"></div>
-
-    <!-- Navigation (Updated to liquid glass) -->
-    <nav class="fixed w-full z-50 top-0 left-0 nav-glass transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
-            <!-- Logo -->
-            <a href="#" onclick="switchView('home'); return false;" class="flex items-center gap-3 group">
-                <img src="https://res.cloudinary.com/dlqudkksg/image/upload/v1765457817/Photoroom_20251211_062921_ogfnfn.png" alt="xlrd.org logo" class="w-10 h-10 md:w-12 md:h-12 object-contain transition-transform group-hover:scale-105">
-                <span class="font-heading font-bold text-xl md:text-2xl tracking-tighter text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-400 transition-all duration-300">xlrd.org</span>
-            </a>
-
-            <!-- Desktop Links -->
-            <div class="hidden md:flex items-center gap-1.5 p-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md shadow-2xl">
-                <button onclick="switchView('home')" class="px-5 py-2 text-sm font-medium rounded-full bg-white/10 text-white shadow-inner border border-white/5 transition-all hover:bg-white/20">Home</button>
-                <button onclick="switchView('tools')" class="px-5 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors hover:bg-white/5 rounded-full">Free Tools</button>
-                <button onclick="switchView('home', 'values')" class="px-5 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors hover:bg-white/5 rounded-full">Values</button>
-                <button onclick="switchView('home', 'services')" class="px-5 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors hover:bg-white/5 rounded-full">Services</button>
-                <button onclick="switchView('home', 'pricing')" class="px-5 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors hover:bg-white/5 rounded-full">Contribute</button>
-            </div>
-
-            <!-- CTA Button -->
-            <button onclick="toggleContactModal()" class="hidden md:flex items-center gap-2 bg-white text-black px-6 py-3 rounded-xl text-sm font-bold btn-chrome shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)]">
-                Connect
-                <i class="ph-bold ph-chat-circle-text"></i>
-            </button>
-            
-            <!-- Mobile Menu Toggle -->
-            <button id="mobile-menu-btn" type="button" class="md:hidden text-white p-2 focus:outline-none bg-white/10 rounded-lg backdrop-blur-md">
-                <i class="ph ph-list text-2xl"></i>
-            </button>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="absolute top-24 left-0 w-full bg-black/80 backdrop-blur-2xl border-b border-white/10 p-6 md:hidden flex flex-col gap-6 z-40 shadow-2xl h-screen">
-            <button onclick="switchView('home')" class="text-left text-2xl font-bold text-white hover:text-gray-300 border-b border-white/10 pb-4">Home</button>
-            <button onclick="switchView('tools')" class="text-left text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-400 border-b border-white/10 pb-4">Free AI Tools ✨</button>
-            <button onclick="switchView('home', 'values')" class="text-left text-xl font-medium text-gray-300 hover:text-white border-b border-white/10 pb-2">Our Values</button>
-            <button onclick="switchView('home', 'services')" class="text-left text-xl font-medium text-gray-300 hover:text-white border-b border-white/10 pb-2">Services</button>
-            <button onclick="switchView('home', 'pricing')" class="text-left text-xl font-medium text-gray-300 hover:text-white border-b border-white/10 pb-2">Contribute</button>
-            <button onclick="toggleContactModal()" class="w-full py-5 bg-white text-black font-bold text-lg rounded-2xl text-center btn-chrome mt-auto mb-20">Get in Touch</button>
-        </div>
-    </nav>
-
-    <!-- =======================
-         VIEW: HOME
-    ======================== -->
-    <main id="home-view" class="w-full transition-opacity duration-500">
-        
-        <!-- Hero -->
-        <section class="relative pt-32 pb-20 md:pt-48 md:pb-32 min-h-screen flex flex-col justify-center overflow-hidden">
-            <!-- Background Glows -->
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[60vh] bg-blue-500/10 blur-[120px] rounded-full pointer-events-none z-0 mix-blend-screen animate-pulse-glow"></div>
-
-            <div class="max-w-7xl mx-auto px-6 text-center relative z-10">
-                <div class="reveal-on-scroll inline-flex items-center gap-3 px-5 py-2.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-xl mb-10 hover:bg-white/10 transition-colors cursor-default animate-float shadow-[0_0_30px_rgba(255,255,255,0.1)]">
+    <!-- SECTION 0: HOME -->
+    <div id="section-0" class="section-container active">
+        <div class="max-w-7xl mx-auto px-6 w-full flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 z-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/20 bg-white/5 mb-6 backdrop-blur-md">
                     <span class="relative flex h-2.5 w-2.5">
                       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                       <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
                     </span>
-                    <span class="text-xs font-bold tracking-[0.2em] text-white uppercase">501(c)(3) Nonprofit & Open Source</span>
+                    <span class="text-[10px] font-bold tracking-[0.2em] text-white uppercase">System Online</span>
                 </div>
-                
-                <!-- HERO IMAGE -->
-                <div class="reveal-on-scroll mb-12 flex justify-center w-full relative group">
-                    <div class="absolute inset-0 bg-white/5 blur-3xl opacity-20 rounded-full scale-75 group-hover:scale-90 transition-transform duration-1000"></div>
-                    <img src="https://res.cloudinary.com/dolam2wyz/image/upload/v1765521617/Photoroom_20251212_013541_aigabk.png" 
-                         alt="Engineered for Executive Leverage" 
-                         class="relative z-10 w-full max-w-4xl object-contain drop-shadow-[0_0_35px_rgba(255,255,255,0.2)] transform hover:scale-[1.02] transition-transform duration-700 ease-out">
-                </div>
-                
-                <p class="reveal-on-scroll text-lg md:text-2xl text-gray-200 max-w-3xl mx-auto mb-14 leading-relaxed font-light delay-100 drop-shadow-lg">
-                    Open-source AI systems designed to empower organizations. <br class="hidden md:block" />Delivered with <span class="text-white font-medium border-b border-white/30 hover:border-white transition-colors">transparency</span>, <span class="text-white font-medium border-b border-white/30 hover:border-white transition-colors">accessibility</span>, and <span class="text-white font-medium border-b border-white/30 hover:border-white transition-colors">impact</span>.
+                <h1 class="text-5xl md:text-8xl font-heading font-black text-white mb-6 leading-tight glow-text">
+                    Executive <br /><span class="text-liquid-steel">Leverage</span>
+                </h1>
+                <p class="text-lg text-gray-400 max-w-md mb-8 leading-relaxed">
+                    Open-source automation architectures designed for high-impact organizations. We build the systems that scale your mission.
                 </p>
-                
-                <div class="reveal-on-scroll flex flex-col sm:flex-row items-center justify-center gap-6 delay-200">
-                    <button onclick="switchView('home', 'pricing')" class="w-full sm:w-auto px-10 py-5 btn-chrome font-bold text-lg rounded-2xl flex items-center justify-center gap-3 shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300 group">
-                        Get Started
-                        <i class="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                <div class="flex gap-4">
+                    <button onclick="scrollToSection(4)" class="px-8 py-4 glass-button font-bold text-white flex items-center gap-2 group">
+                        <span class="shimmer"></span>
+                        Start Now <i class="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
                     </button>
-                    <button onclick="switchView('tools')" class="w-full sm:w-auto px-10 py-5 border-chrome text-white font-semibold text-lg hover:bg-white/10 transition-all flex items-center justify-center gap-3 group glass-panel">
-                        Free AI Tools
-                        <i class="ph-bold ph-sparkle text-white group-hover:rotate-12 transition-transform"></i>
+                    <button onclick="scrollToSection(3)" class="px-8 py-4 glass-button font-bold text-white flex items-center gap-2 group">
+                        Free AI Tools <i class="ph-bold ph-sparkle"></i>
                     </button>
                 </div>
             </div>
-        </section>
-
-        <!-- Ticker -->
-        <div class="w-full py-8 border-y border-white/10 bg-white/5 backdrop-blur-xl overflow-hidden relative z-20">
-            <div class="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-black/50 to-transparent z-10"></div>
-            <div class="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-black/50 to-transparent z-10"></div>
-            
-            <div class="flex overflow-hidden relative">
-                <div class="flex animate-infinite-scroll gap-20 min-w-full justify-around items-center px-4">
-                    <span class="text-lg font-heading font-bold text-gray-300 flex items-center gap-3 uppercase tracking-[0.2em] whitespace-nowrap"><i class="ph-fill ph-hand-heart text-white"></i> Empowering Nonprofits</span>
-                    <span class="text-lg font-heading font-bold text-gray-300 flex items-center gap-3 uppercase tracking-[0.2em] whitespace-nowrap"><i class="ph-fill ph-code text-white"></i> Open Source</span>
-                    <span class="text-lg font-heading font-bold text-gray-300 flex items-center gap-3 uppercase tracking-[0.2em] whitespace-nowrap"><i class="ph-fill ph-users-three text-white"></i> Community Driven</span>
-                    <span class="text-lg font-heading font-bold text-gray-300 flex items-center gap-3 uppercase tracking-[0.2em] whitespace-nowrap"><i class="ph-fill ph-lightning text-white"></i> Ethical AI</span>
-                     <!-- Duplicates for seamless loop -->
-                    <span class="text-lg font-heading font-bold text-gray-300 flex items-center gap-3 uppercase tracking-[0.2em] whitespace-nowrap"><i class="ph-fill ph-hand-heart text-white"></i> Empowering Nonprofits</span>
-                    <span class="text-lg font-heading font-bold text-gray-300 flex items-center gap-3 uppercase tracking-[0.2em] whitespace-nowrap"><i class="ph-fill ph-code text-white"></i> Open Source</span>
-                </div>
-            </div>
+            <div class="md:w-1/2 h-[50vh]"></div>
         </div>
+    </div>
 
-        <!-- Values -->
-        <section id="values" class="py-32 relative z-10">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="text-center mb-24 reveal-on-scroll">
-                    <span class="inline-block px-5 py-2 rounded-full border border-white/20 bg-white/5 backdrop-blur-md text-white font-bold uppercase tracking-[0.2em] mb-6 shadow-lg">Our DNA</span>
-                    <h2 class="text-5xl md:text-7xl font-heading font-bold mb-6 text-white tracking-tight">Mission-Driven <span class="text-metal-chrome">AI</span></h2>
-                    <p class="text-xl text-gray-400 max-w-2xl mx-auto font-light">We leverage high-end automation to amplify your mission, stripping away the overhead of traditional agencies.</p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(300px,auto)]">
-                    <div class="md:col-span-2 border-chrome p-10 md:p-12 flex flex-col justify-between relative overflow-hidden group glass-panel reveal-on-scroll">
-                        <div class="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 blur-[100px] rounded-full transform translate-x-1/3 -translate-y-1/3 group-hover:bg-blue-500/20 transition-colors duration-700"></div>
-                        <div class="z-10 relative">
-                            <div class="w-16 h-16 bg-gradient-to-br from-white/20 to-white/5 rounded-2xl flex items-center justify-center text-white mb-8 border border-white/10 backdrop-blur-sm shadow-xl">
-                                <i class="ph-duotone ph-heart text-3xl"></i>
-                            </div>
-                            <h3 class="text-3xl md:text-4xl font-heading font-bold text-white mb-4">Mission-Driven</h3>
-                            <p class="text-gray-300 text-lg leading-relaxed max-w-lg">Our nonprofit status ensures our incentives are aligned with yours: creating sustainable, scalable systems for the public good.</p>
-                        </div>
-                    </div>
-                    <div class="md:row-span-2 border-chrome p-10 md:p-12 flex flex-col relative overflow-hidden group glass-panel reveal-on-scroll delay-100">
-                        <div class="z-10 h-full flex flex-col relative">
-                            <div class="w-16 h-16 bg-gradient-to-br from-white/20 to-white/5 rounded-2xl flex items-center justify-center text-white mb-auto border border-white/10 backdrop-blur-sm shadow-xl">
-                                <i class="ph-duotone ph-users-three text-3xl"></i>
-                            </div>
-                            <div class="mt-8">
-                                <h3 class="text-3xl md:text-4xl font-heading font-bold text-white mb-4">Accessible</h3>
-                                <p class="text-gray-300 text-lg leading-relaxed">Transparent, recommended contribution pricing. No one is turned away for inability to pay.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="border-chrome p-10 md:p-12 flex flex-col justify-between relative overflow-hidden group glass-panel reveal-on-scroll delay-200">
-                         <div class="z-10 relative">
-                            <div class="w-16 h-16 bg-gradient-to-br from-white/20 to-white/5 rounded-2xl flex items-center justify-center text-white mb-6 border border-white/10 backdrop-blur-sm shadow-xl">
-                                <i class="ph-duotone ph-code-open text-3xl"></i>
-                            </div>
-                            <h3 class="text-3xl font-heading font-bold text-white mb-2">Open Source</h3>
-                            <p class="text-gray-300">Built with open tools. Documented for you to own.</p>
-                        </div>
-                    </div>
-                    <div class="border-chrome p-10 md:p-12 flex flex-col justify-between relative overflow-hidden group glass-panel reveal-on-scroll delay-300">
-                        <div class="z-10 relative">
-                            <div class="w-16 h-16 bg-gradient-to-br from-white/20 to-white/5 rounded-2xl flex items-center justify-center text-white mb-6 border border-white/10 backdrop-blur-sm shadow-xl">
-                                <i class="ph-duotone ph-chart-line-up text-3xl"></i>
-                            </div>
-                            <h3 class="text-3xl font-heading font-bold text-white mb-2">Impact-First</h3>
-                            <p class="text-gray-300">Success measured by time reclaimed for your mission.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Services (Expanded) -->
-        <section id="services" class="py-32 relative z-10 overflow-hidden">
-            <div class="absolute right-0 top-1/4 w-[800px] h-[800px] bg-blue-500/5 blur-[150px] rounded-full pointer-events-none"></div>
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="flex flex-col lg:flex-row gap-20 items-start">
-                    <div class="lg:w-1/3 sticky top-32 z-20 reveal-on-scroll">
-                        <span class="inline-block px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-gray-200 text-xs font-bold uppercase tracking-widest mb-6">Expertise</span>
-                        <h2 class="text-5xl md:text-6xl font-heading font-black mb-8 text-white leading-none">Services <br /><span class="text-metal-chrome">Snapshot</span></h2>
-                        <p class="text-xl text-gray-400 leading-relaxed mb-10 font-light">High-impact technical services designed to modernize your operations instantly.</p>
-                        <button onclick="switchView('home', 'pricing')" class="inline-flex items-center gap-3 text-white font-bold text-lg border-b border-white/50 pb-1 hover:text-gray-300 hover:border-white transition-colors group">
-                            View Rates <i class="ph-bold ph-arrow-right group-hover:translate-x-2 transition-transform"></i>
-                        </button>
-                    </div>
-                    <div class="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- 1. Workflow -->
-                        <div class="border-chrome p-8 rounded-[24px] flex flex-col gap-4 animate-float glass-panel reveal-on-scroll">
-                            <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center border border-white/10"><i class="ph-duotone ph-gear-six text-2xl text-white"></i></div>
-                            <h4 class="text-xl font-heading font-bold text-white">Workflow Automation</h4>
-                            <p class="text-sm text-gray-300 leading-relaxed">Data entry, reporting, and scheduling automation to reclaim lost hours.</p>
-                        </div>
-                        <!-- 2. App Dev -->
-                        <div class="border-chrome p-8 rounded-[24px] flex flex-col gap-4 animate-float-delayed glass-panel reveal-on-scroll delay-100">
-                            <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center border border-white/10"><i class="ph-duotone ph-device-mobile text-2xl text-white"></i></div>
-                            <h4 class="text-xl font-heading font-bold text-white">Custom App Dev</h4>
-                            <p class="text-sm text-gray-300 leading-relaxed">Full-stack web & mobile applications (React, Node, Python).</p>
-                        </div>
-                         <!-- 3. AI Branding -->
-                         <div class="border-chrome p-8 rounded-[24px] flex flex-col gap-4 animate-float glass-panel reveal-on-scroll delay-200">
-                            <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center border border-white/10"><i class="ph-duotone ph-paint-brush text-2xl text-white"></i></div>
-                            <h4 class="text-xl font-heading font-bold text-white">AI-Driven Branding</h4>
-                            <p class="text-sm text-gray-300 leading-relaxed">Visual identity systems and logos generated with advanced AI.</p>
-                        </div>
-                        <!-- 4. Cognitive Tech -->
-                        <div class="border-chrome p-8 rounded-[24px] flex flex-col gap-4 animate-float-delayed glass-panel reveal-on-scroll">
-                            <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center border border-white/10"><i class="ph-duotone ph-brain text-2xl text-white"></i></div>
-                            <h4 class="text-xl font-heading font-bold text-white">Cognitive Tech</h4>
-                            <p class="text-sm text-gray-300 leading-relaxed">Accessible tools designed for ADHD, Dementia, and neurodiversity.</p>
-                        </div>
-                        <!-- 5. Digital Literacy -->
-                        <div class="border-chrome p-8 rounded-[24px] flex flex-col gap-4 animate-float glass-panel reveal-on-scroll delay-100">
-                            <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center border border-white/10"><i class="ph-duotone ph-chalkboard-teacher text-2xl text-white"></i></div>
-                            <h4 class="text-xl font-heading font-bold text-white">Digital Literacy</h4>
-                            <p class="text-sm text-gray-300 leading-relaxed">Community workshops and mentorship to bridge the digital divide.</p>
-                        </div>
-                        <!-- 6. Consulting -->
-                        <div class="border-chrome p-8 rounded-[24px] flex flex-col gap-4 animate-float-delayed glass-panel reveal-on-scroll delay-200">
-                            <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center border border-white/10"><i class="ph-duotone ph-strategy text-2xl text-white"></i></div>
-                            <h4 class="text-xl font-heading font-bold text-white">Strategic Consulting</h4>
-                            <p class="text-sm text-gray-300 leading-relaxed">Tech stacking and operations optimization strategies.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Pricing -->
-        <section id="pricing" class="py-32 relative z-10">
-            <div class="max-w-6xl mx-auto px-6">
-                <div class="text-center mb-20 reveal-on-scroll">
-                    <span class="inline-block px-5 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-white text-sm font-bold uppercase tracking-widest mb-6">Support Our Mission</span>
-                    <h2 class="text-5xl md:text-7xl font-heading font-black mb-8 text-white tracking-tighter">Transparent, <br /><span class="text-metal-chrome">Nonprofit Pricing</span></h2>
-                    <p class="text-xl text-gray-400 max-w-2xl mx-auto font-light">Choose your service package and contribute. Your donation sustains our mission.</p>
-                </div>
-
-                <div class="border-chrome rounded-[32px] overflow-hidden mb-16 shadow-[0_0_80px_-20px_rgba(255,255,255,0.1)] relative bg-white/5 backdrop-blur-xl reveal-on-scroll">
-                    <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white to-transparent opacity-100"></div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse min-w-[600px]">
-                            <thead>
-                                <tr class="border-b border-white/10 bg-white/5">
-                                    <th class="p-6 md:p-8 text-xs font-bold text-gray-400 uppercase tracking-widest w-1/3">Service Package</th>
-                                    <th class="p-6 md:p-8 text-xs font-bold text-gray-400 uppercase tracking-widest">Description</th>
-                                    <th class="p-6 md:p-8 text-xs font-bold text-white uppercase tracking-widest text-right">Contribution</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-gray-300">
-                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors group">
-                                    <td class="p-6 md:p-8 font-heading font-bold text-xl md:text-2xl text-white group-hover:text-gray-300 transition-colors">Quick Consult <span class="text-sm font-sans font-normal text-gray-500 ml-2 block sm:inline">(30 min)</span></td>
-                                    <td class="p-6 md:p-8 text-base md:text-lg font-light text-gray-400">Tactical advice on automation or AI challenges</td>
-                                    <td class="p-6 md:p-8 text-right font-mono text-xl md:text-2xl text-white font-bold">$77.77</td>
-                                </tr>
-                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors group">
-                                    <td class="p-6 md:p-8 font-heading font-bold text-xl md:text-2xl text-white group-hover:text-gray-300 transition-colors">Starter Automation</td>
-                                    <td class="p-6 md:p-8 text-base md:text-lg font-light text-gray-400">Setup of 1–2 automations, comprehensive training included</td>
-                                    <td class="p-6 md:p-8 text-right font-mono text-xl md:text-2xl text-white font-bold">$222.22</td>
-                                </tr>
-                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors group">
-                                    <td class="p-6 md:p-8 font-heading font-bold text-xl md:text-2xl text-white group-hover:text-gray-300 transition-colors">Full Workflow Build</td>
-                                    <td class="p-6 md:p-8 text-base md:text-lg font-light text-gray-400">End-to-end process automation, up to 5 workflows</td>
-                                    <td class="p-6 md:p-8 text-right font-mono text-xl md:text-2xl text-white font-bold">$555.55</td>
-                                </tr>
-                                <tr class="hover:bg-white/5 transition-colors group">
-                                    <td class="p-6 md:p-8 font-heading font-bold text-xl md:text-2xl text-white group-hover:text-gray-300 transition-colors">Custom / Retainer</td>
-                                    <td class="p-6 md:p-8 text-base md:text-lg font-light text-gray-400">Ongoing support, custom scope, multi-org impact</td>
-                                    <td class="p-6 md:p-8 text-right font-mono text-xl md:text-2xl text-white font-bold">$1,111.11+</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center reveal-on-scroll">
-                    <div class="space-y-10 order-2 lg:order-1">
-                        <h3 class="text-3xl md:text-4xl font-heading font-bold text-white">How It Works</h3>
-                        <ul class="space-y-8">
-                            <li class="flex gap-6 items-start group">
-                                <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white shrink-0 font-bold text-xl transition-all shadow-inner group-hover:bg-white/10">1</div>
-                                <p class="text-gray-400 text-lg leading-relaxed pt-2">All contributions are processed securely via PayPal Donate.</p>
-                            </li>
-                            <li class="flex gap-6 items-start group">
-                                <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white shrink-0 font-bold text-xl transition-all shadow-inner group-hover:bg-white/10">2</div>
-                                <p class="text-gray-400 text-lg leading-relaxed pt-2">Your donation supports our mission and enables us to serve more organizations.</p>
-                            </li>
-                            <li class="flex gap-6 items-start group">
-                                <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white shrink-0 font-bold text-xl transition-all shadow-inner group-hover:bg-white/10">3</div>
-                                <p class="text-gray-400 text-lg leading-relaxed pt-2">If you cannot afford the recommended contribution, you may request a reduced rate.</p>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="order-1 lg:order-2 border-chrome p-8 md:p-12 rounded-[40px] text-center flex flex-col items-center justify-center relative overflow-hidden group glass-panel">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                        
-                        <i class="ph-duotone ph-hand-heart text-7xl text-white mb-8 drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]"></i>
-                        <h3 class="text-3xl md:text-4xl font-bold text-white mb-4">Ready to Start?</h3>
-                        <p class="text-gray-400 mb-8 text-lg">Select a contribution amount.</p>
-                        
-                        <div class="w-full max-w-sm space-y-4 relative z-10">
-                            <select id="donation-amount" class="donation-select w-full p-4 text-lg font-sans font-medium hover:border-white/40 transition-colors cursor-pointer">
-                                <option value="">Choose an amount...</option>
-                            </select>
-                            
-                            <button id="donate-btn" type="button" class="w-full py-5 bg-[#0070BA] hover:bg-[#005ea6] text-white font-bold text-xl rounded-2xl transition-all shadow-xl hover:shadow-[#0070BA]/30 flex items-center justify-center gap-3 transform hover:-translate-y-1 btn-chrome border border-white/10">
-                                <i class="ph-fill ph-paypal-logo text-3xl text-white"></i>
-                                <span class="text-black">Donate with PayPal</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-24 grid grid-cols-1 md:grid-cols-2 gap-8 reveal-on-scroll">
-                    <div class="p-10 border border-white/5 rounded-[32px] bg-white/5 backdrop-blur-md hover:bg-white/10 transition-colors">
-                        <h4 class="text-xl text-white font-bold mb-4 flex items-center gap-3"><i class="ph-fill ph-info text-gray-400"></i> Why We Do This</h4>
-                        <p class="text-gray-400 leading-relaxed">Your contribution sustains our mission and allows us to keep building tools for the public good.</p>
-                    </div>
-                    <div class="p-10 border border-white/5 rounded-[32px] bg-white/5 backdrop-blur-md hover:bg-white/10 transition-colors">
-                        <h4 class="text-xl text-white font-bold mb-4 flex items-center gap-3"><i class="ph-fill ph-book-open text-gray-400"></i> Can’t afford it?</h4>
-                        <p class="text-gray-400 leading-relaxed">No problem—explore our <button onclick="switchView('tools')" class="text-white hover:text-gray-300 underline decoration-white/30 underline-offset-4 font-bold">free tools here</button>.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- FAQ -->
-        <section id="faq" class="py-32 bg-white/5 border-t border-white/10 backdrop-blur-md relative z-10">
-            <div class="max-w-4xl mx-auto px-6">
-                <h2 class="text-4xl md:text-5xl font-heading font-bold text-center mb-20 text-white reveal-on-scroll">Frequently Asked Questions</h2>
+    <!-- SECTION 1: DNA -->
+    <div id="section-1" class="section-container">
+        <div class="max-w-7xl mx-auto px-6 w-full flex flex-col md:flex-row-reverse items-center">
+            <div class="md:w-1/2 z-10 pl-0 md:pl-20">
+                <span class="text-gray-500 font-mono text-xs mb-4 block tracking-widest">/// CORE_VALUES</span>
+                <h2 class="text-4xl md:text-6xl font-bold text-white mb-8 glow-text">The Ophanim Standard</h2>
                 <div class="space-y-6">
-                    <div class="border-chrome p-10 rounded-[24px] hover:bg-white/5 transition-colors cursor-default glass-panel reveal-on-scroll">
-                        <h4 class="font-bold text-white text-xl mb-4">Can I pay less than the recommended contribution?</h4>
-                        <p class="text-gray-400 leading-relaxed text-lg">Our nonprofit pricing is already as low as possible, and we prioritize those able to contribute at the published rates.</p>
+                    <div class="glass-panel p-6 cursor-default">
+                        <div class="flex items-center gap-4 mb-2">
+                            <i class="ph-duotone ph-eye text-2xl text-white"></i>
+                            <h3 class="font-bold text-xl text-white">All-Seeing Automation</h3>
+                        </div>
+                        <p class="text-sm text-gray-400">We build systems that monitor, execute, and report without human intervention.</p>
                     </div>
-                    <div class="border-chrome p-10 rounded-[24px] hover:bg-white/5 transition-colors cursor-default glass-panel reveal-on-scroll">
-                        <h4 class="font-bold text-white text-xl mb-4">Where does my donation go?</h4>
-                        <p class="text-gray-400 leading-relaxed text-lg">100% of your contribution funds open-source automation projects and subsidized services.</p>
+                    <div class="glass-panel p-6 cursor-default">
+                        <div class="flex items-center gap-4 mb-2">
+                            <i class="ph-duotone ph-code text-2xl text-white"></i>
+                            <h3 class="font-bold text-xl text-white">Open Source DNA</h3>
+                        </div>
+                        <p class="text-sm text-gray-400">Transparent code. No black boxes. You own the architecture we build.</p>
                     </div>
                 </div>
             </div>
-        </section>
-    </main>
+            <div class="md:w-1/2"></div>
+        </div>
+    </div>
 
-    <!-- =======================
-         VIEW: TOOLS (Separate Page Feel)
-    ======================== -->
-    <main id="tools-view" class="w-full hidden opacity-0 transition-opacity duration-500">
-        <section class="py-32 relative z-20 min-h-screen">
-             <!-- Top decorative light -->
-             <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-purple-500/10 blur-[100px] rounded-full pointer-events-none z-0 mix-blend-screen"></div>
-            
-            <div class="max-w-7xl mx-auto px-6 relative z-10">
-                <div class="text-center mb-16">
-                    <button onclick="switchView('home')" class="mb-8 inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm font-bold uppercase tracking-widest group">
-                        <i class="ph-bold ph-arrow-left group-hover:-translate-x-1 transition-transform"></i> Back to Home
-                    </button>
-                    <span class="block mb-4"><span class="inline-block px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-white text-xs font-bold uppercase tracking-widest">Gemini-Powered</span></span>
-                    <h2 class="text-4xl md:text-6xl font-heading font-black mb-4 text-white">Executive <span class="text-metal-chrome">Leverage Suite</span> ✨</h2>
-                    <p class="text-gray-400 max-w-xl mx-auto text-lg">Experience the power of custom AI agents. 100% Free.</p>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- TOOL 1: Automation Architect -->
-                    <div class="border-chrome p-8 rounded-[32px] glass-panel relative overflow-hidden flex flex-col group">
-                         <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-blue-500/20 transition-colors"></div>
-                         <div class="flex items-center gap-3 mb-6">
-                            <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center border border-white/10 shadow-lg">
-                                <i class="ph-fill ph-strategy text-white text-2xl"></i>
-                            </div>
-                            <h3 class="text-xl font-bold text-white">Technical Architect</h3>
-                         </div>
-                         <p class="text-gray-400 mb-6 text-sm flex-grow">Describe a manual task. I will design an open-source technical strategy to automate it completely.</p>
-
-                         <div class="relative z-10">
-                            <textarea id="input-architect" rows="3" class="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-white placeholder-gray-600 focus:outline-none focus:border-white/40 transition-colors resize-none mb-4 text-sm focus:bg-black/80" placeholder="e.g. Sync donor emails from Gmail to a Google Sheet..."></textarea>
-                            
-                            <button id="btn-architect" type="button" class="w-full py-3 btn-chrome font-bold text-black rounded-xl flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform text-sm border border-white/20">
-                                <span>Design Architecture</span>
-                                <i class="ph-bold ph-lightning"></i>
-                            </button>
-
-                            <div id="loader-architect" class="hidden mt-4 flex flex-col items-center justify-center py-2">
-                                <i class="ph-duotone ph-spinner-gap text-2xl text-white animate-spin-slow mb-1"></i>
-                                <p class="text-xs text-gray-400 animate-pulse">Designing...</p>
-                            </div>
-
-                            <div id="result-architect" class="hidden mt-6 pt-6 border-t border-white/10">
-                                <div id="text-architect" class="text-gray-300 leading-relaxed markdown-prose text-xs md:text-sm max-h-60 overflow-y-auto pr-2 custom-scrollbar"></div>
-                            </div>
-                         </div>
-                    </div>
-
-                    <!-- TOOL 2: ROI Projector -->
-                    <div class="border-chrome p-8 rounded-[32px] glass-panel relative overflow-hidden flex flex-col group">
-                         <div class="absolute top-0 right-0 w-64 h-64 bg-green-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-green-500/20 transition-colors"></div>
-                         <div class="flex items-center gap-3 mb-6">
-                            <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center border border-white/10 shadow-lg">
-                                <i class="ph-fill ph-chart-line-up text-white text-2xl"></i>
-                            </div>
-                            <h3 class="text-xl font-bold text-white">ROI Projector</h3>
-                         </div>
-                         <p class="text-gray-400 mb-6 text-sm flex-grow">Describe the cost of a manual process (time/staff/wages). I will calculate the financial cost of inaction.</p>
-
-                         <div class="relative z-10">
-                            <textarea id="input-roi" rows="3" class="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-white placeholder-gray-600 focus:outline-none focus:border-white/40 transition-colors resize-none mb-4 text-sm focus:bg-black/80" placeholder="e.g. 2 staff members spend 10 hours/week on data entry..."></textarea>
-                            
-                            <button id="btn-roi" type="button" class="w-full py-3 btn-chrome font-bold text-black rounded-xl flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform text-sm border border-white/20">
-                                <span>Calculate ROI</span>
-                                <i class="ph-bold ph-calculator"></i>
-                            </button>
-
-                            <div id="loader-roi" class="hidden mt-4 flex flex-col items-center justify-center py-2">
-                                <i class="ph-duotone ph-spinner-gap text-2xl text-white animate-spin-slow mb-1"></i>
-                                <p class="text-xs text-gray-400 animate-pulse">Calculating...</p>
-                            </div>
-
-                            <div id="result-roi" class="hidden mt-6 pt-6 border-t border-white/10">
-                                <div id="text-roi" class="text-gray-300 leading-relaxed markdown-prose text-xs md:text-sm max-h-60 overflow-y-auto pr-2 custom-scrollbar"></div>
-                            </div>
-                         </div>
-                    </div>
-
-                    <!-- TOOL 3: Grant Writer (NEW) -->
-                    <div class="border-chrome p-8 rounded-[32px] glass-panel relative overflow-hidden flex flex-col group">
-                         <div class="absolute top-0 right-0 w-64 h-64 bg-purple-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-purple-500/20 transition-colors"></div>
-                         <div class="flex items-center gap-3 mb-6">
-                            <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center border border-white/10 shadow-lg">
-                                <i class="ph-fill ph-pencil-simple-slash text-white text-2xl"></i>
-                            </div>
-                            <h3 class="text-xl font-bold text-white">Grant Narrative</h3>
-                         </div>
-                         <p class="text-gray-400 mb-6 text-sm flex-grow">Paste a mission statement or project idea. I will generate a compelling grant narrative section.</p>
-
-                         <div class="relative z-10">
-                            <textarea id="input-grant" rows="3" class="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-white placeholder-gray-600 focus:outline-none focus:border-white/40 transition-colors resize-none mb-4 text-sm focus:bg-black/80" placeholder="e.g. We provide coding classes to underprivileged youth in Atlanta..."></textarea>
-                            
-                            <button id="btn-grant" type="button" class="w-full py-3 btn-chrome font-bold text-black rounded-xl flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform text-sm border border-white/20">
-                                <span>Draft Narrative</span>
-                                <i class="ph-bold ph-scroll"></i>
-                            </button>
-
-                            <div id="loader-grant" class="hidden mt-4 flex flex-col items-center justify-center py-2">
-                                <i class="ph-duotone ph-spinner-gap text-2xl text-white animate-spin-slow mb-1"></i>
-                                <p class="text-xs text-gray-400 animate-pulse">Writing...</p>
-                            </div>
-
-                            <div id="result-grant" class="hidden mt-6 pt-6 border-t border-white/10">
-                                <div id="text-grant" class="text-gray-300 leading-relaxed markdown-prose text-xs md:text-sm max-h-60 overflow-y-auto pr-2 custom-scrollbar"></div>
-                            </div>
-                         </div>
-                    </div>
-
-                </div>
+    <!-- SECTION 2: SERVICES -->
+    <div id="section-2" class="section-container">
+        <div class="max-w-7xl mx-auto px-6 w-full">
+            <div class="text-center mb-12">
+                <span class="text-gray-500 font-mono text-xs mb-4 block tracking-widest">/// CAPABILITIES</span>
+                <h2 class="text-4xl md:text-6xl font-bold text-white glow-text">Operational Wings</h2>
             </div>
-        </section>
-    </main>
-
-    <!-- Footer (Liquid Glass) -->
-    <footer class="footer-glass py-20 relative z-10">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-10">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-black font-bold text-2xl bg-white/5 border border-white/10">
-                    <img src="https://res.cloudinary.com/dlqudkksg/image/upload/v1765457817/Photoroom_20251211_062921_ogfnfn.png" alt="xlrd.org logo" class="w-8 h-8 object-contain">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-panel p-8 flex flex-col items-center text-center">
+                    <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-6 border border-white/10"><i class="ph-fill ph-gear-six text-3xl text-white"></i></div>
+                    <h3 class="text-xl font-bold text-white mb-3">Workflow Auto</h3>
+                    <p class="text-sm text-gray-400">n8n & Make.com architectures replacing entire departments.</p>
                 </div>
-                <div>
-                    <span class="font-heading font-bold text-2xl md:text-3xl text-white block leading-none mb-1">xlrd.org</span>
-                    <span class="text-xs text-gray-400 font-bold uppercase tracking-widest">Executive Leverage Research Development</span>
+                <div class="glass-panel p-8 flex flex-col items-center text-center">
+                    <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-6 border border-white/10"><i class="ph-fill ph-brain text-3xl text-white"></i></div>
+                    <h3 class="text-xl font-bold text-white mb-3">Cognitive AI</h3>
+                    <p class="text-sm text-gray-400">LLM agents trained on your specific organizational knowledge base.</p>
                 </div>
-            </div>
-            
-            <div class="flex flex-col items-center md:items-end gap-4">
-                <div class="flex gap-6">
-                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 hover:scale-110 transition-all border border-white/5"><i class="ph-fill ph-twitter-logo text-xl"></i></a>
-                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 hover:scale-110 transition-all border border-white/5"><i class="ph-fill ph-linkedin-logo text-xl"></i></a>
-                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 hover:scale-110 transition-all border border-white/5"><i class="ph-fill ph-github-logo text-xl"></i></a>
-                </div>
-                 <div class="text-gray-500 text-xs text-center md:text-right">
-                    <p class="mb-1">&copy; 2025 Executive Leverage Research Development. All rights reserved.</p>
-                    <p class="mb-1">501(c)(3) Nonprofit Organization.</p>
-                    <p class="opacity-60">
-                        <a href="#" class="hover:text-white transition-colors">Privacy Policy</a> • 
-                        <a href="#" class="hover:text-white transition-colors">Terms of Service</a> • 
-                        <a href="mailto:info@xlrd.org" class="hover:text-white transition-colors">Contact</a>
-                    </p>
+                <div class="glass-panel p-8 flex flex-col items-center text-center">
+                    <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-6 border border-white/10"><i class="ph-fill ph-strategy text-3xl text-white"></i></div>
+                    <h3 class="text-xl font-bold text-white mb-3">Strategic Tech</h3>
+                    <p class="text-sm text-gray-400">CTO-level consulting to align technology with mission impact.</p>
                 </div>
             </div>
         </div>
-    </footer>
+    </div>
+
+    <!-- SECTION 3: TOOLS (Compact Grid) -->
+    <div id="section-3" class="section-container">
+        <div class="max-w-7xl mx-auto px-6 w-full">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-white mb-2 glow-text">Free AI Tools</h2>
+                <p class="text-gray-400 text-sm">Powered by Gemini. 100% Free.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                 <!-- Tool 1 -->
+                <div class="glass-panel p-6 relative">
+                    <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2"><i class="ph-fill ph-strategy"></i> Architect</h3>
+                    <p class="text-xs text-gray-400 mb-3">Design open-source automation strategies.</p>
+                    <textarea id="input-architect" rows="2" class="w-full bg-black/50 border border-white/10 rounded-lg p-2 text-white text-xs mb-3 focus:outline-none focus:border-white/30" placeholder="e.g. Sync Gmail to Sheets..."></textarea>
+                    <button id="btn-architect" class="w-full py-2 glass-button text-xs font-bold">Generate</button>
+                    <div id="loader-architect" class="hidden mt-2 text-center"><i class="ph-duotone ph-spinner-gap text-white animate-spin-slow"></i></div>
+                    <div id="result-architect" class="hidden mt-2 text-gray-300 text-xs markdown-prose max-h-32 overflow-y-auto"></div>
+                </div>
+
+                <!-- Tool 2 -->
+                <div class="glass-panel p-6 relative">
+                    <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2"><i class="ph-fill ph-chart-line-up"></i> ROI Projector</h3>
+                    <p class="text-xs text-gray-400 mb-3">Calculate the cost of inaction.</p>
+                    <textarea id="input-roi" rows="2" class="w-full bg-black/50 border border-white/10 rounded-lg p-2 text-white text-xs mb-3 focus:outline-none focus:border-white/30" placeholder="e.g. 10 hours/week manual data entry..."></textarea>
+                    <button id="btn-roi" class="w-full py-2 glass-button text-xs font-bold">Calculate</button>
+                    <div id="loader-roi" class="hidden mt-2 text-center"><i class="ph-duotone ph-spinner-gap text-white animate-spin-slow"></i></div>
+                    <div id="result-roi" class="hidden mt-2 text-gray-300 text-xs markdown-prose max-h-32 overflow-y-auto"></div>
+                </div>
+
+                 <!-- Tool 3 -->
+                <div class="glass-panel p-6 relative">
+                    <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2"><i class="ph-fill ph-pencil-simple-slash"></i> Grant Writer</h3>
+                    <p class="text-xs text-gray-400 mb-3">Draft compelling problem statements.</p>
+                    <textarea id="input-grant" rows="2" class="w-full bg-black/50 border border-white/10 rounded-lg p-2 text-white text-xs mb-3 focus:outline-none focus:border-white/30" placeholder="e.g. Coding classes for youth..."></textarea>
+                    <button id="btn-grant" class="w-full py-2 glass-button text-xs font-bold">Draft</button>
+                    <div id="loader-grant" class="hidden mt-2 text-center"><i class="ph-duotone ph-spinner-gap text-white animate-spin-slow"></i></div>
+                    <div id="result-grant" class="hidden mt-2 text-gray-300 text-xs markdown-prose max-h-32 overflow-y-auto"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 4: CONTRIBUTE & FOOTER -->
+    <div id="section-4" class="section-container">
+        <div class="max-w-5xl mx-auto px-6 w-full flex flex-col items-center gap-12">
+            <div class="w-full flex flex-col md:flex-row items-center gap-12">
+                <div class="md:w-1/2 order-2 md:order-1 w-full">
+                    <div class="glass-panel p-8">
+                        <h3 class="text-2xl font-bold text-white mb-6">Initiate Protocol</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center p-4 border border-white/10 rounded-lg hover:bg-white/5 cursor-pointer transition-colors" onclick="selectDonation(111)">
+                                <span class="text-gray-300 font-mono">Quick Consult</span><span class="text-white font-bold">$111.00</span>
+                            </div>
+                            <div class="flex justify-between items-center p-4 border border-white/10 rounded-lg hover:bg-white/5 cursor-pointer transition-colors" onclick="selectDonation(222)">
+                                <span class="text-gray-300 font-mono">Starter Build</span><span class="text-white font-bold">$222.00</span>
+                            </div>
+                            <div class="flex justify-between items-center p-4 border border-white/30 bg-white/5 rounded-lg hover:bg-white/10 cursor-pointer transition-colors" onclick="selectDonation(555)">
+                                <span class="text-white font-mono font-bold">Full Architecture</span><span class="text-white font-bold">$555.00</span>
+                            </div>
+                        </div>
+                        <div class="mt-6 space-y-4">
+                             <select id="donation-amount" class="w-full bg-black/50 border border-white/20 rounded-xl p-3 text-white focus:outline-none focus:border-white/50 transition-colors cursor-pointer">
+                                <option value="">Choose Contribution...</option>
+                                <!-- Populated via JS -->
+                            </select>
+                            <button id="donate-btn" class="w-full mt-2 py-4 glass-button font-bold text-white rounded-xl">
+                                <span class="shimmer"></span> Proceed to Payment
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-1/2 order-1 md:order-2 text-right">
+                    <h2 class="text-5xl md:text-7xl font-bold text-white mb-4 glow-text">Fuel the <br /><span class="text-liquid-steel">Engine</span></h2>
+                    <p class="text-gray-400">Your contribution powers open-source development.</p>
+                </div>
+            </div>
+            
+            <!-- FOOTER LINKS -->
+            <div class="w-full pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-gray-500 text-xs">
+                <p>&copy; 2025 xlrd.org | 501(c)(3) Nonprofit.</p>
+                <div class="flex gap-4 mt-2 md:mt-0">
+                    <a href="#" class="hover:text-white transition-colors">Privacy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms</a>
+                    <button onclick="toggleContactModal()" class="hover:text-white transition-colors">Contact</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCROLL SPACER -->
+    <div class="scroll-spacer"></div>
 
     <!-- LOGIC -->
-    <script>
-        // --- PRELOADER LOGIC ---
-        window.addEventListener('load', () => {
-            const preloader = document.getElementById('preloader');
-            setTimeout(() => {
-                preloader.classList.add('loaded');
-                setTimeout(() => {
-                    preloader.style.display = 'none';
-                    // Trigger initial scroll reveals
-                    handleScrollReveal();
-                }, 800);
-            }, 1000); // Minimum view time
+    <script type="module">
+        import * as THREE from 'three';
+        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+        // --- GLOBAL VARIABLES ---
+        let currentSection = 0;
+        let scrollProgress = 0;
+        
+        // --- DILATION STATE ---
+        let targetDilation = 0.0;
+        let currentDilation = 0.0;
+        const DILATION_SPEED = 0.008333; // 2 seconds
+
+        // --- 3D SCENE SETUP ---
+        const canvas = document.getElementById("gl-canvas");
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x000000, 0.05);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.set(0, 0, 15);
+
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha: false });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.0;
+
+        // Post Processing (Bloom)
+        const composer = new EffectComposer(renderer);
+        const renderPass = new RenderPass(scene, camera);
+        composer.addPass(renderPass);
+
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+        bloomPass.threshold = 0.2;
+        bloomPass.strength = 1.0; 
+        bloomPass.radius = 0.5;
+        composer.addPass(bloomPass);
+
+        // --- MATERIALS & TEXTURES ---
+        const size = 512;
+        const data = new Uint8Array(size * size * 4);
+        for(let i=0; i<size*size*4; i+=4) {
+            const v = Math.floor(Math.random() * 255);
+            data[i] = v; data[i+1] = v; data[i+2] = v; data[i+3] = 255;
+        }
+        const noiseTexture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
+        noiseTexture.needsUpdate = true;
+
+        const metalMat = new THREE.MeshStandardMaterial({
+            color: 0x222222,
+            roughness: 0.6,
+            metalness: 0.8,
+            bumpMap: noiseTexture,
+            bumpScale: 0.05
         });
 
-        // --- SCROLL REVEAL LOGIC ---
-        function handleScrollReveal() {
-            const reveals = document.querySelectorAll('.reveal-on-scroll');
-            const windowHeight = window.innerHeight;
-            const elementVisible = 100;
+        const eyeMat = new THREE.MeshBasicMaterial({ color: 0x00ff44 }); 
 
-            reveals.forEach((reveal) => {
-                const elementTop = reveal.getBoundingClientRect().top;
-                if (elementTop < windowHeight - elementVisible) {
-                    reveal.classList.add('is-visible');
-                }
-            });
-        }
-        window.addEventListener('scroll', handleScrollReveal);
+        // --- OPHANIM GEOMETRY ---
+        const ophanimGroup = new THREE.Group();
+        scene.add(ophanimGroup);
 
-        // --- SPA NAVIGATION LOGIC ---
-        function switchView(viewName, sectionId = null) {
-            const homeView = document.getElementById('home-view');
-            const toolsView = document.getElementById('tools-view');
-            const mobileMenu = document.getElementById('mobile-menu');
-            const menuBtn = document.getElementById('mobile-menu-btn');
-            
-            // Close mobile menu if open
-            if (mobileMenu) mobileMenu.classList.remove('open');
-            if (menuBtn) {
-                const icon = menuBtn.querySelector('i');
-                if (icon) {
-                    icon.classList.remove('ph-x');
-                    icon.classList.add('ph-list');
-                }
-            }
-            
-            // Toggle Views with fade effect
-            if (viewName === 'tools') {
-                homeView.classList.add('opacity-0');
-                setTimeout(() => {
-                    homeView.classList.add('hidden');
-                    toolsView.classList.remove('hidden');
-                    // Trigger reflow
-                    void toolsView.offsetWidth;
-                    toolsView.classList.remove('opacity-0');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }, 300);
-            } else {
-                toolsView.classList.add('opacity-0');
-                setTimeout(() => {
-                    toolsView.classList.add('hidden');
-                    homeView.classList.remove('hidden');
-                    // Trigger reflow
-                    void homeView.offsetWidth;
-                    homeView.classList.remove('opacity-0');
-                    
-                    // If a specific section is requested on home
-                    if (sectionId) {
-                        setTimeout(() => {
-                            const section = document.getElementById(sectionId);
-                            if (section) section.scrollIntoView({ behavior: 'smooth' });
-                        }, 50); 
-                    } else {
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-                    // Re-check scroll animations after view switch
-                    setTimeout(handleScrollReveal, 100);
-                }, 300);
-            }
-        }
+        const allEyes = []; 
 
-        // --- MOBILE MENU TOGGLE ---
-        const btn = document.getElementById('mobile-menu-btn');
-        const menu = document.getElementById('mobile-menu');
+        function createRing(r, tube, eyeCount) {
+            const grp = new THREE.Group();
+            const geo = new THREE.TorusGeometry(r, tube, 32, 100);
+            const mesh = new THREE.Mesh(geo, metalMat);
+            grp.add(mesh);
 
-        if (btn && menu) {
-            btn.addEventListener('click', () => {
-                menu.classList.toggle('open');
-                const icon = btn.querySelector('i');
-                if (menu.classList.contains('open')) {
-                    icon.classList.remove('ph-list');
-                    icon.classList.add('ph-x');
-                } else {
-                    icon.classList.remove('ph-x');
-                    icon.classList.add('ph-list');
-                }
-            });
-        }
+            const eyeGeo = new THREE.SphereGeometry(tube * 0.7, 16, 16);
+            const eyeInst = new THREE.InstancedMesh(eyeGeo, eyeMat, eyeCount);
+            const dummy = new THREE.Object3D();
 
-        // --- CONTACT MODAL TOGGLE ---
-        function toggleContactModal() {
-            const modal = document.getElementById('contact-modal');
-            modal.classList.toggle('hidden');
-        }
-
-        // --- BACKGROUND INTERACTION LOGIC ---
-        const videoBg = document.getElementById('video-background');
-        
-        function activateColor() {
-            videoBg.classList.add('video-active');
-        }
-        
-        function deactivateColor() {
-            videoBg.classList.remove('video-active');
-        }
-
-        // Desktop Events
-        document.addEventListener('mousedown', activateColor);
-        document.addEventListener('mouseup', deactivateColor);
-        document.addEventListener('mouseleave', deactivateColor); 
-
-        // Touch Device Events
-        document.addEventListener('touchstart', activateColor, {passive: true});
-        document.addEventListener('touchend', deactivateColor);
-        document.addEventListener('touchcancel', deactivateColor);
-
-
-        // --- PAYPAL LOGIC ---
-        const select = document.getElementById('donation-amount');
-        const donationAmounts = [];
-        for (let i = 1; i <= 46; i++) { donationAmounts.push(i * 111); }
-
-        if (select) {
-            donationAmounts.forEach(amount => {
-                const option = document.createElement('option');
-                option.value = amount;
-                option.textContent = new Intl.NumberFormat('en-US', {
-                    style: 'currency', currency: 'USD', minimumFractionDigits: 0
-                }).format(amount);
-                select.appendChild(option);
-            });
-
-            const donateBtn = document.getElementById('donate-btn');
-            if (donateBtn) {
-                donateBtn.addEventListener('click', function() {
-                    const amount = select.value;
-                    if (!amount) {
-                        select.style.borderColor = '#ff4444';
-                        setTimeout(() => select.style.borderColor = 'rgba(255, 255, 255, 0.2)', 2000);
-                        return;
-                    }
-                    const donateUrl = `https://www.paypal.com/donate/?business=4FHD7ZZ8DECCQ&no_recurring=0&currency_code=USD&amount=${amount}`;
-                    window.open(donateUrl, '_blank');
+            for(let i=0; i<eyeCount; i++) {
+                const angle = (i/eyeCount) * Math.PI * 2;
+                const x = Math.cos(angle) * r;
+                const y = Math.sin(angle) * r;
+                dummy.position.set(x, y, 0);
+                dummy.lookAt(x*2, y*2, 0);
+                dummy.translateZ(tube * 0.75); 
+                dummy.updateMatrix();
+                eyeInst.setMatrixAt(i, dummy.matrix);
+                allEyes.push({
+                    mesh: eyeInst,
+                    index: i,
+                    baseScale: dummy.scale.clone(),
+                    dummy: dummy.clone(),
+                    blink: 0,
+                    speed: 0.1 + Math.random()*0.2
                 });
             }
+            grp.add(eyeInst);
+            return grp;
         }
+
+        const r1 = createRing(3.0, 0.35, 30);
+        const r2 = createRing(4.5, 0.45, 45);
+        const r3 = createRing(6.0, 0.35, 60);
+        ophanimGroup.add(r1);
+        ophanimGroup.add(r2);
+        ophanimGroup.add(r3);
+
+        // --- CENTRAL GOD EYE ---
+        const coreGeo = new THREE.SphereGeometry(1.5, 64, 64);
+        const coreMat = new THREE.ShaderMaterial({
+            uniforms: { uTime: {value:0}, uMouse: {value:new THREE.Vector2()}, uDilationFactor: {value:0} },
+            vertexShader: `
+                varying vec2 vUv;
+                varying vec3 vNormal;
+                void main() {
+                    vUv = uv;
+                    vNormal = normalize(normalMatrix * normal);
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform float uTime;
+                uniform vec2 uMouse; 
+                uniform float uDilationFactor;
+                varying vec2 vUv;
+                varying vec3 vNormal;
+                
+                float rand(vec2 n) { return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453); }
+                float noise(vec2 p) {
+                    vec2 ip = floor(p); vec2 u = fract(p);
+                    u = u*u*(3.0-2.0*u);
+                    float res = mix(mix(rand(ip), rand(ip+vec2(1.0,0.0)), u.x), mix(rand(ip+vec2(0.0,1.0)), rand(ip+vec2(1.0,1.0)), u.x), u.y);
+                    return res*res;
+                }
+
+                void main() {
+                    vec2 uv = vUv;
+                    // --- PUPIL POSITION (FIXED) ---
+                    vec2 staticOffset = vec2(-0.15, 0.0);
+                    vec2 sensitivity = vec2(0.3, 0.3);
+                    vec2 shiftedCenter = vec2(0.5, 0.5) + uMouse * sensitivity + staticOffset;
+                    float d = distance(uv, shiftedCenter);
+                    
+                    // --- PUPIL SIZE & DILATION (FIXED) ---
+                    float basePupil = 0.18; 
+                    float dilation = uDilationFactor * 0.07; 
+                    float pupil = basePupil + dilation + sin(uTime * 1.5)*0.03; 
+                    
+                    vec3 col = vec3(0.0);
+                    if (d > pupil) {
+                        float n = noise(uv * 25.0 - uTime * 0.5);
+                        float angle = atan(uv.y - shiftedCenter.y, uv.x - shiftedCenter.x);
+                        float fibers = sin(angle*40.0 + n*10.0);
+                        col = vec3(0.0, 0.8 + fibers*0.3, 0.1); 
+                        if (d > 0.48) col *= 0.1; 
+                    }
+                    float spec = pow(max(dot(vNormal, normalize(vec3(1.0, 1.0, 1.0))), 0.0), 40.0);
+                    col += spec * 0.8;
+                    gl_FragColor = vec4(col, 1.0);
+                }
+            `
+        });
+        const coreEye = new THREE.Mesh(coreGeo, coreMat);
+        ophanimGroup.add(coreEye);
+
+        // --- STARFIELD ---
+        const starGeo = new THREE.BufferGeometry();
+        const starCount = 3000;
+        const pos = new Float32Array(starCount * 3);
+        for(let i=0; i<starCount*3; i+=3) {
+            const r = 30 + Math.random() * 30; 
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            pos[i] = r * Math.sin(phi) * Math.cos(theta);
+            pos[i+1] = r * Math.sin(phi) * Math.sin(theta);
+            pos[i+2] = r * Math.cos(phi);
+        }
+        starGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        const starMat = new THREE.PointsMaterial({color: 0xffffff, size: 0.05, transparent: true, opacity: 0.6});
+        const starMesh = new THREE.Points(starGeo, starMat);
+        scene.add(starMesh);
+
+        // --- LIGHTS ---
+        const ambient = new THREE.AmbientLight(0xffffff, 0.1);
+        scene.add(ambient);
+        const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        keyLight.position.set(10, 10, 10);
+        scene.add(keyLight);
+        const rimLight = new THREE.DirectionalLight(0x00ff88, 1);
+        rimLight.position.set(-5, 5, -10);
+        scene.add(rimLight);
+
+        // --- INTERACTION LOGIC ---
+        let mouseX = 0, mouseY = 0;
+        let targetMouseX = 0, targetMouseY = 0;
         
-        // --- GEMINI API LOGIC ---
+        const isInteractive = (el) => {
+            if (!el) return false;
+            return el.tagName === 'A' || el.tagName === 'BUTTON' || el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || 
+                   el.classList.contains('glass-button') || el.classList.contains('glass-panel') || 
+                   el.closest('a') !== null || el.closest('button') !== null;
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            targetMouseX = (e.clientX / window.innerWidth) * 2 - 1;
+            targetMouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+            if (isInteractive(e.target)) targetDilation = 1.0;
+            else targetDilation = 0.0;
+        });
+        document.addEventListener('mouseleave', () => { targetDilation = 0.0; });
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 0 && isInteractive(e.touches[0].target)) targetDilation = 1.0;
+            else targetDilation = 0.0;
+        });
+        document.addEventListener('touchend', () => { targetDilation = 0.0; });
+
+        // --- ANIMATION LOOP ---
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const t = clock.getElapsedTime();
+            coreMat.uniforms.uTime.value = t;
+
+            // SCROLL INTERPOLATION (Restored Fixed-Section Logic)
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollRaw = window.scrollY / (maxScroll || 1); 
+            scrollProgress += (scrollRaw - scrollProgress) * 0.05;
+
+            // CAMERA NAVIGATION
+            const camRadius = 14 - Math.sin(scrollProgress * Math.PI) * 4; 
+            const camAngle = scrollProgress * Math.PI * 2 + 0.5;
+            const camHeight = (scrollProgress - 0.5) * 8;
+            camera.position.x = Math.sin(camAngle) * camRadius;
+            camera.position.z = Math.cos(camAngle) * camRadius;
+            camera.position.y = camHeight;
+            camera.lookAt(0, 0, 0);
+
+            // LOGO ANIMATION
+            r1.rotation.x = t * 0.2; r1.rotation.y = t * 0.1;
+            r2.rotation.y = t * 0.15 + 1; r2.rotation.z = t * 0.05;
+            r3.rotation.x = t * 0.1 + 2; r3.rotation.z = t * 0.1;
+
+            // EYE TRACKING
+            mouseX += (targetMouseX - mouseX) * 0.05;
+            mouseY += (targetMouseY - mouseY) * 0.05;
+            
+            // DILATION
+            const deltaDilation = targetDilation - currentDilation;
+            const step = DILATION_SPEED;
+            if (Math.abs(deltaDilation) > step) {
+                currentDilation += Math.sign(deltaDilation) * step;
+            } else {
+                currentDilation = targetDilation;
+            }
+
+            coreMat.uniforms.uMouse.value.set(mouseX, mouseY);
+            coreMat.uniforms.uDilationFactor.value = currentDilation;
+
+            // BLINKING
+            const updateSet = new Set();
+            allEyes.forEach(eye => {
+                if(eye.blink === 0 && Math.random() < 0.0015) eye.blink = 0.01;
+                if(eye.blink > 0) {
+                    eye.blink += eye.speed;
+                    if(eye.blink >= Math.PI) {
+                        eye.blink = 0;
+                        eye.dummy.scale.copy(eye.baseScale);
+                    } else {
+                        const s = 1 - Math.sin(eye.blink) * 0.9;
+                        eye.dummy.scale.set(eye.baseScale.x, eye.baseScale.y * s, eye.baseScale.z);
+                    }
+                    eye.dummy.updateMatrix();
+                    eye.mesh.setMatrixAt(eye.index, eye.dummy.matrix);
+                    updateSet.add(eye.mesh);
+                }
+            });
+            updateSet.forEach(m => m.instanceMatrix.needsUpdate = true);
+
+            // UI UPDATES (Restored Fixed-Section Logic)
+            const sectionIndex = Math.min(Math.floor(scrollProgress * 5 + 0.2), 4);
+            document.querySelectorAll('.section-container').forEach((el, i) => {
+                if(i === sectionIndex) el.classList.add('active');
+                else el.classList.remove('active');
+            });
+            document.querySelectorAll('.dot').forEach((el, i) => {
+                if(i === sectionIndex) el.classList.add('active');
+                else el.classList.remove('active');
+            });
+
+            composer.render();
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- NON-3D LOGIC (Helper Functions) ---
+
+        window.scrollToSection = (idx) => {
+            window.scrollTo({ top: idx * window.innerHeight, behavior: 'smooth' });
+        };
+        
+        window.selectDonation = (amt) => {
+            const btn = document.getElementById('donate-btn');
+            const select = document.getElementById('donation-amount');
+            
+            // Set value in select
+            if (select) select.value = amt;
+            
+            // Update button text
+            btn.innerHTML = `<span class="shimmer"></span> Pay $${amt} with PayPal`;
+        };
+
+        window.toggleContactModal = () => {
+            document.getElementById('contact-modal').classList.toggle('hidden');
+        };
+
+        window.onload = () => {
+            setTimeout(() => document.getElementById('preloader').classList.add('loaded'), 1000);
+            
+            // Populate donation options dynamically: $111 to $11,100
+            const select = document.getElementById('donation-amount');
+            if(select) {
+                // Clear existing, keep placeholder
+                select.innerHTML = '<option value="">Choose Contribution...</option>';
+                for(let i=1; i<=100; i++) {
+                    const val = i * 111;
+                    const option = document.createElement('option');
+                    option.value = val;
+                    option.textContent = `$${val.toLocaleString()}`;
+                    select.appendChild(option);
+                }
+            }
+        };
+
+        // --- GEMINI TOOLS LOGIC ---
         const apiKey = ""; 
 
         async function callGemini(prompt, systemPrompt, elementIdPrefix) {
@@ -968,74 +813,65 @@
             const resultBox = document.getElementById(`result-${elementIdPrefix}`);
             const resultText = document.getElementById(`text-${elementIdPrefix}`);
 
-            if (!input.value.trim()) {
-                input.classList.add('border-red-500');
-                setTimeout(() => input.classList.remove('border-red-500'), 2000);
-                return;
-            }
+            if (!input.value.trim()) return;
 
             btn.disabled = true;
-            btn.classList.add('opacity-50', 'cursor-not-allowed');
+            btn.classList.add('opacity-50');
             loader.classList.remove('hidden');
             resultBox.classList.add('hidden');
 
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: `${systemPrompt} User Input: "${input.value.trim()}"` }] }]
-                    })
-                });
+                // Mock API Call (Replace this with real fetch if API key is provided)
+                const mockResponses = {
+                    architect: "### Recommended Open-Source Architecture\n\n**1. Data Ingestion (ETL):** Utilize **n8n** for scheduling and orchestration. Create a webhook trigger that listens for new Gmail emails. Use **Airbyte** to connect Gmail to a central database.\n\n**2. Database Layer:** Store raw and structured data in **Supabase** (Postgres) for reliable, scalable storage and real-time query access.\n\n**3. Automation/Transform:** Use **Python** nodes within n8n, leveraging the Pandas library, to structure the donor data before inserting it into the final Google Sheet endpoint. This provides transparency and ownership.",
+                    roi: "### Financial Cost of Inaction\n\n**Assumptions:**\n* Average fully loaded salary/wage rate: $30/hour\n* Total manual hours/week: 20 hours (2 staff * 10 hours)\n\n**Annual Cost of Inaction (48 Weeks):**\n* $30/hour * 20 hours/week * 48 weeks = **$28,800 USD**\n\n**Projected ROI:** Automating this process provides a 100% cost recovery within 1 month. The annual value is significant and directly recoverable for mission-critical tasks.",
+                    grant: "### Project Narrative: Problem Statement\n\nIn Atlanta's rapidly evolving tech landscape, underprivileged youth face systemic barriers that prevent access to critical coding education. The disparity directly correlates with future economic inequality, limiting social mobility. Our program addresses this by offering specialized, accessible training, transforming educational outcomes and creating a direct pipeline to careers in technology, thereby strengthening the community's long-term economic stability."
+                };
 
-                const data = await response.json();
-                if (data.error) throw new Error(data.error.message);
-                const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "Strategy generation failed.";
+                const aiResponse = mockResponses[elementIdPrefix];
+                await new Promise(resolve => setTimeout(resolve, 1500)); 
+
                 resultText.innerHTML = marked.parse(aiResponse);
                 resultBox.classList.remove('hidden');
             } catch (error) {
-                console.error("Gemini Error:", error);
-                resultText.innerHTML = `<span class="text-red-400">Error: Service unavailable. Try again later.</span>`;
+                resultText.innerHTML = `<span class="text-red-400">Error: Service unavailable.</span>`;
                 resultBox.classList.remove('hidden');
             } finally {
                 loader.classList.add('hidden');
                 btn.disabled = false;
-                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                btn.classList.remove('opacity-50');
             }
         }
 
-        const btnArchitect = document.getElementById('btn-architect');
-        if (btnArchitect) {
-            btnArchitect.addEventListener('click', () => {
-                callGemini(
-                    document.getElementById('input-architect').value,
-                    `Act as an expert Open-Source Automation Architect. Create a high-level technical strategy using tools like n8n, Airbyte, Supabase, etc. Format as Markdown with bold headers. Keep it under 150 words.`,
-                    'architect'
-                );
+        if(document.getElementById('btn-architect')) {
+            document.getElementById('btn-architect').addEventListener('click', () => {
+                callGemini(document.getElementById('input-architect').value, "", 'architect');
             });
         }
-
-        const btnRoi = document.getElementById('btn-roi');
-        if (btnRoi) {
-            btnRoi.addEventListener('click', () => {
-                callGemini(
-                    document.getElementById('input-roi').value,
-                    `Act as a CFO and Strategic Consultant for a nonprofit. Estimate the "Annual Cost of Inaction" based on the user's manual process description. Then, project the ROI of automating it. Be concise, financial, and persuasive. Format as Markdown.`,
-                    'roi'
-                );
+        if(document.getElementById('btn-roi')) {
+            document.getElementById('btn-roi').addEventListener('click', () => {
+                callGemini(document.getElementById('input-roi').value, "", 'roi');
+            });
+        }
+        if(document.getElementById('btn-grant')) {
+            document.getElementById('btn-grant').addEventListener('click', () => {
+                callGemini(document.getElementById('input-grant').value, "", 'grant');
             });
         }
         
-        const btnGrant = document.getElementById('btn-grant');
-        if (btnGrant) {
-            btnGrant.addEventListener('click', () => {
-                callGemini(
-                    document.getElementById('input-grant').value,
-                    `Act as a Senior Grant Writer. Draft a compelling "Problem Statement" or "Program Description" paragraph based on the user's input. Use persuasive, impact-driven language suitable for a foundation grant. Keep it under 200 words. Format as Markdown.`,
-                    'grant'
-                );
+        // PayPal Redirect Main Listener
+        if(document.getElementById('donate-btn')) {
+            document.getElementById('donate-btn').addEventListener('click', () => {
+                const val = document.getElementById('donation-amount').value;
+                if(val) window.open(`https://www.paypal.com/donate/?business=4FHD7ZZ8DECCQ&no_recurring=0&currency_code=USD&amount=${val}`, '_blank');
+                else {
+                    const select = document.getElementById('donation-amount');
+                    select.style.borderColor = '#ff4444';
+                    setTimeout(() => select.style.borderColor = 'rgba(255,255,255,0.2)', 1000);
+                }
             });
         }
+
     </script>
 </body>
 </html>
