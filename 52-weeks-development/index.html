@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>52 Weeks Development</title>
+    <meta name="description" content="Redeveloping individuals and communities through second chance opportunities.">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_1390.JPG-r9oNMP7wdPFYTmV0JqgGWfVmP5FESW.jpeg" type="image/jpeg">
+    <link rel="shortcut icon" href="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_1390.JPG-r9oNMP7wdPFYTmV0JqgGWfVmP5FESW.jpeg" type="image/jpeg">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Animation utilities */
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Mobile menu animation */
+        .slide-down { animation: slideDown 0.3s ease-out forwards; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Accordion transition */
+        .accordion-content { transition: max-height 0.3s ease-out, opacity 0.3s ease-out; max-height: 0; opacity: 0; overflow: hidden; }
+        .accordion-content.open { max-height: 500px; opacity: 1; }
+        .accordion-icon { transition: transform 0.3s ease; }
+        .accordion-btn[aria-expanded="true"] .accordion-icon { transform: rotate(180deg); }
+    </style>
+</head>
+<body class="bg-white text-slate-900 antialiased selection:bg-cyan-100 selection:text-cyan-900">
+
+    <!-- Header -->
+    <header id="main-header" class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md transition-all duration-300 border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-24">
+                <!-- Logo -->
+                <a href="#" onclick="navigate(event, 'home')" class="flex items-center gap-3 group shrink-0">
+                    <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_1390.JPG-r9oNMP7wdPFYTmV0JqgGWfVmP5FESW.jpeg" 
+                         alt="52 Weeks Development Logo" 
+                         class="h-16 w-auto object-contain group-hover:scale-105 transition-transform duration-300">
+                    <span class="font-bold text-xl hidden sm:inline text-slate-900 tracking-tight">52 Weeks Development</span>
+                </a>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden lg:flex items-center gap-8 xl:gap-10">
+                    <a href="#" onclick="navigate(event, 'home')" class="text-sm font-semibold text-slate-600 hover:text-cyan-600 transition-colors nav-link tracking-wide whitespace-nowrap" data-target="home">HOME</a>
+                    <a href="#" onclick="navigate(event, 'about')" class="text-sm font-semibold text-slate-600 hover:text-cyan-600 transition-colors nav-link tracking-wide whitespace-nowrap" data-target="about">ABOUT US</a>
+                    <a href="#" onclick="navigate(event, 'programs')" class="text-sm font-semibold text-slate-600 hover:text-cyan-600 transition-colors nav-link tracking-wide whitespace-nowrap" data-target="programs">PROGRAMS</a>
+                    <a href="https://square.link/u/OQowKsqR" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-slate-600 hover:text-cyan-600 transition-colors tracking-wide whitespace-nowrap">DONATE</a>
+                    <a href="#" onclick="navigate(event, 'contact')" class="text-sm font-semibold text-slate-600 hover:text-cyan-600 transition-colors nav-link tracking-wide whitespace-nowrap" data-target="contact">CONTACT</a>
+                    
+                    <a href="#" onclick="navigate(event, 'contact')" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-bold transition-all bg-cyan-600 text-white hover:bg-cyan-700 hover:shadow-lg hover:-translate-y-0.5 h-10 px-8 shadow-md">
+                        Get In Touch
+                    </a>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" class="lg:hidden p-2 text-slate-600 hover:text-slate-900 focus:outline-none" aria-label="Toggle menu">
+                    <i data-lucide="menu" id="menu-icon" class="w-7 h-7"></i>
+                    <i data-lucide="x" id="close-icon" class="w-7 h-7 hidden"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Nav Dropdown -->
+        <div id="mobile-menu" class="hidden lg:hidden absolute top-24 left-0 w-full bg-white border-b shadow-xl">
+            <div class="px-6 py-8 space-y-6 flex flex-col items-center">
+                <a href="#" onclick="navigate(event, 'home')" class="block py-2 text-xl font-semibold text-slate-800 hover:text-cyan-600">HOME</a>
+                <a href="#" onclick="navigate(event, 'about')" class="block py-2 text-xl font-semibold text-slate-800 hover:text-cyan-600">ABOUT US</a>
+                <a href="#" onclick="navigate(event, 'programs')" class="block py-2 text-xl font-semibold text-slate-800 hover:text-cyan-600">PROGRAMS</a>
+                <a href="https://square.link/u/OQowKsqR" target="_blank" rel="noopener noreferrer" class="block py-2 text-xl font-semibold text-slate-800 hover:text-cyan-600">DONATE</a>
+                <a href="#" onclick="navigate(event, 'contact')" class="block py-2 text-xl font-semibold text-slate-800 hover:text-cyan-600">CONTACT</a>
+                <a href="#" onclick="navigate(event, 'contact')" class="w-full max-w-sm mt-6 inline-flex items-center justify-center rounded-full text-base font-bold bg-cyan-600 text-white hover:bg-cyan-700 h-12 px-8">
+                    Get In Touch
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main id="main-content">
+        
+        <!-- HOME VIEW -->
+        <div id="home-view" class="page-view fade-in">
+            <!-- Hero Section -->
+            <section class="relative min-h-[700px] flex items-center justify-center text-white overflow-hidden">
+                <div class="absolute inset-0 z-0">
+                    <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_1391.JPG-Afkt1HNUb0Ldf2QdjE16rHZIuxXb4O.jpeg" 
+                         alt="52 Weeks Development Team" 
+                         class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-slate-900/80 backdrop-grayscale-[0.3]"></div>
+                </div>
+
+                <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-8 leading-tight tracking-tight drop-shadow-lg">
+                        Developing individuals<br />
+                        and communities through<br />
+                        <span class="text-cyan-400">second chance</span> opportunities.
+                    </h1>
+                    <p class="text-lg md:text-2xl mb-12 text-slate-100 max-w-3xl mx-auto font-light leading-relaxed">
+                        At 52 Weeks Development, we are dedicated to redeveloping individuals and communities through second chance opportunities, offering a holistic support system tailored for justice-involved individuals.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                        <a href="#" onclick="navigate(event, 'programs')" class="inline-flex items-center justify-center rounded-full text-lg font-bold bg-cyan-600 text-white hover:bg-cyan-500 hover:shadow-lg hover:-translate-y-1 transition-all h-14 px-10 shadow-md">
+                            Explore Our Programs
+                        </a>
+                        <a href="#" onclick="navigate(event, 'about')" class="inline-flex items-center justify-center rounded-full text-lg font-bold border-2 border-white text-white hover:bg-white hover:text-slate-900 hover:shadow-lg hover:-translate-y-1 transition-all h-14 px-10 shadow-md">
+                            Learn More
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features -->
+            <section class="py-24 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-20 max-w-3xl mx-auto">
+                        <h2 class="text-3xl md:text-5xl font-bold mb-6 text-slate-900 tracking-tight">Explore the 52 Weeks Advantage</h2>
+                        <p class="text-xl text-slate-600 leading-relaxed">Our comprehensive approach addresses the full spectrum of needs for successful reintegration.</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
+                        <!-- Feature 1 -->
+                        <div class="text-center group p-8 rounded-3xl hover:bg-slate-50 transition-all duration-300 hover:shadow-xl border border-transparent hover:border-slate-100">
+                            <div class="w-20 h-20 mx-auto mb-8 rounded-2xl bg-cyan-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 group-hover:bg-cyan-100">
+                                <i data-lucide="users" class="w-10 h-10 text-cyan-600"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-4 text-slate-900">Empower Your Future</h3>
+                            <p class="text-slate-600 leading-relaxed">Gain new skills and opportunities through our comprehensive programs.</p>
+                        </div>
+                        <!-- Feature 2 -->
+                        <div class="text-center group p-8 rounded-3xl hover:bg-slate-50 transition-all duration-300 hover:shadow-xl border border-transparent hover:border-slate-100">
+                            <div class="w-20 h-20 mx-auto mb-8 rounded-2xl bg-cyan-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 group-hover:bg-cyan-100">
+                                <i data-lucide="heart" class="w-10 h-10 text-cyan-600"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-4 text-slate-900">Tailored Support</h3>
+                            <p class="text-slate-600 leading-relaxed">Experience programs designed specifically for your unique journey.</p>
+                        </div>
+                        <!-- Feature 3 -->
+                        <div class="text-center group p-8 rounded-3xl hover:bg-slate-50 transition-all duration-300 hover:shadow-xl border border-transparent hover:border-slate-100">
+                            <div class="w-20 h-20 mx-auto mb-8 rounded-2xl bg-cyan-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 group-hover:bg-cyan-100">
+                                <i data-lucide="lightbulb" class="w-10 h-10 text-cyan-600"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-4 text-slate-900">Innovative Solutions</h3>
+                            <p class="text-slate-600 leading-relaxed">Utilize integrated services to enhance your path to reintegration.</p>
+                        </div>
+                        <!-- Feature 4 -->
+                        <div class="text-center group p-8 rounded-3xl hover:bg-slate-50 transition-all duration-300 hover:shadow-xl border border-transparent hover:border-slate-100">
+                            <div class="w-20 h-20 mx-auto mb-8 rounded-2xl bg-cyan-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 group-hover:bg-cyan-100">
+                                <i data-lucide="building-2" class="w-10 h-10 text-cyan-600"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-4 text-slate-900">Community Engagement</h3>
+                            <p class="text-slate-600 leading-relaxed">Connect with true mentorship for your growth and stability.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Programs Preview -->
+            <section class="py-24 bg-slate-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-20 max-w-3xl mx-auto">
+                        <h2 class="text-3xl md:text-5xl font-bold mb-6 text-slate-900 tracking-tight">Our Core Programs</h2>
+                        <p class="text-xl text-slate-600">Comprehensive support services designed for justice-involved individuals aged 18-45.</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-10 mb-16">
+                        <!-- Card 1 -->
+                        <div class="bg-slate-800 text-white p-10 md:p-12 rounded-3xl shadow-2xl flex flex-col h-full text-center hover:scale-[1.02] transition-transform duration-300">
+                            <h3 class="text-3xl font-bold mb-6">Temporary Supportive Housing</h3>
+                            <p class="mb-10 text-slate-300 text-lg leading-relaxed flex-grow">Safe, stable housing for program participants, providing a structured environment that supports personal growth and accountability.</p>
+                            <ul class="space-y-5 mb-10 text-lg">
+                                <li class="flex items-center justify-center gap-4"><span class="flex-shrink-0 w-8 h-8 rounded-full bg-cyan-900/50 flex items-center justify-center"><i data-lucide="check" class="w-5 h-5 text-cyan-400"></i></span> <span>Structured living environment</span></li>
+                                <li class="flex items-center justify-center gap-4"><span class="flex-shrink-0 w-8 h-8 rounded-full bg-cyan-900/50 flex items-center justify-center"><i data-lucide="check" class="w-5 h-5 text-cyan-400"></i></span> <span>Supportive community</span></li>
+                                <li class="flex items-center justify-center gap-4"><span class="flex-shrink-0 w-8 h-8 rounded-full bg-cyan-900/50 flex items-center justify-center"><i data-lucide="check" class="w-5 h-5 text-cyan-400"></i></span> <span>Reduced risk of recidivism</span></li>
+                            </ul>
+                            <div class="text-center">
+                                <a href="#" onclick="navigate(event, 'programs')" class="inline-flex items-center justify-center rounded-full text-base font-bold bg-white text-slate-900 hover:bg-cyan-50 transition-colors shadow-lg h-12 px-8">Learn More</a>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="bg-cyan-600 text-white p-10 md:p-12 rounded-3xl shadow-2xl flex flex-col h-full text-center hover:scale-[1.02] transition-transform duration-300">
+                            <h3 class="text-3xl font-bold mb-6">Workforce Development</h3>
+                            <p class="mb-10 text-cyan-50 text-lg leading-relaxed flex-grow">Hands-on, industry-specific job training and skill-building programs designed to prepare participants for high-demand careers.</p>
+                            <ul class="space-y-5 mb-10 text-lg">
+                                <li class="flex items-center justify-center gap-4"><span class="flex-shrink-0 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center"><i data-lucide="check" class="w-5 h-5 text-white"></i></span> <span>Industry-recognized certifications</span></li>
+                                <li class="flex items-center justify-center gap-4"><span class="flex-shrink-0 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center"><i data-lucide="check" class="w-5 h-5 text-white"></i></span> <span>Apprenticeship opportunities</span></li>
+                                <li class="flex items-center justify-center gap-4"><span class="flex-shrink-0 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center"><i data-lucide="check" class="w-5 h-5 text-white"></i></span> <span>Career placement assistance</span></li>
+                            </ul>
+                            <div class="text-center">
+                                <a href="#" onclick="navigate(event, 'programs')" class="inline-flex items-center justify-center rounded-full text-base font-bold bg-white text-cyan-700 hover:bg-cyan-50 transition-colors shadow-lg h-12 px-8">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center pt-8">
+                        <a href="#" onclick="navigate(event, 'programs')" class="inline-flex items-center justify-center rounded-full text-lg font-bold bg-white border-2 border-cyan-600 text-cyan-600 hover:bg-cyan-50 transition-all h-14 px-12 shadow-sm hover:shadow-md">View All Programs</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stories -->
+            <section class="py-24 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-20 max-w-3xl mx-auto">
+                        <h2 class="text-3xl md:text-5xl font-bold mb-6 text-slate-900 tracking-tight">Real People. Real Stories.</h2>
+                        <p class="text-xl text-slate-600">Our participants are more than statistics. They are resilient individuals who have overcome significant challenges, rebuilt their lives, and are now thriving contributors to their communities.</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="group relative h-96 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500">
+                            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_1392.JPG-rg56l2sLjzdUrxPqXjvbA8wmKzzvkw.jpeg" alt="Story 1" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        </div>
+                        <div class="group relative h-96 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500">
+                            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_1397.JPG-kZQ8LWQqFYhmaC9A5iHdIkqtWLnYIf.jpeg" alt="Story 2" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        </div>
+                        <div class="group relative h-96 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500">
+                            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_1394.JPG-mXRKZqSev5RB42zBDBXph2DTvEm6OP.jpeg" alt="Story 3" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ABOUT VIEW -->
+        <div id="about-view" class="page-view hidden fade-in">
+            <section class="bg-slate-900 text-white py-24 relative overflow-hidden">
+                <div class="absolute inset-0 bg-cyan-900/20"></div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                    <h1 class="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">About 52 Weeks Development</h1>
+                    <p class="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto font-light">Redeveloping individuals and communities through second chance opportunities.</p>
+                </div>
+            </section>
+
+            <section class="py-24 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 class="text-3xl md:text-5xl font-bold mb-16 text-center text-slate-900 tracking-tight">Our Mission</h2>
+                    <div class="grid md:grid-cols-2 gap-16 items-center">
+                        <div class="text-center">
+                            <p class="text-2xl font-medium mb-8 text-cyan-700">Redeveloping individuals and communities through second chance opportunities.</p>
+                            <p class="text-slate-600 mb-8 leading-relaxed text-lg">
+                                52 Weeks Development exists to empower returning citizens by providing temporary housing, hands-on job training, apprenticeship opportunities, trauma-informed counseling, and career placement—helping them transition from incarceration to hope, stability, and opportunity.
+                            </p>
+                            
+                            <div class="space-y-8 mt-10">
+                                <div class="flex flex-col items-center gap-4 p-6 rounded-2xl bg-slate-50 border border-slate-100">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-16 h-16 rounded-full bg-cyan-100 flex items-center justify-center">
+                                            <i data-lucide="target" class="w-8 h-8 text-cyan-600"></i>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <h3 class="text-xl font-bold mb-2 text-slate-900">Vision</h3>
+                                        <p class="text-slate-600">By chasing results and not numbers, 52 Weeks Development will become a beacon of hope for second chance deserving individuals.</p>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-center gap-4 p-6 rounded-2xl bg-slate-50 border border-slate-100">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-16 h-16 rounded-full bg-cyan-100 flex items-center justify-center">
+                                            <i data-lucide="lightbulb" class="w-8 h-8 text-cyan-600"></i>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <h3 class="text-xl font-bold mb-2 text-slate-900">Purpose</h3>
+                                        <p class="text-slate-600">If 52 Weeks Development assists with temporary housing, actual on the job training, apprenticeship opportunities, mental health/individual trauma counseling, and career placement, a returning citizen can return to hope and opportunity.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative h-[600px] rounded-3xl overflow-hidden shadow-2xl">
+                            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_1391.JPG-Afkt1HNUb0Ldf2QdjE16rHZIuxXb4O.jpeg" alt="Team photo" class="absolute inset-0 w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Our Approach Section -->
+            <section class="py-24 bg-slate-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-20">
+                        <h2 class="text-3xl md:text-5xl font-bold mb-6 text-slate-900 tracking-tight">Our Approach</h2>
+                        <p class="text-xl text-slate-600">Learn about our history, business model, and the individuals we serve.</p>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-10">
+                        <!-- Story -->
+                        <div class="bg-white p-10 rounded-3xl shadow-md hover:shadow-xl transition-shadow text-center">
+                            <h3 class="text-2xl font-bold mb-6 text-slate-800">Our Story</h3>
+                            <p class="text-slate-600 mb-6 leading-relaxed">This organization was originally founded in 2018 with a mission to support at-risk youth in making meaningful educational and career strides. Our founder, Waine Weeks, saw the potential in these young individuals and wanted to create opportunities that would help them break cycles of poverty, disengagement, and underachievement.</p>
+                            <p class="text-slate-600 leading-relaxed">This realization shifted our focus. We felt a deep responsibility to serve this overlooked population by providing them with a true second chance.</p>
+                        </div>
+                        
+                        <!-- Business Model -->
+                        <div class="bg-white p-10 rounded-3xl shadow-md hover:shadow-xl transition-shadow text-center">
+                            <h3 class="text-2xl font-bold mb-6 text-slate-800">Our Business Model</h3>
+                            <p class="text-slate-600 mb-6 leading-relaxed">52 Weeks Development's model combines the proven frameworks of YouthBuild, Job Corps, and the Milton Hershey School to create a holistic, wraparound support system.</p>
+                            
+                            <h4 class="font-bold mb-4 text-lg text-cyan-700 uppercase tracking-wide">Our Goals</h4>
+                            <div class="space-y-6">
+                                <div>
+                                    <p class="font-bold mb-3 text-slate-800">Short-Term (1-6 Years)</p>
+                                    <ul class="space-y-3 text-sm text-slate-600">
+                                        <li class="flex flex-col items-center gap-2"><span class="text-cyan-600 text-xl">✓</span><span>Launch initial cohort of 20 participants in a 24-month cycle.</span></li>
+                                        <li class="flex flex-col items-center gap-2"><span class="text-cyan-600 text-xl">✓</span><span>Implement 12-month post-graduation monitoring.</span></li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <p class="font-bold mb-3 text-slate-800">Long-Term (7-15 Years)</p>
+                                    <ul class="space-y-3 text-sm text-slate-600">
+                                        <li class="flex flex-col items-center gap-2"><span class="text-cyan-600 text-xl">✓</span><span>Replicate model in high-need regions nationally.</span></li>
+                                        <li class="flex flex-col items-center gap-2"><span class="text-cyan-600 text-xl">✓</span><span>Position as a leader in reentry development.</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Who We Serve -->
+                        <div class="bg-white p-10 rounded-3xl shadow-md hover:shadow-xl transition-shadow text-center">
+                            <h3 class="text-2xl font-bold mb-6 text-slate-800">Who We Serve</h3>
+                            <p class="text-slate-600 mb-8 leading-relaxed">Our programs are designed for justice-involved individuals seeking a second chance.</p>
+                            
+                            <h4 class="font-bold mb-4 text-lg text-cyan-700 uppercase tracking-wide">Demographics</h4>
+                            <ul class="space-y-4 mb-8 text-slate-600">
+                                <li class="flex flex-col items-center gap-1"><span class="text-cyan-600 text-xl font-bold">18-54</span><span>Years Old</span></li>
+                                <li class="flex flex-col items-center gap-1"><span class="text-cyan-600 text-xl font-bold">Reentry</span><span>Incarcerated or Institutionalized</span></li>
+                                <li class="flex flex-col items-center gap-1"><span class="text-cyan-600 text-xl font-bold">Broward/Dade</span><span>Focus Area</span></li>
+                            </ul>
+
+                            <h4 class="font-bold mb-4 text-lg text-cyan-700 uppercase tracking-wide">Key Needs</h4>
+                            <ul class="space-y-4">
+                                <li class="text-center">
+                                    <div class="font-bold text-slate-800 mb-1">Stable Housing</div>
+                                    <div class="text-slate-500 text-sm">Safe, supportive, and structured.</div>
+                                </li>
+                                <li class="text-center">
+                                    <div class="font-bold text-slate-800 mb-1">Workforce Development</div>
+                                    <div class="text-slate-500 text-sm">Training & Apprenticeships.</div>
+                                </li>
+                                <li class="text-center">
+                                    <div class="font-bold text-slate-800 mb-1">Mental Health</div>
+                                    <div class="text-slate-500 text-sm">Trauma-informed counseling.</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- PROGRAMS VIEW -->
+        <div id="programs-view" class="page-view hidden fade-in">
+            <section class="bg-slate-900 text-white py-24 relative overflow-hidden">
+                <div class="absolute inset-0 bg-cyan-900/20"></div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                    <h1 class="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">Our Programs</h1>
+                    <p class="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto font-light">Comprehensive solutions designed to break barriers and build futures.</p>
+                </div>
+            </section>
+
+            <section class="py-24 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <!-- Housing -->
+                    <div class="grid md:grid-cols-2 gap-16 items-center mb-32">
+                        <div class="order-2 md:order-1 text-center">
+                            <h2 class="text-3xl md:text-4xl font-bold mb-6 text-slate-900">Temporary Supportive Housing</h2>
+                            <span class="inline-block bg-cyan-100 text-cyan-800 text-xs font-bold px-3 py-1 rounded-full mb-6 tracking-wide uppercase">Coming Soon</span>
+                            <p class="text-lg mb-8 text-slate-600 leading-relaxed">
+                                Our temporary supportive housing provides a safe, structured environment that fosters personal growth and accountability while reducing the risk of recidivism.
+                            </p>
+                            <ul class="space-y-6 mb-10">
+                                <li class="text-center">
+                                    <div class="flex items-center justify-center gap-3 mb-2"><span class="text-cyan-600 text-xl font-bold">✓</span><strong class="text-slate-800 text-lg">Safe, Stable Environment</strong></div>
+                                    <div class="text-slate-500">Secure housing that removes individuals from environments associated with past behaviors.</div>
+                                </li>
+                                <li class="text-center">
+                                    <div class="flex items-center justify-center gap-3 mb-2"><span class="text-cyan-600 text-xl font-bold">✓</span><strong class="text-slate-800 text-lg">Structured Living</strong></div>
+                                    <div class="text-slate-500">Clear expectations, routines, and accountability measures that promote responsibility.</div>
+                                </li>
+                                <li class="text-center">
+                                    <div class="flex items-center justify-center gap-3 mb-2"><span class="text-cyan-600 text-xl font-bold">✓</span><strong class="text-slate-800 text-lg">Supportive Community</strong></div>
+                                    <div class="text-slate-500">Peer support and mentorship from staff and fellow participants.</div>
+                                </li>
+                            </ul>
+                            <p class="italic text-slate-500 border-l-4 border-cyan-500 pl-6 py-2 mx-auto max-w-xl text-left bg-slate-50 rounded-r-lg">
+                                "Our housing program is designed to be a stepping stone, not a permanent solution. We provide the stability needed for individuals to focus on their personal development."
+                            </p>
+                        </div>
+                        <div class="order-1 md:order-2 relative h-[600px] rounded-3xl overflow-hidden shadow-2xl">
+                            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_1395.JPG-bUG1bgRpmmpoaYv48hSzHUttK432S6.jpeg" alt="Housing Support" class="absolute inset-0 w-full h-full object-cover transform hover:scale-105 transition-transform duration-700">
+                        </div>
+                    </div>
+
+                    <!-- Workforce -->
+                    <div class="grid md:grid-cols-2 gap-16 items-center mb-32">
+                        <div class="relative h-[600px] rounded-3xl overflow-hidden shadow-2xl">
+                            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_1394.JPG-mXRKZqSev5RB42zBDBXph2DTvEm6OP.jpeg" alt="Workforce Training" class="absolute inset-0 w-full h-full object-cover transform hover:scale-105 transition-transform duration-700">
+                        </div>
+                        <div class="text-center">
+                            <h2 class="text-3xl md:text-4xl font-bold mb-6 text-slate-900">Workforce Development</h2>
+                            <p class="text-lg mb-8 text-slate-600 leading-relaxed">
+                                Equip yourself with essential skills for high-demand careers through hands-on training and apprenticeships with local businesses for real-world experience.
+                            </p>
+                            <ul class="space-y-6 mb-10">
+                                <li class="text-center">
+                                    <div class="flex items-center justify-center gap-3 mb-2"><span class="text-cyan-600 text-xl font-bold">✓</span><strong class="text-slate-800 text-lg">Industry-Specific Training</strong></div>
+                                    <div class="text-slate-500">Focused skill development in high-growth sectors like construction and hospitality.</div>
+                                </li>
+                                <li class="text-center">
+                                    <div class="flex items-center justify-center gap-3 mb-2"><span class="text-cyan-600 text-xl font-bold">✓</span><strong class="text-slate-800 text-lg">NCCER Core Training</strong></div>
+                                    <div class="text-slate-500">Nationally recognized construction education including safety and basics.</div>
+                                </li>
+                                <li class="text-center">
+                                    <div class="flex items-center justify-center gap-3 mb-2"><span class="text-cyan-600 text-xl font-bold">✓</span><strong class="text-slate-800 text-lg">Trade Pathways</strong></div>
+                                    <div class="text-slate-500">Specialized training in masonry, plumbing, carpentry, and other trades.</div>
+                                </li>
+                                <li class="text-center">
+                                    <div class="flex items-center justify-center gap-3 mb-2"><span class="text-cyan-600 text-xl font-bold">✓</span><strong class="text-slate-800 text-lg">Apprenticeships</strong></div>
+                                    <div class="text-slate-500">Partnerships with local businesses for paid work experience.</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Mental Health -->
+                    <div class="grid md:grid-cols-2 gap-16 items-center mb-32">
+                        <div class="order-2 md:order-1 text-center">
+                            <h2 class="text-3xl md:text-4xl font-bold mb-6 text-slate-900">Mental Health Support</h2>
+                            <p class="text-lg mb-8 text-slate-600 leading-relaxed">
+                                Comprehensive trauma-informed counseling and wellness services to support emotional wellbeing and personal growth.
+                            </p>
+                            <ul class="space-y-6 mb-10">
+                                <li class="text-center">
+                                    <div class="flex items-center justify-center gap-3 mb-2"><span class="text-cyan-600 text-xl font-bold">✓</span><strong class="text-slate-800 text-lg">Individual Counseling</strong></div>
+                                    <div class="text-slate-500">One-on-one sessions with licensed therapists.</div>
+                                </li>
+                                <li class="text-center">
+                                    <div class="flex items-center justify-center gap-3 mb-2"><span class="text-cyan-600 text-xl font-bold">✓</span><strong class="text-slate-800 text-lg">Group Therapy</strong></div>
+                                    <div class="text-slate-500">Peer support groups fostering connection and shared healing.</div>
+                                </li>
+                                <li class="text-center">
+                                    <div class="flex items-center justify-center gap-3 mb-2"><span class="text-cyan-600 text-xl font-bold">✓</span><strong class="text-slate-800 text-lg">Trauma-Informed Care</strong></div>
+                                    <div class="text-slate-500">Addressing the impact of past trauma on current behavior.</div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="order-1 md:order-2 relative h-[600px] rounded-3xl overflow-hidden shadow-2xl">
+                            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_1398.JPG-RHwT48d4dOFyprxyCkNF8lsmd2klic.jpeg" alt="Mental Health Support" class="absolute inset-0 w-full h-full object-cover transform hover:scale-105 transition-transform duration-700">
+                        </div>
+                    </div>
+
+                    <!-- Education -->
+                    <div class="grid md:grid-cols-2 gap-16 items-center">
+                        <div class="relative h-[600px] rounded-3xl overflow-hidden shadow-2xl">
+                            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_1392.JPG-rg56l2sLjzdUrxPqXjvbA8wmKzzvkw.jpeg" alt="Education" class="absolute inset-0 w-full h-full object-cover transform hover:scale-105 transition-transform duration-700">
+                        </div>
+                        <div class="text-center">
+                            <h2 class="text-3xl md:text-4xl font-bold mb-6 text-slate-900">Educational Advancement</h2>
+                            <p class="text-lg mb-8 text-slate-600 leading-relaxed">
+                                Build a strong educational foundation through GED preparation and vocational certifications that open doors to career opportunities.
+                            </p>
+                            <ul class="space-y-6 mb-10">
+                                <li class="text-center">
+                                    <div class="flex items-center justify-center gap-3 mb-2"><span class="text-cyan-600 text-xl font-bold">✓</span><strong class="text-slate-800 text-lg">GED Preparation</strong></div>
+                                    <div class="text-slate-500">Comprehensive instruction to earn high school equivalency.</div>
+                                </li>
+                                <li class="text-center">
+                                    <div class="flex items-center justify-center gap-3 mb-2"><span class="text-cyan-600 text-xl font-bold">✓</span><strong class="text-slate-800 text-lg">Vocational Certifications</strong></div>
+                                    <div class="text-slate-500">Industry-recognized credentials that demonstrate skills.</div>
+                                </li>
+                                <li class="text-center">
+                                    <div class="flex items-center justify-center gap-3 mb-2"><span class="text-cyan-600 text-xl font-bold">✓</span><strong class="text-slate-800 text-lg">Life Skills Training</strong></div>
+                                    <div class="text-slate-500">Financial literacy, communication, and professional development.</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- CONTACT VIEW -->
+        <div id="contact-view" class="page-view hidden fade-in">
+            <div class="min-h-screen">
+                <section class="relative h-72 flex items-center justify-center text-white bg-slate-900">
+                    <div class="absolute inset-0 bg-slate-900/60 z-10"></div>
+                    <div class="absolute inset-0 opacity-20">
+                        <div class="w-full h-full" style="background-image:radial-gradient(circle, white 1px, transparent 1px);background-size:30px 30px"></div>
+                    </div>
+                    <div class="relative z-20 max-w-4xl mx-auto px-4 text-center">
+                        <h1 class="text-5xl font-extrabold mb-4">Contact Us</h1>
+                        <p class="text-xl text-slate-300">We're here to answer your questions and help you get involved.</p>
+                    </div>
+                </section>
+
+                <section class="py-24 bg-white">
+                    <div class="max-w-7xl mx-auto px-4">
+                        <div class="grid md:grid-cols-2 gap-16">
+                            <div class="text-center">
+                                <h2 class="text-3xl font-bold mb-8 text-slate-900">Get In Touch</h2>
+                                <p class="text-lg text-slate-600 mb-12">Have questions about our programs or how you can get involved? We'd love to hear from you.</p>
+                                
+                                <div class="space-y-8">
+                                    <div class="flex flex-col items-center gap-3 text-center p-6 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-colors">
+                                        <div class="w-12 h-12 rounded-full bg-cyan-100 flex items-center justify-center flex-shrink-0">
+                                            <i data-lucide="map-pin" class="w-6 h-6 text-cyan-600"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-bold text-slate-900 mb-1">Service Area</h3>
+                                            <p class="text-slate-600">Broward and Dade Counties</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col items-center gap-3 text-center p-6 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-colors">
+                                        <div class="w-12 h-12 rounded-full bg-cyan-100 flex items-center justify-center flex-shrink-0">
+                                            <i data-lucide="mail" class="w-6 h-6 text-cyan-600"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-bold text-slate-900 mb-1">Email</h3>
+                                            <a href="mailto:waine@52weeks.dev" class="text-cyan-600 hover:text-cyan-700 font-medium">waine@52weeks.dev</a>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col items-center gap-3 text-center p-6 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-colors">
+                                        <div class="w-12 h-12 rounded-full bg-cyan-100 flex items-center justify-center flex-shrink-0">
+                                            <i data-lucide="phone" class="w-6 h-6 text-cyan-600"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-bold text-slate-900 mb-1">Phone</h3>
+                                            <a href="tel:9546965494" class="text-cyan-600 hover:text-cyan-700 font-medium">(954) 696-5494</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 p-10 rounded-3xl shadow-lg border border-slate-100 text-center">
+                                <h2 class="text-2xl font-bold mb-8 text-slate-900">Send Us a Message</h2>
+                                <form id="contact-form" onsubmit="handleFormSubmit(event)" class="space-y-6">
+                                    <div class="text-left">
+                                        <label for="name" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Your Name</label>
+                                        <input type="text" id="name" required placeholder="John Doe" class="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none transition-all placeholder:text-slate-400">
+                                    </div>
+                                    <div class="text-left">
+                                        <label for="email" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Your Email</label>
+                                        <input type="email" id="email" required placeholder="john@example.com" class="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none transition-all placeholder:text-slate-400">
+                                    </div>
+                                    <div class="text-left">
+                                        <label for="phone" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Contact Number</label>
+                                        <input type="tel" id="phone" placeholder="(555) 123-4567" class="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none transition-all placeholder:text-slate-400">
+                                    </div>
+                                    <div class="text-left">
+                                        <label for="message" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Your Message</label>
+                                        <textarea id="message" required rows="5" placeholder="How can we help you?" class="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none transition-all resize-y placeholder:text-slate-400"></textarea>
+                                    </div>
+                                    <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-full text-base font-bold bg-cyan-600 text-white hover:bg-cyan-700 hover:shadow-lg transition-all h-12 shadow-md">
+                                        Send Message
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="py-24 bg-slate-50">
+                    <div class="max-w-4xl mx-auto px-4">
+                        <h2 class="text-4xl font-bold mb-12 text-center text-slate-900">Frequently Asked Questions</h2>
+                        <div class="space-y-4">
+                            <!-- FAQ Item 1 -->
+                            <div class="border border-slate-200 bg-white px-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                                <button onclick="toggleAccordion('faq1')" class="accordion-btn w-full flex items-center justify-between py-6 text-left font-bold text-slate-800 focus:outline-none" aria-expanded="false">
+                                    <span class="text-lg">How can I apply for your programs?</span>
+                                    <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center accordion-icon">
+                                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500"></i>
+                                    </div>
+                                </button>
+                                <div id="faq1" class="accordion-content">
+                                    <div class="pb-6 text-base text-slate-600 text-center leading-relaxed">
+                                        Please contact us directly using the form above or call our office to begin the application process. We will guide you through the necessary steps.
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- FAQ Item 2 -->
+                            <div class="border border-slate-200 bg-white px-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                                <button onclick="toggleAccordion('faq2')" class="accordion-btn w-full flex items-center justify-between py-6 text-left font-bold text-slate-800 focus:outline-none" aria-expanded="false">
+                                    <span class="text-lg">Do you offer services for family members?</span>
+                                    <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center accordion-icon">
+                                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500"></i>
+                                    </div>
+                                </button>
+                                <div id="faq2" class="accordion-content">
+                                    <div class="pb-6 text-base text-slate-600 text-center leading-relaxed">
+                                        Yes, we believe in a holistic approach and can provide resources and referrals for family members of justice-involved individuals.
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- FAQ Item 3 -->
+                            <div class="border border-slate-200 bg-white px-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                                <button onclick="toggleAccordion('faq3')" class="accordion-btn w-full flex items-center justify-between py-6 text-left font-bold text-slate-800 focus:outline-none" aria-expanded="false">
+                                    <span class="text-lg">How can businesses partner with 52 Weeks?</span>
+                                    <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center accordion-icon">
+                                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500"></i>
+                                    </div>
+                                </button>
+                                <div id="faq3" class="accordion-content">
+                                    <div class="pb-6 text-base text-slate-600 text-center leading-relaxed">
+                                        We are always looking for partners for apprenticeships and job placement. Please reach out via email to discuss partnership opportunities.
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- FAQ Item 4 -->
+                            <div class="border border-slate-200 bg-white px-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                                <button onclick="toggleAccordion('faq4')" class="accordion-btn w-full flex items-center justify-between py-6 text-left font-bold text-slate-800 focus:outline-none" aria-expanded="false">
+                                    <span class="text-lg">Is my donation tax-deductible?</span>
+                                    <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center accordion-icon">
+                                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500"></i>
+                                    </div>
+                                </button>
+                                <div id="faq4" class="accordion-content">
+                                    <div class="pb-6 text-base text-slate-600 text-center leading-relaxed">
+                                        Yes, 52 Weeks Development is a registered non-profit organization, and your donations are tax-deductible to the extent allowed by law.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center lg:text-left">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-y-12 lg:gap-x-12">
+                
+                <!-- Brand -->
+                <div class="space-y-6 flex flex-col items-center lg:items-start">
+                    <div class="flex items-center gap-4">
+                        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_1390.JPG-r9oNMP7wdPFYTmV0JqgGWfVmP5FESW.jpeg" 
+                             alt="52 Weeks Development Logo" 
+                             class="w-14 h-14 rounded-full border-2 border-slate-700">
+                        <span class="font-bold text-2xl tracking-tight">52 Weeks Development</span>
+                    </div>
+                    <p class="text-slate-400 text-base leading-relaxed max-w-xs mx-auto lg:mx-0 font-light">
+                        Redeveloping individuals and communities through second chance opportunities.
+                    </p>
+                </div>
+
+                <!-- Links -->
+                <div class="space-y-6">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Quick Links</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" onclick="navigate(event, 'home')" class="text-slate-300 hover:text-cyan-400 transition-colors text-base">Home</a></li>
+                        <li><a href="#" onclick="navigate(event, 'about')" class="text-slate-300 hover:text-cyan-400 transition-colors text-base">About Us</a></li>
+                        <li><a href="#" onclick="navigate(event, 'programs')" class="text-slate-300 hover:text-cyan-400 transition-colors text-base">Programs</a></li>
+                        <li><a href="#" onclick="navigate(event, 'contact')" class="text-slate-300 hover:text-cyan-400 transition-colors text-base">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div class="space-y-6">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Get in Touch</h3>
+                    <ul class="space-y-4 text-slate-300 flex flex-col items-center lg:items-start">
+                        <li class="flex items-center gap-3"><i data-lucide="map-pin" class="w-5 h-5 text-cyan-600"></i><span>Serving Broward and Dade Counties</span></li>
+                        <li><a href="mailto:waine@52weeks.dev" class="flex items-center gap-3 hover:text-cyan-400 transition-colors"><i data-lucide="mail" class="w-5 h-5 text-cyan-600"></i>waine@52weeks.dev</a></li>
+                        <li><a href="tel:9546965494" class="flex items-center gap-3 hover:text-cyan-400 transition-colors"><i data-lucide="phone" class="w-5 h-5 text-cyan-600"></i>(954) 696-5494</a></li>
+                        <li><a href="https://www.52weeks.dev" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 hover:text-cyan-400 transition-colors"><i data-lucide="globe" class="w-5 h-5 text-cyan-600"></i>www.52weeks.dev</a></li>
+                    </ul>
+                </div>
+
+                <!-- Actions -->
+                <div class="space-y-8 flex flex-col items-center lg:items-start">
+                    <a href="https://square.link/u/OQowKsqR" target="_blank" rel="noopener noreferrer" class="inline-block bg-cyan-600 hover:bg-cyan-700 text-white px-10 py-3 rounded-full font-bold transition-all hover:shadow-lg w-full sm:w-auto text-center shadow-md">Donate Now</a>
+                    <div class="flex space-x-6">
+                        <a href="https://instagram.com/52weeksdev" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-cyan-400 transition-colors hover:scale-110 transform duration-200" aria-label="Instagram"><i data-lucide="instagram" class="w-7 h-7"></i></a>
+                        <a href="https://x.com/52weeksdev" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-cyan-400 transition-colors hover:scale-110 transform duration-200" aria-label="X (formerly Twitter)">
+                            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M18.244 2H21l-6.53 7.46L22 22h-6.76l-4.72-6.2L4.8 22H2l6.98-7.97L2.5 2h6.85l4.21 5.6L18.244 2z"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-800 mt-16 py-8 text-center">
+                <p class="text-sm text-slate-500">&copy; <span id="year"></span> 52 Weeks Development. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Logic -->
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Navbar Scroll Effect
+        const header = document.getElementById('main-header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-md', 'bg-white/95');
+                header.classList.remove('bg-white');
+            } else {
+                header.classList.add('bg-white');
+                header.classList.remove('shadow-md', 'bg-white/95');
+            }
+        });
+
+        // Mobile Menu Logic
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        const closeIcon = document.getElementById('close-icon');
+        let isMenuOpen = false;
+
+        function toggleMobileMenu() {
+            isMenuOpen = !isMenuOpen;
+            if (isMenuOpen) {
+                mobileMenu.classList.remove('hidden');
+                mobileMenu.classList.add('slide-down');
+                menuIcon.classList.add('hidden');
+                closeIcon.classList.remove('hidden');
+            } else {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('slide-down');
+                menuIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+            }
+        }
+
+        // Router / Navigation Logic
+        function navigate(event, pageId) {
+            event.preventDefault();
+
+            // Hide all pages
+            document.querySelectorAll('.page-view').forEach(el => el.classList.add('hidden'));
+            
+            // Show target page
+            const target = document.getElementById(`${pageId}-view`);
+            if (target) {
+                target.classList.remove('hidden');
+                // Re-trigger animation
+                target.classList.remove('fade-in');
+                void target.offsetWidth; // trigger reflow
+                target.classList.add('fade-in');
+            }
+
+            // Update active state on nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.dataset.target === pageId) {
+                    link.classList.add('text-cyan-600');
+                    link.classList.remove('text-slate-600');
+                } else {
+                    link.classList.remove('text-cyan-600');
+                    link.classList.add('text-slate-600');
+                }
+            });
+
+            // Close mobile menu if open
+            if (isMenuOpen) toggleMobileMenu();
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // FAQ Accordion Logic
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const btn = content.previousElementSibling;
+            const expanded = btn.getAttribute('aria-expanded') === 'true';
+            
+            // Close all others (optional)
+            // document.querySelectorAll('.accordion-content').forEach(c => {
+            //     c.classList.remove('open');
+            //     c.previousElementSibling.setAttribute('aria-expanded', 'false');
+            // });
+
+            if (expanded) {
+                content.classList.remove('open');
+                btn.setAttribute('aria-expanded', 'false');
+            } else {
+                content.classList.add('open');
+                btn.setAttribute('aria-expanded', 'true');
+            }
+        }
+
+        // Contact Form Logic (Mailto)
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const message = document.getElementById('message').value;
+            
+            const subject = encodeURIComponent(`New Contact from ${name}`);
+            const body = encodeURIComponent(
+                `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`
+            );
+            
+            window.location.href = `mailto:waine@52weeks.dev?subject=${subject}&body=${body}`;
+        }
+
+        // Initialize active state
+        document.querySelector('[data-target="home"]').classList.add('text-cyan-600');
+    </script>
+</body>
+</html>
