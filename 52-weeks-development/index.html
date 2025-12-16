@@ -3,12 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>52 Weeks Development</title>
-    <meta name="description" content="Redeveloping individuals and communities through second chance opportunities.">
+    <title>52 Weeks Development | Second Chance Opportunities</title>
+    <meta name="description" content="Redeveloping individuals and communities through second chance opportunities. Offering housing, workforce development, and mentorship for justice-involved individuals.">
+    <meta name="keywords" content="52 Weeks Development, Second Chance, Reentry Programs, Workforce Development, Transitional Housing, Non-profit, Broward, Dade">
+    <meta name="author" content="52 Weeks Development">
+    <meta property="og:title" content="52 Weeks Development | Second Chance Opportunities">
+    <meta property="og:description" content="Redeveloping individuals and communities through second chance opportunities. Holistic support for reentry success.">
+    <meta property="og:image" content="https://res.cloudinary.com/dlqudkksg/image/upload/v1765851909/Photoroom_20251215_212348_h4zvep.png">
+    <meta property="og:url" content="https://www.52weeks.dev">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="52 Weeks Development">
+    <meta name="twitter:description" content="Redeveloping individuals and communities through second chance opportunities.">
+    <meta name="twitter:image" content="https://res.cloudinary.com/dlqudkksg/image/upload/v1765851909/Photoroom_20251215_212348_h4zvep.png">
     
     <!-- Favicon -->
     <link rel="icon" href="https://res.cloudinary.com/dlqudkksg/image/upload/v1765851909/Photoroom_20251215_212348_h4zvep.png" type="image/png">
     <link rel="shortcut icon" href="https://res.cloudinary.com/dlqudkksg/image/upload/v1765851909/Photoroom_20251215_212348_h4zvep.png" type="image/png">
+    <link rel="apple-touch-icon" href="https://res.cloudinary.com/dlqudkksg/image/upload/v1765851909/Photoroom_20251215_212348_h4zvep.png">
 
     <!-- Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -132,6 +144,17 @@
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 0px; background: transparent; }
+
+        /* Mobile Menu Accordion Styles */
+        #mobile-menu-accordion {
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+        }
+        .nav-mobile-link {
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .nav-mobile-link:active {
+            transform: scale(0.98);
+        }
     </style>
 </head>
 <body class="bg-[#F2F2F7] relative">
@@ -141,45 +164,64 @@
 
     <!-- Floating Navbar -->
     <header class="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none fade-in-up">
-        <div class="pointer-events-auto nav-capsule rounded-full px-6 py-3 flex items-center justify-between gap-8 w-full max-w-[90%] md:max-w-5xl transition-all duration-500 hover:shadow-2xl">
+        <!-- Main Nav Capsule -->
+        <div id="nav-container" class="pointer-events-auto nav-capsule rounded-3xl px-6 py-3 flex flex-col lg:flex-row lg:items-center justify-between w-full max-w-[95%] lg:max-w-5xl transition-all duration-500 hover:shadow-2xl bg-white/90 backdrop-blur-xl border border-white/60 shadow-sm">
             
-            <!-- Logo -->
-            <a href="#" onclick="navigate(event, 'home')" class="flex items-center gap-3 group shrink-0 magnetic-btn">
-                <img src="https://res.cloudinary.com/dlqudkksg/image/upload/v1765851909/Photoroom_20251215_212348_h4zvep.png" 
-                     alt="Logo" 
-                     class="h-14 w-auto object-contain shadow-sm group-hover:rotate-6 transition-transform duration-500">
-                <!-- Text removed as requested since it's in the logo image -->
-            </a>
+            <!-- Top Bar (Always Visible) -->
+            <div class="flex items-center justify-between w-full lg:w-auto">
+                <!-- Logo -->
+                <a href="#" onclick="navigate(event, 'home')" class="flex items-center gap-3 group shrink-0 magnetic-btn">
+                    <img src="https://res.cloudinary.com/dlqudkksg/image/upload/v1765851909/Photoroom_20251215_212348_h4zvep.png" 
+                         alt="Logo" 
+                         class="h-12 w-auto object-contain shadow-sm group-hover:rotate-6 transition-transform duration-500">
+                </a>
 
-            <!-- Desktop Nav -->
+                <!-- Mobile Toggle Button -->
+                <button onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-full hover:bg-black/5 transition-colors magnetic-btn active:bg-black/10">
+                    <i data-lucide="menu" id="menu-icon" class="w-7 h-7 text-[#0C2340] transition-all duration-300"></i>
+                    <i data-lucide="x" id="close-icon" class="w-7 h-7 text-[#0C2340] hidden transition-all duration-300"></i>
+                </button>
+            </div>
+
+            <!-- Desktop Nav (Hidden on Mobile) -->
             <nav class="hidden lg:flex items-center gap-1">
                 <a href="#" onclick="navigate(event, 'home')" class="px-5 py-2.5 rounded-full text-[13px] font-bold text-[#0C2340] hover:bg-black/5 transition-all nav-link" data-target="home">Home</a>
                 <a href="#" onclick="navigate(event, 'about')" class="px-5 py-2.5 rounded-full text-[13px] font-bold text-[#0C2340] hover:bg-black/5 transition-all nav-link whitespace-nowrap" data-target="about">About Us</a>
                 <a href="#" onclick="navigate(event, 'programs')" class="px-5 py-2.5 rounded-full text-[13px] font-bold text-[#0C2340] hover:bg-black/5 transition-all nav-link" data-target="programs">Programs</a>
-                <a href="https://square.link/u/OQowKsqR" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-full text-[13px] font-bold text-[#86868B] hover:text-[#0C2340] hover:bg-black/5 transition-all">Donate</a>
                 <a href="#" onclick="navigate(event, 'contact')" class="px-5 py-2.5 rounded-full text-[13px] font-bold text-[#0C2340] hover:bg-black/5 transition-all nav-link" data-target="contact">Contact</a>
+                <a href="https://square.link/u/OQowKsqR" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-full text-[13px] font-bold text-[#86868B] hover:text-[#0C2340] hover:bg-black/5 transition-all">Donate</a>
             </nav>
 
-            <!-- CTA -->
-            <div class="flex items-center gap-3">
+            <!-- Desktop CTA (Hidden on Mobile) -->
+            <div class="hidden lg:flex items-center gap-3">
                 <a href="#" onclick="navigate(event, 'contact')" class="hidden md:inline-flex items-center justify-center rounded-full text-[13px] font-bold h-10 px-6 shadow-lg magnetic-btn btn-brand">
                     Get In Touch
                 </a>
-                <button onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-full hover:bg-black/5 transition-colors magnetic-btn">
-                    <i data-lucide="menu" id="menu-icon" class="w-6 h-6 text-[#0C2340]"></i>
-                    <i data-lucide="x" id="close-icon" class="w-6 h-6 text-[#0C2340] hidden"></i>
-                </button>
+            </div>
+
+            <!-- Mobile Menu Content (Accordion Dropdown) -->
+            <div id="mobile-menu-accordion" class="w-full lg:hidden overflow-hidden max-h-0 opacity-0 flex flex-col gap-2">
+                <!-- Divider -->
+                <div class="h-px w-full bg-slate-200 my-2"></div>
+                
+                <nav class="flex flex-col text-center space-y-2 pb-4">
+                    <a href="#" onclick="navigate(event, 'home')" class="nav-mobile-link block py-3 text-lg font-bold text-[#0C2340] hover:bg-black/5 rounded-xl" data-target="home">Home</a>
+                    <a href="#" onclick="navigate(event, 'about')" class="nav-mobile-link block py-3 text-lg font-bold text-[#0C2340] hover:bg-black/5 rounded-xl" data-target="about">About Us</a>
+                    <a href="#" onclick="navigate(event, 'programs')" class="nav-mobile-link block py-3 text-lg font-bold text-[#0C2340] hover:bg-black/5 rounded-xl" data-target="programs">Programs</a>
+                    <a href="https://square.link/u/OQowKsqR" target="_blank" rel="noopener noreferrer" class="nav-mobile-link block py-3 text-lg font-bold text-[#D4AF37] hover:bg-black/5 rounded-xl">Donate</a>
+                    <a href="#" onclick="navigate(event, 'contact')" class="nav-mobile-link block py-3 text-lg font-bold text-[#0C2340] hover:bg-black/5 rounded-xl" data-target="contact">Contact</a>
+                </nav>
             </div>
         </div>
     </header>
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="fixed inset-0 z-40 bg-white/80 backdrop-blur-3xl hidden flex-col justify-center items-center space-y-6 opacity-0 transition-opacity duration-300">
-        <a href="#" onclick="navigate(event, 'home')" class="text-3xl font-bold text-[#0C2340] hover:text-[#D4AF37] transition-colors">Home</a>
-        <a href="#" onclick="navigate(event, 'about')" class="text-3xl font-bold text-[#0C2340] hover:text-[#D4AF37] transition-colors">About Us</a>
-        <a href="#" onclick="navigate(event, 'programs')" class="text-3xl font-bold text-[#0C2340] hover:text-[#D4AF37] transition-colors">Programs</a>
-        <a href="https://square.link/u/OQowKsqR" target="_blank" rel="noopener noreferrer" class="text-3xl font-bold text-[#0C2340] hover:text-[#D4AF37] transition-colors">Donate</a>
-        <a href="#" onclick="navigate(event, 'contact')" class="text-3xl font-bold text-[#0C2340] hover:text-[#D4AF37] transition-colors">Contact</a>
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="fixed inset-0 z-[100] bg-black/95 hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4" onclick="closeLightbox()">
+        <img id="lightbox-img" src="" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl transform scale-95 transition-transform duration-300">
+        <button class="absolute top-6 right-6 text-white hover:text-[#D4AF37] transition-colors p-2 bg-black/50 rounded-full">
+            <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+        <p class="absolute bottom-6 left-0 right-0 text-center text-white/70 text-sm pointer-events-none">Click anywhere to close</p>
     </div>
 
     <!-- Main Content -->
@@ -324,22 +366,22 @@
                 </div>
                 
                 <div class="grid md:grid-cols-3 gap-8 h-[600px] md:h-[550px]">
-                    <div class="relative rounded-[2.5rem] overflow-hidden group h-full shadow-2xl shine-card">
+                    <div class="relative rounded-[2.5rem] overflow-hidden group h-full shadow-2xl shine-card cursor-pointer" onclick="openLightbox('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_1392.JPG-rg56l2sLjzdUrxPqXjvbA8wmKzzvkw.jpeg')">
                         <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_1392.JPG-rg56l2sLjzdUrxPqXjvbA8wmKzzvkw.jpeg" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                         <div class="absolute inset-0 bg-gradient-to-t from-[#0C2340]/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-8">
-                            <p class="text-[#D4AF37] font-bold text-xl">Graduation Day</p>
+                            <p class="text-[#D4AF37] font-bold text-xl">Graduation Day<br><span class="text-xs text-white/70 font-normal">Click to view full image</span></p>
                         </div>
                     </div>
-                    <div class="relative rounded-[2.5rem] overflow-hidden group h-full shadow-2xl shine-card">
+                    <div class="relative rounded-[2.5rem] overflow-hidden group h-full shadow-2xl shine-card cursor-pointer" onclick="openLightbox('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_1397.JPG-kZQ8LWQqFYhmaC9A5iHdIkqtWLnYIf.jpeg')">
                         <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_1397.JPG-kZQ8LWQqFYhmaC9A5iHdIkqtWLnYIf.jpeg" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                         <div class="absolute inset-0 bg-gradient-to-t from-[#0C2340]/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-8">
-                            <p class="text-[#D4AF37] font-bold text-xl">Classroom Skills</p>
+                            <p class="text-[#D4AF37] font-bold text-xl">Classroom Skills<br><span class="text-xs text-white/70 font-normal">Click to view full image</span></p>
                         </div>
                     </div>
-                    <div class="relative rounded-[2.5rem] overflow-hidden group h-full shadow-2xl shine-card">
+                    <div class="relative rounded-[2.5rem] overflow-hidden group h-full shadow-2xl shine-card cursor-pointer" onclick="openLightbox('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_1394.JPG-mXRKZqSev5RB42zBDBXph2DTvEm6OP.jpeg')">
                         <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_1394.JPG-mXRKZqSev5RB42zBDBXph2DTvEm6OP.jpeg" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                         <div class="absolute inset-0 bg-gradient-to-t from-[#0C2340]/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-8">
-                            <p class="text-[#D4AF37] font-bold text-xl">Hands-on Training</p>
+                            <p class="text-[#D4AF37] font-bold text-xl">Hands-on Training<br><span class="text-xs text-white/70 font-normal">Click to view full image</span></p>
                         </div>
                     </div>
                 </div>
@@ -393,6 +435,49 @@
             <section class="w-full max-w-[1200px] mx-auto px-6 mb-24">
                 <h2 class="text-4xl font-bold text-center mb-16 text-[#0C2340]">Explore Our Programs</h2>
                 <p class="text-xl text-center text-slate-500 max-w-3xl mx-auto mb-16">Our comprehensive approach addresses the full spectrum of needs required for successful reintegration into society.</p>
+                
+                <!-- NEW FLAGSHIP PROGRAMS SECTION -->
+                <div class="glass-panel-dark rounded-[3rem] p-8 md:p-12 relative overflow-hidden shine-card mb-16">
+                    <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-[#0C2340] to-slate-900 z-0"></div>
+                    
+                    <div class="relative z-10 text-center mb-12">
+                        <h2 class="text-3xl md:text-5xl font-bold text-white mb-4">OUR FLAGSHIP PROGRAMS</h2>
+                        <p class="text-lg text-gray-300">Industry-recognized training designed for real-world success.</p>
+                    </div>
+
+                    <div class="relative z-10 grid md:grid-cols-2 gap-8 mb-12">
+                        <!-- BUILDBACK -->
+                        <div class="bg-white/10 backdrop-blur-md rounded-[2.5rem] p-10 text-center border border-white/10 hover:bg-white/15 transition-all group">
+                            <h3 class="text-4xl font-extrabold text-[#D4AF37] mb-4 tracking-wide group-hover:scale-105 transition-transform">BUILDBACK</h3>
+                            <p class="text-white text-xl md:text-2xl font-bold tracking-wider leading-snug">
+                                Building Trades.<br>Building People.
+                            </p>
+                        </div>
+
+                        <!-- BuildSmart -->
+                        <div class="bg-white/10 backdrop-blur-md rounded-[2.5rem] p-10 text-center border border-white/10 hover:bg-white/15 transition-all group">
+                            <h3 class="text-4xl font-extrabold text-[#0071E3] mb-4 tracking-wide group-hover:scale-105 transition-transform">BuildSmart</h3>
+                            <p class="text-white text-xl md:text-2xl font-bold tracking-wider leading-snug">
+                                Where Safety Meets Skills<br>& Purpose Meets Paychecks
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Curriculum List -->
+                    <div class="relative z-10">
+                        <div class="flex flex-wrap justify-center gap-3 md:gap-4">
+                            <!-- Badges for each item -->
+                            <span class="px-6 py-3 rounded-full bg-white text-[#0C2340] font-bold shadow-lg hover:scale-105 transition-transform cursor-default">NCCER CORE</span>
+                            <span class="px-6 py-3 rounded-full bg-white text-[#0C2340] font-bold shadow-lg hover:scale-105 transition-transform cursor-default">Plumbing</span>
+                            <span class="px-6 py-3 rounded-full bg-white text-[#0C2340] font-bold shadow-lg hover:scale-105 transition-transform cursor-default">Masonry</span>
+                            <span class="px-6 py-3 rounded-full bg-white text-[#0C2340] font-bold shadow-lg hover:scale-105 transition-transform cursor-default">Carpentry</span>
+                            <span class="px-6 py-3 rounded-full bg-white text-[#0C2340] font-bold shadow-lg hover:scale-105 transition-transform cursor-default">Workforce Readiness</span>
+                            <span class="px-6 py-3 rounded-full bg-white text-[#0C2340] font-bold shadow-lg hover:scale-105 transition-transform cursor-default">Financial Literacy</span>
+                            <span class="px-6 py-3 rounded-full bg-white text-[#0C2340] font-bold shadow-lg hover:scale-105 transition-transform cursor-default">Intro to Drone Operations</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     <!-- Summary Card 1 -->
                     <div class="glass-panel p-8 rounded-[2rem] text-center shine-card">
@@ -809,43 +894,60 @@
             }, 6000); 
         });
 
-        // Mobile Menu
-        const mobileMenu = document.getElementById('mobile-menu');
+        // Mobile Menu Logic (Accordion Style)
+        const mobileMenuContent = document.getElementById('mobile-menu-accordion');
+        const menuIcon = document.getElementById('menu-icon');
+        const closeIcon = document.getElementById('close-icon');
         let isMenuOpen = false;
+
         function toggleMobileMenu() {
             isMenuOpen = !isMenuOpen;
-            const menuIcon = document.getElementById('menu-icon');
-            const closeIcon = document.getElementById('close-icon');
+
             if (isMenuOpen) {
-                mobileMenu.classList.remove('hidden');
-                setTimeout(() => mobileMenu.classList.remove('opacity-0'), 10);
+                // OPENING
+                mobileMenuContent.style.maxHeight = '500px'; // Approx height
+                mobileMenuContent.style.opacity = '1';
+                mobileMenuContent.style.marginTop = '1rem';
+                
+                // Swap Icons
                 menuIcon.classList.add('hidden');
                 closeIcon.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
+
             } else {
-                mobileMenu.classList.add('opacity-0');
-                setTimeout(() => mobileMenu.classList.add('hidden'), 300);
+                // CLOSING
+                mobileMenuContent.style.maxHeight = '0px';
+                mobileMenuContent.style.opacity = '0';
+                mobileMenuContent.style.marginTop = '0';
+                
+                // Swap Icons
                 menuIcon.classList.remove('hidden');
                 closeIcon.classList.add('hidden');
-                document.body.style.overflow = '';
             }
         }
 
-        // Navigation
+        // Navigation Logic
         function navigate(event, pageId) {
+            // Prevent default anchor behavior
             event.preventDefault();
+
+            // If mobile menu is open, close it
             if(isMenuOpen) toggleMobileMenu();
 
+            // Hide all pages
             document.querySelectorAll('.page-view').forEach(el => {
                 el.classList.add('hidden');
                 el.classList.remove('fade-in-up');
             });
             
+            // Show target page
             const target = document.getElementById(`${pageId}-view`);
-            target.classList.remove('hidden');
-            void target.offsetWidth; 
-            target.classList.add('fade-in-up');
+            if (target) {
+                target.classList.remove('hidden');
+                void target.offsetWidth; // Trigger Reflow
+                target.classList.add('fade-in-up');
+            }
 
+            // Update Nav Active States
             document.querySelectorAll('.nav-link').forEach(link => {
                 if(link.dataset.target === pageId) {
                     link.classList.remove('text-[#86868B]');
@@ -856,6 +958,16 @@
                 }
             });
 
+            // Update Mobile Nav Active States
+            document.querySelectorAll('.nav-mobile-link').forEach(link => {
+                if(link.dataset.target === pageId) {
+                    link.classList.add('bg-black/5');
+                } else {
+                    link.classList.remove('bg-black/5');
+                }
+            });
+
+            // Scroll to top
             window.scrollTo(0, 0);
         }
 
@@ -865,6 +977,39 @@
             content.classList.toggle('open');
             const icon = content.previousElementSibling.querySelector('svg');
             icon.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        // Lightbox Functions
+        function openLightbox(src) {
+            const lightbox = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-img');
+            
+            img.src = src;
+            lightbox.classList.remove('hidden');
+            
+            // Slight delay to allow display:flex to apply before opacity transition
+            requestAnimationFrame(() => {
+                lightbox.classList.remove('opacity-0');
+                img.classList.remove('scale-95');
+                img.classList.add('scale-100');
+            });
+
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-img');
+            
+            lightbox.classList.add('opacity-0');
+            img.classList.remove('scale-100');
+            img.classList.add('scale-95');
+            
+            setTimeout(() => {
+                lightbox.classList.add('hidden');
+                img.src = '';
+                document.body.style.overflow = ''; // Restore scrolling
+            }, 300); // Matches CSS transition duration
         }
 
         // Contact Form
@@ -877,12 +1022,15 @@
             
             const subject = encodeURIComponent(`New Contact from ${name}`);
             const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`);
-            window.location.href = `mailto:waine@52weeks.dev?subject=${subject}&body=${body}`;
+            window.location.href = `mailto:waine @52weeks.dev?subject=${subject}&body=${body}`;
         }
 
-        // Set Home Active
-        document.querySelector('[data-target="home"]').classList.remove('text-[#86868B]');
-        document.querySelector('[data-target="home"]').classList.add('text-[#0C2340]');
+        // Set Home Active initially
+        const homeLink = document.querySelector('[data-target="home"]');
+        if (homeLink) {
+            homeLink.classList.remove('text-[#86868B]');
+            homeLink.classList.add('text-[#0C2340]');
+        }
     </script>
 </body>
 </html>
