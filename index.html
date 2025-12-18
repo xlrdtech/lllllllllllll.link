@@ -32,10 +32,6 @@
     <meta property="twitter:image" content="https://res.cloudinary.com/dlqudkksg/image/upload/v1765851909/Photoroom_20251215_212348_h4zvep.png">
     <meta property="twitter:image:alt" content="XLRDTECH Logo">
 
-    <!-- Favicon & Icons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="https://res.cloudinary.com/dlqudkksg/image/upload/v1765851909/Photoroom_20251215_212348_h4zvep.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="https://res.cloudinary.com/dlqudkksg/image/upload/v1765851909/Photoroom_20251215_212348_h4zvep.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="https://res.cloudinary.com/dlqudkksg/image/upload/v1765851909/Photoroom_20251215_212348_h4zvep.png">
     <link rel="manifest" href="/site.webmanifest">
 
     <!-- Structured Data -->
@@ -110,11 +106,8 @@
         }
 
         .scroll-container {
-            position: fixed;
-            top: 0;
-            left: 0;
+            position: static;
             width: 100%;
-            will-change: transform;
         }
 
         /* --- 3. TYPOGRAPHY & UTILITIES --- */
@@ -196,13 +189,13 @@
             padding-bottom: 10vh;
             position: relative;
             overflow: hidden;
-            background: #000;
+            background: var(--bg-color);
             border-bottom: none; 
-            color: #fff;
+            color: var(--text-color);
         }
         
-        .hero .text-body { color: #ccc; } 
-        .hero .hero-meta { color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.3); }
+        .hero .text-body { color: var(--text-muted); } 
+        .hero .hero-meta { color: var(--text-muted); border-color: var(--border-color); }
 
         /* Video Background Styles */
         .video-wrapper {
@@ -228,7 +221,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to top, #050505 5%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.3) 100%);
+            background: linear-gradient(to top, var(--bg-color) 5%, transparent 100%);
             z-index: 1;
         }
 
@@ -276,12 +269,10 @@
             width: 100%;
             height: 100%;
             border: none;
-            /* Optional: Pointer events none to prevent interacting with the iframe content (scrolling etc) inside the card.
-               This ensures the click goes to the overlay link. */
-            pointer-events: none; 
+            pointer-events: auto; 
             opacity: 0.8;
             transition: opacity 0.3s ease;
-            background: #fff; /* White bg for iframes to prevent transparent body issues */
+            background: #fff;
         }
 
         .gallery-item:hover iframe {
@@ -301,7 +292,8 @@
         }
         
         .gallery-item:hover .gallery-overlay-link {
-            background: rgba(0,0,0,0.0); /* Clear on hover to see site better */
+            background: rgba(0,0,0,0.0);
+            pointer-events: none;
         }
 
         /* Project Title Overlay */
@@ -347,55 +339,8 @@
             letter-spacing: 0.1em;
             z-index: 999;
             color: #fff;
+            display: inline-block;
         }
-        
-        /* Theme Toggle */
-        .theme-toggle {
-            position: fixed;
-            top: 2rem;
-            right: 14rem; 
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 999;
-            transition: all 0.3s ease;
-        }
-        
-        .theme-toggle:hover {
-            background: #fff;
-            color: #000;
-        }
-        
-        .theme-toggle svg {
-            width: 20px;
-            height: 20px;
-        }
-        
-        .sun-icon { display: none; }
-        .moon-icon { display: block; }
-        
-        /* Light mode toggle state */
-        :root.light-mode .theme-toggle {
-            background: rgba(255, 255, 255, 0.8);
-            border-color: rgba(0,0,0,0.1);
-            color: #000;
-        }
-        
-        :root.light-mode .theme-toggle:hover {
-            background: #000;
-            color: #fff;
-        }
-        
-        :root.light-mode .sun-icon { display: block; }
-        :root.light-mode .moon-icon { display: none; }
         
         :root.light-mode .badge {
             background: rgba(255, 255, 255, 0.8);
@@ -403,14 +348,63 @@
             color: #000;
         }
 
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 14rem;
+            width: 64px;
+            height: 36px;
+            border-radius: 18px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            z-index: 999;
+        }
+        .theme-toggle .toggle-track {
+            position: absolute;
+            inset: 0;
+            border-radius: 18px;
+            background: rgba(20,20,20,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: background 0.25s ease, border-color 0.25s ease;
+        }
+        .theme-toggle .toggle-thumb {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+            transition: transform 0.25s ease, background 0.25s ease;
+        }
+        .theme-toggle .sun-icon,
+        .theme-toggle .moon-icon {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 10px;
+        }
+        .theme-toggle .sun-icon { left: 12px; opacity: 0; transition: opacity 0.25s ease; }
+        .theme-toggle .moon-icon { right: 12px; opacity: 1; transition: opacity 0.25s ease; }
+        :root.light-mode .theme-toggle .toggle-track { background: rgba(255,255,255,0.85); border-color: rgba(0,0,0,0.1); }
+        :root.light-mode .theme-toggle .toggle-thumb { transform: translateX(28px); background: #000; }
+        :root.light-mode .theme-toggle .sun-icon { opacity: 1; }
+        :root.light-mode .theme-toggle .moon-icon { opacity: 0; }
+
     </style>
 </head>
 <body>
 
-    <div class="badge">Status: Live // Portfolio</div>
+    <span class="badge" role="status" aria-live="polite">Status: Live // Portfolio</span>
 
     <!-- Theme Toggle -->
-    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme">
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme" aria-pressed="false">
+        <span class="toggle-track"></span>
+        <span class="toggle-thumb"></span>
         <svg class="sun-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
         <svg class="moon-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
     </button>
@@ -497,19 +491,9 @@
                 "url": "./52-weeks-development/"
             },
             {
-                "title": "Apple Vision Pro Ui",
-                "subtitle": "CodePen Experiment",
-                "url": "./codepens/apple-vision-pro-ui/"
-            },
-            {
                 "title": "Autophone",
                 "subtitle": "Telephony App",
                 "url": "./autophone/"
-            },
-            {
-                "title": "Beast Hero",
-                "subtitle": "CodePen Experiment",
-                "url": "./codepens/beast-hero/"
             },
             {
                 "title": "Buzycred",
@@ -537,11 +521,6 @@
                 "url": "./codepens/l7-solutions/"
             },
             {
-                "title": "L75 Hero",
-                "subtitle": "CodePen Experiment",
-                "url": "./codepens/l75-hero/"
-            },
-            {
                 "title": "L7shero",
                 "subtitle": "Business Solutions",
                 "url": "./l7shero/"
@@ -550,11 +529,6 @@
                 "title": "Morphing Particles",
                 "subtitle": "CodePen Experiment",
                 "url": "./codepens/morphing-particles/"
-            },
-            {
-                "title": "Online Viewer",
-                "subtitle": "Utility",
-                "url": "./online-viewer-net/"
             },
             {
                 "title": "Only Casino Night",
@@ -570,11 +544,6 @@
                 "title": "Pbldfv3",
                 "subtitle": "CodePen Experiment",
                 "url": "./codepens/pbldfv3/"
-            },
-            {
-                "title": "PBLD Signup Form",
-                "subtitle": "Construction Tech",
-                "url": "./pbld/signup_form/"
             },
             {
                 "title": "Pfs",
@@ -597,24 +566,9 @@
                 "url": "./codepens/project-interface/"
             },
             {
-                "title": "Skeuomorphism Dark",
-                "subtitle": "CodePen Experiment",
-                "url": "./codepens/skeuomorphism-dark/"
-            },
-            {
                 "title": "Space Anomaly",
                 "subtitle": "CodePen Experiment",
                 "url": "./codepens/space-anomaly/"
-            },
-            {
-                "title": "Syla Sphere",
-                "subtitle": "Web Experience",
-                "url": "./syla-sphere/"
-            },
-            {
-                "title": "Sylo",
-                "subtitle": "Web Experience",
-                "url": "./sylo/"
             },
             {
                 "title": "Template.io Mission Control",
@@ -622,7 +576,7 @@
                 "url": "./template-io-mission-control/"
             },
             {
-                "title": "Terrence x Collab",
+                "title": "DCL Demo",
                 "subtitle": "Fashion Portfolio",
                 "url": "./terrence-collab/"
             },
@@ -636,14 +590,11 @@
                 "subtitle": "React Application",
                 "url": "./VVS/"
             },
-            {
-                "title": "Xlrd Npo",
-                "subtitle": "CodePen Experiment",
-                "url": "./codepens/xlrd-npo/"
-            }
+            
         ];
 
         const gallery = document.getElementById('gallery');
+        const BASE = 'https://lllllllllllll.link/';
         
         projects.forEach((proj, i) => {
             const div = document.createElement('div');
@@ -656,17 +607,19 @@
             
             // 1. Create Iframe for "Web View"
             const iframe = document.createElement('iframe');
-            iframe.src = proj.url;
+            const absoluteUrl = proj.url.startsWith('http') ? proj.url : new URL(proj.url, BASE).href;
+            iframe.src = absoluteUrl;
             iframe.title = proj.title;
             iframe.loading = "lazy";
             // sandbox to prevent scripts in iframes from taking over top window, but allow scripts to run inside
-            iframe.sandbox = "allow-scripts allow-same-origin allow-forms"; 
+            iframe.sandbox = "allow-scripts allow-same-origin allow-forms allow-popups"; 
             
             // 2. Create Overlay Link (for clicking)
             const link = document.createElement('a');
-            link.href = proj.url;
+            link.href = absoluteUrl;
             link.className = 'gallery-overlay-link';
             link.setAttribute('aria-label', `View project: ${proj.title}`);
+            link.target = '_blank';
             
             // 3. Info Container
             const info = document.createElement('div');
@@ -691,35 +644,7 @@
             gallery.appendChild(div);
         });
 
-        // --- 2. SMOOTH MOMENTUM SCROLLING ---
-        const body = document.body;
-        const main = document.getElementById('scroll-wrapper');
         
-        const lerp = (start, end, t) => start * (1 - t) + end * t;
-        
-        let current = 0;
-        let target = 0;
-        let ease = 0.08; 
-
-        function setHeight() {
-            body.style.height = `${main.getBoundingClientRect().height}px`;
-        }
-
-        function smoothScroll() {
-            target = window.scrollY;
-            current = lerp(current, target, ease);
-            
-            main.style.transform = `translate3d(0, ${-current}px, 0)`;
-            
-            requestAnimationFrame(smoothScroll);
-        }
-
-        window.addEventListener('resize', setHeight);
-        window.addEventListener('load', () => {
-            setHeight();
-            smoothScroll();
-        });
-        setInterval(setHeight, 1000);
 
 
         // --- 3. INTERSECTION OBSERVER FOR ANIMATIONS ---
@@ -744,20 +669,17 @@
         // --- 4. THEME TOGGLE ---
         const themeToggle = document.getElementById('theme-toggle');
         const rootElement = document.documentElement;
-        
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
-            rootElement.classList.add('light-mode');
-        }
-
+        const applyTheme = (theme) => {
+            const light = theme === 'light';
+            rootElement.classList.toggle('light-mode', light);
+            themeToggle.setAttribute('aria-pressed', light ? 'true' : 'false');
+        };
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        applyTheme(savedTheme);
         themeToggle.addEventListener('click', () => {
-            rootElement.classList.toggle('light-mode');
-            
-            if (rootElement.classList.contains('light-mode')) {
-                localStorage.setItem('theme', 'light');
-            } else {
-                localStorage.setItem('theme', 'dark');
-            }
+            const next = rootElement.classList.contains('light-mode') ? 'dark' : 'light';
+            localStorage.setItem('theme', next);
+            applyTheme(next);
         });
     </script>
 </body>
