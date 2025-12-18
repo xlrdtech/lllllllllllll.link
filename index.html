@@ -208,22 +208,11 @@
             pointer-events: none;
         }
 
-        .video-wrapper video,
-        .video-wrapper iframe {
+        .video-wrapper video {
             width: 100%;
             height: 100%;
             object-fit: cover;
             opacity: 0.9; 
-            border: none;
-        }
-
-        /* Desktop/Mobile Switcher */
-        .video-mobile { display: block; }
-        .video-desktop { display: none; }
-
-        @media (min-width: 1024px) {
-            .video-mobile { display: none; }
-            .video-desktop { display: block; }
         }
 
         .video-overlay {
@@ -426,20 +415,10 @@
         <!-- HERO WITH VIDEO BACKGROUND -->
         <section class="hero">
             <div class="video-wrapper">
-                <!-- Mobile Video -->
-                <video class="video-mobile" autoplay muted loop playsinline>
+                <video autoplay muted loop playsinline>
                     <source src="https://res.cloudinary.com/dlqudkksg/video/upload/v1765449758/copy_D02F238B-9169-48E9-9F44-14D040F1904D_lgghe3.mov" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
-                
-                <!-- Desktop Video (New) -->
-                <iframe 
-                    class="video-desktop"
-                    src="https://player.cloudinary.com/embed/?cloud_name=dlqudkksg&public_id=copy_56D11E0F-0392-4CA9-A4C3-142F7991AFF1_zutpmf&profile=cld-default&autoplay=true&muted=true&loop=true&controls=false&hide_controls=true"
-                    allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
-                    allowfullscreen>
-                </iframe>
-                
                 <div class="video-overlay"></div>
             </div>
 
