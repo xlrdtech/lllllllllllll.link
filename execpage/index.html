@@ -243,7 +243,7 @@
     <main id="app-container">
 
         <!-- 1. HOME (VIDEO HERO + LOGO MARQUEE) -->
-        <div id="view-home" class="page-view active animate-fade-in">
+        <div id="home" class="page-view active animate-fade-in">
             <section class="min-h-screen flex items-center justify-center relative overflow-hidden pt-20 pb-20 px-4">
                 
                 <!-- Video Background -->
@@ -350,7 +350,7 @@
         </div>
 
         <!-- 2. THE PROBLEM -->
-        <div id="view-why" class="page-view animate-fade-in">
+        <div id="why-it-works" class="page-view animate-fade-in">
             <section class="py-20 px-4 bg-white dark:bg-white/5">
                 <div class="max-w-4xl mx-auto">
                     <h2 class="text-4xl font-bold mb-12 text-center">The 3 Big Problems with Web Design</h2>
@@ -390,7 +390,7 @@
         </div>
 
         <!-- 3. QUALIFICATION -->
-        <div id="view-qualify" class="page-view animate-fade-in">
+        <div id="book-consult" class="page-view animate-fade-in">
             <section class="pt-10 px-4 min-h-screen flex flex-col items-center justify-start relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-2/3 h-full bg-gradient-to-l from-brand/10 to-transparent pointer-events-none"></div>
 
@@ -494,7 +494,7 @@
         </div>
 
         <!-- 4. WHAT'S INCLUDED -->
-        <div id="view-offer" class="page-view animate-fade-in">
+        <div id="offer-details" class="page-view animate-fade-in">
             <section class="py-10 px-4">
                 <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-12 items-start mb-16">
                     <div class="md:w-1/2 sticky top-24">
@@ -540,7 +540,7 @@
         </div>
 
         <!-- 5. SOP WORKFLOW -->
-        <div id="view-process" class="page-view animate-fade-in">
+        <div id="sop-workflow" class="page-view animate-fade-in">
             <section class="py-10 px-4 text-center">
                 <div class="max-w-5xl mx-auto">
                     <h1 class="text-5xl font-bold mb-6">The 7-Day Sprint</h1>
@@ -572,7 +572,7 @@
         </div>
 
         <!-- 6. PRICING -->
-        <div id="view-pricing" class="page-view animate-fade-in">
+        <div id="pricing" class="page-view animate-fade-in">
             <section class="py-10 px-4">
                 <div class="max-w-6xl mx-auto">
                     <h1 class="text-5xl font-bold text-center mb-16">Simple Investment</h1>
@@ -639,7 +639,7 @@
         </div>
         
         <!-- 7. NON-NEGOTIABLES -->
-        <div id="view-terms" class="page-view animate-fade-in">
+        <div id="non-negotiables" class="page-view animate-fade-in">
              <section class="py-10 px-4">
                 <div class="max-w-5xl mx-auto text-center">
                     <h1 class="text-5xl font-bold mb-6">Non-Negotiables</h1>
@@ -713,7 +713,7 @@
             navigate: (viewId) => {
                 // Update URL Hash
                 const routeMap = {
-                    'home': '',
+                    'home': 'home',
                     'offer': 'offer-details',
                     'why': 'why-it-works',
                     'process': 'sop-workflow',
@@ -734,14 +734,14 @@
                 });
                 
                 // Show target view
-                const target = document.getElementById('view-' + viewId);
+                const target = document.getElementById(hash);
                 if(target) {
                     target.classList.add('active');
                     // Re-trigger animation
                     setTimeout(() => target.classList.add('animate-fade-in'), 10);
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
-                    document.getElementById('view-home').classList.add('active', 'animate-fade-in');
+                    document.getElementById('home').classList.add('active', 'animate-fade-in');
                 }
 
                 // Close mobile menu
@@ -812,19 +812,19 @@
         window.addEventListener('hashchange', () => {
             const hash = window.location.hash.replace('#', '');
             const reverseRouteMap = {
-                '': 'home',
-                'offer-details': 'offer',
-                'why-it-works': 'why',
-                'sop-workflow': 'process',
-                'non-negotiables': 'terms',
+                'home': 'home',
+                'offer-details': 'offer-details',
+                'why-it-works': 'why-it-works',
+                'sop-workflow': 'sop-workflow',
+                'non-negotiables': 'non-negotiables',
                 'pricing': 'pricing',
-                'book-consult': 'qualify'
+                'book-consult': 'book-consult'
             };
             
             const viewId = reverseRouteMap[hash] || 'home';
             // Manually trigger view update without setting hash again
             document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active', 'animate-fade-in'));
-            const target = document.getElementById('view-' + viewId);
+            const target = document.getElementById(viewId);
             if(target) {
                 target.classList.add('active', 'animate-fade-in');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
