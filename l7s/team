@@ -1,0 +1,744 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  LayoutDashboard, 
+  Calendar, 
+  Users, 
+  Settings, 
+  Search, 
+  Bell, 
+  Menu, 
+  X, 
+  CreditCard, 
+  Briefcase, 
+  MessageSquare, 
+  BarChart3, 
+  FileText, 
+  Shield, 
+  Zap, 
+  Globe,
+  Bot,
+  Mail,
+  PenTool,
+  Database,
+  UserCheck,
+  TrendingUp,
+  Send,
+  Loader2,
+  MoreVertical,
+  Paperclip,
+  Download,
+  Trash2,
+  CheckCircle,
+  AlertCircle
+} from 'lucide-react';
+
+const L7S_RED = '#D60000';
+const L7S_BLACK = '#000000';
+
+// --- API CONFIGURATION ---
+// In this environment, the key is injected automatically.
+const apiKey = ""; 
+
+// --- MOCK DATA ---
+
+const AI_WORKFORCE = [
+  { id: 1, name: 'BizDev Bot', role: 'Business Development', icon: Briefcase, desc: 'Research competitors & build strategy.', color: 'bg-blue-100 text-blue-600', systemPrompt: 'You are BizDev Bot, a top-tier business strategist for L7S Inc. You specialize in analyzing markets, identifying growth opportunities, and defeating competitors. Keep responses strategic, actionable, and professional.' },
+  { id: 2, name: 'Hero SOS', role: 'Customer Support', icon: Shield, desc: 'Handle credit repair tickets & inquiries.', color: 'bg-red-100 text-red-600', systemPrompt: 'You are Hero SOS, the customer support specialist for L7S Inc. You assist clients with credit repair inquiries, technical issues, and general support. Be empathetic, patient, and solution-oriented.' },
+  { id: 3, name: 'Web Architect', role: 'Web Builder', icon: Globe, desc: 'Build high-converting landing pages.', color: 'bg-green-100 text-green-600', systemPrompt: 'You are Web Architect. You write clean HTML/CSS/React code for high-converting landing pages. You focus on UX/UI, conversion rates, and modern design trends.' },
+  { id: 4, name: 'Social Star', role: 'Social Media', icon: MessageSquare, desc: 'Create viral posts for L7S socials.', color: 'bg-purple-100 text-purple-600', systemPrompt: 'You are Social Star. You create viral content for L7S Inc. social media channels. You know the algorithms of Instagram, LinkedIn, and X. Use emojis, hashtags, and engaging hooks.' },
+  { id: 5, name: 'Data Vault', role: 'Data Analysis', icon: Database, desc: 'Analyze financial freedom factors.', color: 'bg-yellow-100 text-yellow-600', systemPrompt: 'You are Data Vault. You analyze data to find trends, risks, and opportunities. You are precise, analytical, and love numbers. Focus on financial freedom factors.' },
+  { id: 6, name: 'Exec Admin', role: 'Virtual Assistant', icon: Zap, desc: 'Manage A.B.C.S. and scheduling.', color: 'bg-pink-100 text-pink-600', systemPrompt: 'You are the Executive Admin for Luckie Goggins, CEO of L7S. You manage the A.B.C.S. (Appointments, Bookings, Calendar, Schedule). You are efficient, organized, and proactive.' },
+  { id: 7, name: 'Copy King', role: 'Copywriting', icon: PenTool, desc: 'Draft contracts and agreements.', color: 'bg-indigo-100 text-indigo-600', systemPrompt: 'You are Copy King. You write persuasive copy, iron-clad contracts, and compelling sales letters. Your tone is professional yet persuasive.' },
+  { id: 8, name: 'Email Elite', role: 'Email Marketing', icon: Mail, desc: 'Automate client communication sequences.', color: 'bg-orange-100 text-orange-600', systemPrompt: 'You are Email Elite. You craft high-converting email sequences. You focus on open rates, click-through rates, and nurturing client relationships.' },
+];
+
+const ABCS_EVENTS = [
+  { id: 1, title: 'Dialysis Session', time: '6:00 AM - 10:00 AM', date: 'Sat, Jan 4', type: 'Personal', status: 'Completed' },
+  { id: 2, title: 'Client Deadline (MatechPower)', time: '5:00 PM EST', date: 'Sun, Jan 5', type: 'Critical', status: 'Pending' },
+  { id: 3, title: 'Credit Hero Strategy Call', time: '2:00 PM EST', date: 'Mon, Jan 6', type: 'Business', status: 'Scheduled' },
+  { id: 4, title: 'Q1 Review: A.B.C.S. Setup', time: '11:00 AM EST', date: 'Tue, Jan 7', type: 'Business', status: 'Scheduled' },
+  { id: 5, title: 'L7S Team Sync', time: '9:00 AM EST', date: 'Wed, Jan 8', type: 'Business', status: 'Scheduled' },
+];
+
+const DOCUMENTS = [
+  { id: 1, name: 'L7S_Master_Agreement_Template.pdf', type: 'PDF', size: '2.4 MB', date: 'Jan 4, 2026', author: 'Luckie Goggins' },
+  { id: 2, name: 'MatechPower_Execution_Plan.docx', type: 'DOCX', size: '1.1 MB', date: 'Jan 3, 2026', author: 'BizDev Bot' },
+  { id: 3, name: 'Q1_Financial_Projections.xlsx', type: 'XLSX', size: '845 KB', date: 'Jan 2, 2026', author: 'Data Vault' },
+  { id: 4, name: 'Credit_Hero_Integration_Specs.pdf', type: 'PDF', size: '3.2 MB', date: 'Dec 28, 2025', author: 'Hero SOS' },
+];
+
+// --- COMPONENTS ---
+
+const SidebarItem = ({ icon: Icon, label, active, onClick, collapsed }) => (
+  <button 
+    onClick={onClick}
+    className={`w-full flex items-center gap-3 px-4 py-3 transition-all duration-200 
+      ${active 
+        ? 'bg-red-600 text-white shadow-lg' 
+        : 'text-gray-400 hover:bg-gray-900 hover:text-white'
+      } ${collapsed ? 'justify-center px-2' : ''}`}
+  >
+    <Icon size={20} />
+    {!collapsed && <span className="font-semibold tracking-wide text-sm">{label}</span>}
+  </button>
+);
+
+const StatCard = ({ label, value, trend, icon: Icon, trendUp }) => (
+  <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-start justify-between">
+    <div>
+      <p className="text-gray-500 text-xs font-bold uppercase tracking-wider">{label}</p>
+      <h3 className="text-2xl font-black text-gray-900 mt-1">{value}</h3>
+      <p className={`${trendUp ? 'text-green-500' : 'text-red-500'} text-xs font-bold mt-2 flex items-center gap-1`}>
+        <TrendingUp size={12} /> {trend}
+      </p>
+    </div>
+    <div className="p-3 bg-gray-50 rounded-lg text-gray-400">
+      <Icon size={24} />
+    </div>
+  </div>
+);
+
+const WorkforceCard = ({ agent, onClick }) => (
+  <div 
+    onClick={() => onClick(agent)}
+    className="bg-white p-5 rounded-xl border border-gray-200 hover:shadow-xl hover:border-red-200 transition-all duration-300 group cursor-pointer relative overflow-hidden"
+  >
+    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="bg-black text-white text-[10px] px-2 py-1 rounded font-bold uppercase flex items-center gap-1">
+        Launch <Send size={10} />
+      </div>
+    </div>
+    <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 ${agent.color}`}>
+      <agent.icon size={24} />
+    </div>
+    <h3 className="font-bold text-gray-900 text-lg">{agent.name}</h3>
+    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">{agent.role}</p>
+    <p className="text-sm text-gray-600 leading-snug line-clamp-2">{agent.desc}</p>
+  </div>
+);
+
+// --- CHAT MODAL ---
+const ChatInterface = ({ agent, onClose }) => {
+  const [messages, setMessages] = useState([{ role: 'model', text: `Hello Luckie. I am ${agent.name}, ready to assist with ${agent.role} tasks. How can I help you today?` }]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(scrollToBottom, [messages]);
+
+  const handleSend = async () => {
+    if (!input.trim()) return;
+    
+    const userMsg = input;
+    setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
+    setInput('');
+    setIsLoading(true);
+
+    try {
+      // API Logic with retries
+      const callApi = async (retryCount = 0) => {
+        try {
+          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: userMsg }] }],
+              systemInstruction: { parts: [{ text: agent.systemPrompt }] }
+            })
+          });
+
+          if (!response.ok) throw new Error(`API Error: ${response.status}`);
+          const data = await response.json();
+          return data.candidates[0].content.parts[0].text;
+
+        } catch (error) {
+          if (retryCount < 3) {
+            await new Promise(r => setTimeout(r, 1000 * Math.pow(2, retryCount)));
+            return callApi(retryCount + 1);
+          }
+          throw error;
+        }
+      };
+
+      const reply = await callApi();
+      setMessages(prev => [...prev, { role: 'model', text: reply }]);
+    } catch (error) {
+      setMessages(prev => [...prev, { role: 'model', text: "I'm having trouble connecting to the L7S mainframe. Please try again." }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="bg-white w-full max-w-2xl h-[80vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+        
+        {/* Chat Header */}
+        <div className="h-16 bg-black flex items-center justify-between px-6 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${agent.color.replace('text-', 'bg-opacity-20 text-white ')} bg-white/10`}>
+              <agent.icon size={20} className="text-white" />
+            </div>
+            <div>
+              <h3 className="text-white font-bold text-lg leading-none">{agent.name}</h3>
+              <p className="text-gray-400 text-xs font-bold uppercase tracking-wider">{agent.role}</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
+            <X size={24} />
+          </button>
+        </div>
+
+        {/* Chat Messages */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
+          {messages.map((msg, idx) => (
+            <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm font-medium leading-relaxed
+                ${msg.role === 'user' 
+                  ? 'bg-red-600 text-white rounded-br-none' 
+                  : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none shadow-sm'}
+              `}>
+                {msg.text}
+              </div>
+            </div>
+          ))}
+          {isLoading && (
+            <div className="flex justify-start">
+              <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-none px-4 py-3 shadow-sm flex items-center gap-2">
+                <Loader2 size={16} className="animate-spin text-red-600" />
+                <span className="text-xs font-bold text-gray-400 uppercase">Processing...</span>
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input Area */}
+        <div className="p-4 bg-white border-t border-gray-200">
+          <div className="flex gap-2">
+            <input 
+              type="text" 
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+              placeholder={`Message ${agent.name}...`}
+              className="flex-1 bg-gray-100 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-red-500 outline-none transition-all"
+            />
+            <button 
+              onClick={handleSend}
+              disabled={isLoading || !input.trim()}
+              className="bg-black hover:bg-gray-800 text-white p-3 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <Send size={20} />
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+
+// --- MAIN APP ---
+
+export default function L7SWorkspace() {
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [activeAgent, setActiveAgent] = useState(null);
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentDate(new Date()), 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formattedDate = currentDate.toLocaleDateString('en-US', { 
+    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' 
+  });
+
+  const formattedTime = currentDate.toLocaleTimeString('en-US', {
+    hour: 'numeric', minute: '2-digit'
+  });
+
+  return (
+    <div className="flex h-screen bg-[#F3F4F6] font-sans text-slate-800 overflow-hidden">
+      
+      {/* Mobile Sidebar Overlay */}
+      {showMobileMenu && (
+        <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setShowMobileMenu(false)} />
+      )}
+
+      {/* Chat Overlay */}
+      {activeAgent && (
+        <ChatInterface agent={activeAgent} onClose={() => setActiveAgent(null)} />
+      )}
+
+      {/* Sidebar */}
+      <aside 
+        className={`fixed md:relative z-50 bg-black h-full transition-all duration-300 flex flex-col
+          ${sidebarCollapsed ? 'w-20' : 'w-64'}
+          ${showMobileMenu ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        `}
+      >
+        <div className="h-20 flex items-center justify-center border-b border-gray-800 relative">
+          <div className={`flex items-center gap-2 ${sidebarCollapsed ? 'justify-center' : 'px-6 w-full'}`}>
+            <div className="w-8 h-8 bg-red-600 rounded flex items-center justify-center text-white font-black text-xl shrink-0">
+              L7
+            </div>
+            {!sidebarCollapsed && (
+              <div>
+                <h1 className="text-white font-black text-lg tracking-tight leading-none">L7S INC.</h1>
+                <p className="text-gray-500 text-[9px] uppercase tracking-[0.2em] font-bold">Workspace</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <nav className="flex-1 py-6 space-y-1">
+          <SidebarItem 
+            icon={LayoutDashboard} 
+            label="Dashboard" 
+            active={activeTab === 'dashboard'} 
+            onClick={() => setActiveTab('dashboard')} 
+            collapsed={sidebarCollapsed}
+          />
+          <SidebarItem 
+            icon={Bot} 
+            label="AI Workforce" 
+            active={activeTab === 'workforce'} 
+            onClick={() => setActiveTab('workforce')} 
+            collapsed={sidebarCollapsed}
+          />
+          <SidebarItem 
+            icon={Calendar} 
+            label="A.B.C.S. Calendar" 
+            active={activeTab === 'abcs'} 
+            onClick={() => setActiveTab('abcs')} 
+            collapsed={sidebarCollapsed}
+          />
+          <SidebarItem 
+            icon={Users} 
+            label="Strategic Partners" 
+            active={activeTab === 'partners'} 
+            onClick={() => setActiveTab('partners')} 
+            collapsed={sidebarCollapsed}
+          />
+          <SidebarItem 
+            icon={FileText} 
+            label="Documents" 
+            active={activeTab === 'docs'} 
+            onClick={() => setActiveTab('docs')} 
+            collapsed={sidebarCollapsed}
+          />
+        </nav>
+
+        <div className="p-4 border-t border-gray-800">
+          <SidebarItem 
+            icon={Settings} 
+            label="Settings" 
+            active={activeTab === 'settings'} 
+            onClick={() => setActiveTab('settings')} 
+            collapsed={sidebarCollapsed}
+          />
+          <button 
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="w-full flex justify-center text-gray-500 hover:text-white mt-4 hidden md:flex"
+          >
+            {sidebarCollapsed ? '→' : '← Collapse'}
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col h-full overflow-hidden relative">
+        
+        {/* Top Header */}
+        <header className="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-6 shrink-0">
+          <div className="flex items-center gap-4">
+            <button 
+              className="md:hidden text-gray-500"
+              onClick={() => setShowMobileMenu(true)}
+            >
+              <Menu size={24} />
+            </button>
+            
+            <div>
+              <h2 className="text-xl font-bold text-gray-800 hidden md:block">
+                {activeTab === 'dashboard' && 'Executive Command Center'}
+                {activeTab === 'workforce' && 'AI Workforce Management'}
+                {activeTab === 'abcs' && 'A.B.C.S. Schedule (Q1 2026)'}
+                {activeTab === 'partners' && 'Strategic Partnerships'}
+                {activeTab === 'docs' && 'Document Vault'}
+                {activeTab === 'settings' && 'System Settings'}
+              </h2>
+              <p className="text-xs text-gray-400 font-bold uppercase tracking-wider md:hidden">L7S Workspace</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-6">
+            <div className="hidden md:flex items-center bg-gray-100 rounded-full px-4 py-2 w-64 border border-transparent focus-within:border-red-500 focus-within:bg-white transition-all">
+              <Search size={16} className="text-gray-400 mr-2" />
+              <input 
+                type="text" 
+                placeholder="Search database..." 
+                className="bg-transparent border-none outline-none text-sm w-full font-medium text-gray-700 placeholder-gray-400"
+              />
+            </div>
+
+            <div className="relative cursor-pointer">
+              <Bell size={20} className="text-gray-400 hover:text-red-600 transition-colors" />
+              <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
+            </div>
+
+            <div className="flex items-center gap-3 pl-6 border-l border-gray-200">
+              <div className="text-right hidden md:block">
+                <p className="text-sm font-bold text-gray-900">Luckie Goggins</p>
+                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Founder / CEO</p>
+              </div>
+              <div className="w-10 h-10 bg-black rounded-full border-2 border-red-600 flex items-center justify-center text-white font-bold text-xs overflow-hidden">
+                <div className="bg-gradient-to-br from-gray-800 to-black w-full h-full flex items-center justify-center">LG</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto p-6 md:p-8 bg-[#F3F4F6]">
+          
+          {/* DASHBOARD VIEW */}
+          {activeTab === 'dashboard' && (
+            <div className="space-y-8 max-w-7xl mx-auto">
+              <div className="bg-gradient-to-r from-black to-gray-900 rounded-2xl p-8 text-white relative overflow-hidden shadow-2xl">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-red-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 -mr-10 -mt-10"></div>
+                <div className="relative z-10">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="text-red-500 font-bold uppercase tracking-widest text-xs mb-2">Good {currentDate.getHours() < 12 ? 'Morning' : 'Afternoon'}, Luckie</p>
+                      <h2 className="text-4xl font-black mb-2 tracking-tight">Let's A.I.M. for the S.T.A.R.S.™</h2>
+                      <p className="text-gray-400 max-w-xl text-sm leading-relaxed">
+                        Your AI workforce is ready. All systems operational. 
+                        Upcoming critical deadline: <span className="text-white font-bold border-b border-red-500">Jan 5, 5:00 PM EST</span>.
+                      </p>
+                    </div>
+                    <div className="text-right hidden md:block">
+                      <p className="text-5xl font-black text-white tracking-tighter">{formattedTime}</p>
+                      <p className="text-gray-400 font-bold uppercase text-sm mt-1">{formattedDate}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-8 flex gap-3">
+                    <button 
+                      onClick={() => setActiveAgent(AI_WORKFORCE[0])}
+                      className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-bold text-sm transition-all shadow-lg flex items-center gap-2"
+                    >
+                      <Zap size={16} /> Consult BizDev Bot
+                    </button>
+                    <button onClick={() => setActiveTab('abcs')} className="bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-lg font-bold text-sm transition-all backdrop-blur-sm border border-white/10 flex items-center gap-2">
+                      <Calendar size={16} /> View Schedule
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <StatCard label="Active Clients" value="42" trend="+12% this month" trendUp={true} icon={Users} />
+                <StatCard label="Pending Executions" value="3" trend="Urgent Action Req." trendUp={false} icon={Zap} />
+                <StatCard label="Est. Revenue (Q1)" value="$125k" trend="+8% vs target" trendUp={true} icon={BarChart3} />
+                <StatCard label="Credit Hero Score" value="A+" trend="Stable" trendUp={true} icon={Shield} />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                    <Bot size={20} className="text-red-600" />
+                    L7S AI Workforce
+                  </h3>
+                  <button onClick={() => setActiveTab('workforce')} className="text-sm font-bold text-red-600 hover:text-red-700">View All Agents →</button>
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {AI_WORKFORCE.slice(0, 4).map(agent => (
+                    <WorkforceCard key={agent.id} agent={agent} onClick={setActiveAgent} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* AI WORKFORCE VIEW */}
+          {activeTab === 'workforce' && (
+            <div className="space-y-6 max-w-7xl mx-auto">
+               <div className="flex items-center justify-between">
+                 <div>
+                   <h2 className="text-2xl font-black text-gray-900">Your AI Team</h2>
+                   <p className="text-gray-500 text-sm mt-1">Select an agent to begin a task.</p>
+                 </div>
+                 <button className="bg-black text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-gray-800 transition-colors">+ Hire Agent</button>
+               </div>
+               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {AI_WORKFORCE.map(agent => (
+                    <WorkforceCard key={agent.id} agent={agent} onClick={setActiveAgent} />
+                  ))}
+               </div>
+            </div>
+          )}
+
+          {/* A.B.C.S. CALENDAR VIEW */}
+          {activeTab === 'abcs' && (
+            <div className="max-w-6xl mx-auto h-full flex flex-col">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-black text-gray-900">A.B.C.S. Schedule</h2>
+                  <p className="text-sm text-gray-500 font-medium">Appointments • Bookings • Calendar • Schedule</p>
+                </div>
+                <div className="flex bg-white rounded-lg border border-gray-200 p-1">
+                  <button className="px-4 py-1.5 text-xs font-bold bg-red-100 text-red-700 rounded">Q1 2026</button>
+                  <button className="px-4 py-1.5 text-xs font-bold text-gray-500 hover:bg-gray-50 rounded">Q2 2026</button>
+                </div>
+              </div>
+
+              <div className="flex gap-6 flex-1 h-full min-h-[500px]">
+                <div className="hidden md:block w-72 bg-white rounded-xl shadow-sm border border-gray-200 p-4 h-fit sticky top-0">
+                  <div className="text-center font-bold text-lg mb-4">January 2026</div>
+                  <div className="grid grid-cols-7 gap-1 text-center text-xs font-bold text-gray-400 mb-2">
+                    <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+                  </div>
+                  <div className="grid grid-cols-7 gap-1 text-center text-sm font-medium text-gray-700">
+                     {[...Array(3).keys()].map(i => <div key={`empty-${i}`} className="p-2"></div>)}
+                     {[...Array(31).keys()].map(i => {
+                       const day = i + 1;
+                       const isToday = day === 4;
+                       const isEvent = [4, 5, 6, 7, 8].includes(day);
+                       return (
+                         <div 
+                           key={day} 
+                           className={`
+                             p-2 rounded-full cursor-pointer hover:bg-gray-100 relative
+                             ${isToday ? 'bg-black text-white hover:bg-black' : ''}
+                             ${day === 5 ? 'text-red-600 font-black' : ''}
+                           `}
+                         >
+                           {day}
+                           {isEvent && !isToday && <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-red-500 rounded-full"></div>}
+                         </div>
+                       )
+                     })}
+                  </div>
+                </div>
+
+                <div className="flex-1 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                  <h3 className="font-bold text-gray-900 mb-6 flex items-center gap-2"><Calendar size={18} /> Upcoming Agenda</h3>
+                  <div className="space-y-4">
+                    {ABCS_EVENTS.map(event => (
+                      <div key={event.id} className="flex gap-4 p-4 rounded-lg border border-gray-100 hover:border-red-200 hover:bg-red-50/30 transition-all group">
+                        <div className="flex flex-col items-center justify-center w-16 bg-gray-50 rounded-lg group-hover:bg-white group-hover:shadow-sm transition-all shrink-0">
+                          <span className="text-xs font-bold text-red-600 uppercase">{event.date.split(',')[0]}</span>
+                          <span className="text-xl font-black text-gray-900">{event.date.split(' ')[2]}</span>
+                        </div>
+                        <div className="flex-1">
+                           <div className="flex justify-between items-start">
+                             <h4 className="font-bold text-gray-900 text-lg">{event.title}</h4>
+                             <span className={`text-[10px] font-bold uppercase px-2 py-1 rounded
+                               ${event.type === 'Critical' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-600'}
+                             `}>
+                               {event.type}
+                             </span>
+                           </div>
+                           <p className="text-sm text-gray-500 font-medium flex items-center gap-4 mt-2">
+                             <span className="flex items-center gap-1"><ClockIcon /> {event.time}</span>
+                             <span className="flex items-center gap-1">
+                               {event.status === 'Completed' ? <CheckCircle size={12} className="text-green-500" /> : <AlertCircle size={12} className="text-gray-400" />}
+                               {event.status}
+                             </span>
+                           </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* STRATEGIC PARTNERS VIEW */}
+          {activeTab === 'partners' && (
+            <div className="space-y-8 max-w-7xl mx-auto">
+              <h2 className="text-2xl font-black text-gray-900 mb-6">Strategic Partnerships</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <div className="bg-white p-6 rounded-xl border-l-4 border-blue-500 shadow-sm">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                      <Shield size={24} />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-lg">Credit Hero</h3>
+                      <p className="text-xs text-gray-500 font-bold uppercase">Division: HERO SOS</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">Strategic partner for credit repair and compliance. Connected to BAG System.</p>
+                  <div className="flex items-center gap-2 text-xs font-bold text-gray-400">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div> Active Connection
+                  </div>
+                </div>
+
+                <div className="bg-white p-6 rounded-xl border-l-4 border-red-600 shadow-sm">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-red-600">
+                      <Zap size={24} />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-lg">MatechPower UK</h3>
+                      <p className="text-xs text-gray-500 font-bold uppercase">Client / Partner</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">Asset Owner for ERC-20 M1 Execution. Deadline: Jan 5.</p>
+                  <div className="flex items-center gap-2 text-xs font-bold text-gray-400">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div> Pending Execution
+                  </div>
+                </div>
+
+                 <div className="bg-white p-6 rounded-xl border-l-4 border-purple-500 shadow-sm">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600">
+                      <Database size={24} />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-lg">BAG System</h3>
+                      <p className="text-xs text-gray-500 font-bold uppercase">Brightpath Ascend</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">Rafael Rodriguez - Strategic resources for outsourcing solutions.</p>
+                  <div className="flex items-center gap-2 text-xs font-bold text-gray-400">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div> Integrated
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* DOCUMENTS VIEW */}
+          {activeTab === 'docs' && (
+            <div className="space-y-6 max-w-7xl mx-auto">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-black text-gray-900">Document Vault</h2>
+                <div className="flex gap-2">
+                  <button className="bg-white text-gray-600 border border-gray-300 px-4 py-2 rounded-lg font-bold text-sm hover:bg-gray-50 flex items-center gap-2">
+                    <Search size={14} /> Search
+                  </button>
+                  <button className="bg-black text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-gray-800 flex items-center gap-2">
+                    <Paperclip size={14} /> Upload
+                  </button>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <table className="w-full text-left">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Document Name</th>
+                      <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Type</th>
+                      <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Date</th>
+                      <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Author</th>
+                      <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {DOCUMENTS.map((doc) => (
+                      <tr key={doc.id} className="hover:bg-gray-50 transition-colors group">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-gray-100 rounded text-gray-500">
+                              <FileText size={18} />
+                            </div>
+                            <span className="font-bold text-gray-800 text-sm">{doc.name}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-xs font-bold px-2 py-1 bg-gray-100 rounded text-gray-600">{doc.type}</span>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-500">{doc.date}</td>
+                        <td className="px-6 py-4 text-sm text-gray-500">{doc.author}</td>
+                        <td className="px-6 py-4 text-right">
+                          <button className="text-gray-400 hover:text-black transition-colors p-2">
+                            <Download size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* SETTINGS VIEW */}
+          {activeTab === 'settings' && (
+            <div className="max-w-2xl mx-auto">
+              <h2 className="text-2xl font-black text-gray-900 mb-8">System Settings</h2>
+              
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 space-y-8">
+                <div>
+                  <h3 className="font-bold text-lg mb-4">Profile Information</h3>
+                  <div className="flex items-center gap-4">
+                    <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center text-white font-bold text-2xl">LG</div>
+                    <div>
+                      <p className="font-bold text-gray-900">Luckie Goggins</p>
+                      <p className="text-sm text-gray-500">Founder & CEO</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t border-gray-100 pt-8">
+                  <h3 className="font-bold text-lg mb-4">Workspace Preferences</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-gray-900">Theme Color</p>
+                        <p className="text-xs text-gray-500">System default is L7S Red/Black</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="w-6 h-6 rounded-full bg-red-600 border-2 border-white shadow-sm ring-1 ring-gray-200"></div>
+                        <div className="w-6 h-6 rounded-full bg-black border-2 border-white shadow-sm ring-1 ring-gray-200"></div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-gray-900">Notifications</p>
+                        <p className="text-xs text-gray-500">Email and push alerts</p>
+                      </div>
+                      <div className="w-10 h-6 bg-green-500 rounded-full relative cursor-pointer">
+                        <div className="w-4 h-4 bg-white rounded-full absolute top-1 right-1 shadow-sm"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t border-gray-100 pt-8">
+                  <h3 className="font-bold text-lg mb-4 text-red-600">Danger Zone</h3>
+                  <button className="text-red-600 text-sm font-bold border border-red-200 px-4 py-2 rounded hover:bg-red-50">
+                    Reset Workspace Data
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+        </div>
+      </main>
+    </div>
+  );
+}
+
+const ClockIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"></circle>
+    <polyline points="12 6 12 12 16 14"></polyline>
+  </svg>
+);
