@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exec Page | Executive Digital Presence</title>
+    <title>Exec Page | Limited Time Offer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,16 +33,11 @@
                     },
                     animation: {
                         'fade-in': 'fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                        'scroll': 'scroll 30s linear infinite',
                     },
                     keyframes: {
                         fadeIn: {
                             '0%': { opacity: '0', transform: 'scale(0.98) translateY(10px)' },
                             '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
-                        },
-                        scroll: {
-                            '0%': { transform: 'translateX(0)' },
-                            '100%': { transform: 'translateX(-50%)' },
                         }
                     }
                 }
@@ -61,9 +56,9 @@
             --color-brand: hsl(var(--hue-brand), var(--sat-brand), 45%);
             --color-accent: hsl(var(--hue-brand), var(--sat-brand), 92%);
             --color-bg: #F5F5F7;
-            --color-surface: rgba(255, 255, 255, 0.85);
+            --color-surface: rgba(255, 255, 255, 0.7);
             --text-main: #1D1D1F;
-            --text-muted: #515155;
+            --text-muted: #86868B;
             --glass-border: rgba(255, 255, 255, 0.4);
         }
 
@@ -105,8 +100,6 @@
             opacity: 0;
             padding-top: 6rem;
             min-height: 80vh;
-            position: relative;
-            z-index: 10;
         }
         .page-view.active {
             display: block;
@@ -116,22 +109,6 @@
             max-width: 100%;
             height: auto;
             border-radius: 1.5rem;
-        }
-
-        /* Video Background */
-        .video-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 1s ease;
-        }
-        .video-bg.active {
-            opacity: 0.4;
         }
 
         /* Scan Animations */
@@ -155,10 +132,6 @@
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--color-brand); border-radius: 4px; }
-        
-        /* Prevent overlaps */
-        header { z-index: 50 !important; position: relative; }
-        main { position: relative; z-index: 20; }
     </style>
 </head>
 <body class="antialiased selection:bg-brand selection:text-white">
@@ -167,38 +140,23 @@
     <header class="fixed top-4 left-0 right-0 z-50 px-4">
         <div class="max-w-7xl mx-auto ios-glass rounded-full px-6 py-3 flex items-center justify-between transition-all duration-500">
             <!-- Logo -->
-            <a href="/#home" onclick="router.navigate('home')" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 rounded-full bg-brand flex items-center justify-center text-white shadow-glow transition-colors duration-500 overflow-hidden relative group-hover:scale-105">
-                    <!-- NEW CUSTOM SVG: Intricate Circuit Fingerprint -->
+            <a href="javascript:void(0)" onclick="router.navigate('home')" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-full bg-brand flex items-center justify-center text-white shadow-glow transition-colors duration-500 overflow-hidden relative">
+                    <!-- CUSTOM SVG: Circuit Fingerprint Logo -->
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-white w-6 h-6">
-                        <!-- Outer Loops -->
-                        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-dasharray="2 2"/>
-                        <path d="M12 22C17.52 22 22 17.52 22 12" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
-                        
-                        <!-- Middle Circuit Ridges -->
-                        <path d="M12 5C8.13 5 5 8.13 5 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        <path d="M19 12C19 8.13 15.87 5 12 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="4 2"/>
-                        <path d="M12 8C9.79 8 8 9.79 8 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        <path d="M16 12C16 9.79 14.21 8 12 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        
-                        <!-- Core Chip Details -->
-                        <rect x="11" y="11" width="2" height="2" rx="0.5" fill="currentColor"/>
-                        <path d="M12 11V10" stroke="currentColor" stroke-width="1.5"/>
-                        <path d="M12 13V15" stroke="currentColor" stroke-width="1.5"/>
-                        <path d="M10 12H11" stroke="currentColor" stroke-width="1.5"/>
-                        <path d="M13 12H15" stroke="currentColor" stroke-width="1.5"/>
-                        
-                        <!-- Connection Nodes (The "Chip" components) -->
-                        <circle cx="5" cy="12" r="1.5" fill="currentColor"/>
-                        <circle cx="19" cy="12" r="1.5" fill="currentColor"/>
-                        <circle cx="12" cy="2" r="1" fill="currentColor"/>
-                        <circle cx="12" cy="22" r="1" fill="currentColor"/>
-                        <circle cx="8" cy="12" r="1" fill="currentColor"/>
-                        <circle cx="16" cy="12" r="1" fill="currentColor"/>
-                        
-                        <!-- Data Lines at bottom -->
-                        <path d="M7 18L7 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        <path d="M17 18L17 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M12 4C8 4 4.5 7 4.5 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M19.5 11C19.5 7 16 4 12 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="3 3"/>
+                        <path d="M12 7C10 7 8.5 8.5 8.5 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M15.5 11C15.5 9 14 7 12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M12 10V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <circle cx="4.5" cy="11" r="1.5" fill="currentColor"/>
+                        <circle cx="19.5" cy="11" r="1.5" fill="currentColor"/>
+                        <circle cx="12" cy="4" r="1.5" fill="currentColor"/>
+                        <circle cx="8.5" cy="11" r="1" fill="currentColor"/>
+                        <circle cx="15.5" cy="11" r="1" fill="currentColor"/>
+                        <path d="M7 16V20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M12 16V20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M17 16V20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                     </svg>
                 </div>
                 <span class="text-xl font-bold tracking-tight group-hover:text-brand transition-colors">Exec Page</span>
@@ -206,23 +164,44 @@
 
             <!-- Desktop Menu -->
             <nav class="hidden lg:flex items-center space-x-1">
-                <a href="/#why-it-works" onclick="router.navigate('why')" class="px-4 py-2 rounded-full text-sm font-medium hover:bg-black/5 dark:hover:bg-white/10 transition-colors">Why It Works</a>
-                <a href="/#offer-details" onclick="router.navigate('offer')" class="px-4 py-2 rounded-full text-sm font-medium hover:bg-black/5 dark:hover:bg-white/10 transition-colors">Included</a>
-                <a href="/#sop-workflow" onclick="router.navigate('process')" class="px-4 py-2 rounded-full text-sm font-medium hover:bg-black/5 dark:hover:bg-white/10 transition-colors">SOP</a>
-                <a href="/#pricing" onclick="router.navigate('pricing')" class="px-4 py-2 rounded-full text-sm font-medium hover:bg-black/5 dark:hover:bg-white/10 transition-colors">Pricing</a>
-                <a href="/#book-consult" onclick="router.navigate('qualify')" class="px-4 py-2 rounded-full text-sm font-bold bg-brand text-white shadow-lg hover:shadow-glow transition-all ios-btn hidden md:inline-block">Book ($33)</a>
+                
+                <!-- The Offer Dropdown -->
+                <div class="relative group">
+                    <button class="px-4 py-2 rounded-full text-sm font-medium hover:bg-black/5 dark:hover:bg-white/10 transition-colors flex items-center gap-1">
+                        The Offer <i class="fas fa-chevron-down text-xs opacity-50"></i>
+                    </button>
+                    <div class="absolute top-full left-0 mt-2 w-64 ios-glass rounded-2xl p-2 hidden group-hover:block animate-fade-in shadow-xl">
+                        <a href="javascript:void(0)" onclick="router.navigate('offer')" class="block px-4 py-3 rounded-xl hover:bg-brand hover:text-white text-sm font-medium transition-colors">What's Included</a>
+                        <a href="javascript:void(0)" onclick="router.navigate('process')" class="block px-4 py-3 rounded-xl hover:bg-brand hover:text-white text-sm font-medium transition-colors">SOP Workflow</a>
+                        <a href="javascript:void(0)" onclick="router.navigate('terms')" class="block px-4 py-3 rounded-xl hover:bg-brand hover:text-white text-sm font-medium transition-colors">Non-Negotiables</a>
+                    </div>
+                </div>
+
+                <!-- Results Dropdown -->
+                <div class="relative group">
+                    <button class="px-4 py-2 rounded-full text-sm font-medium hover:bg-black/5 dark:hover:bg-white/10 transition-colors flex items-center gap-1">
+                        Results <i class="fas fa-chevron-down text-xs opacity-50"></i>
+                    </button>
+                    <div class="absolute top-full left-0 mt-2 w-64 ios-glass rounded-2xl p-2 hidden group-hover:block animate-fade-in shadow-xl">
+                        <a href="javascript:void(0)" onclick="router.navigate('speed')" class="block px-4 py-3 rounded-xl hover:bg-brand hover:text-white text-sm font-medium transition-colors">7-Day Turnaround</a>
+                        <a href="javascript:void(0)" onclick="router.navigate('roi')" class="block px-4 py-3 rounded-xl hover:bg-brand hover:text-white text-sm font-medium transition-colors">Why It Converts</a>
+                    </div>
+                </div>
+
+                <a href="javascript:void(0)" onclick="router.navigate('pricing')" class="px-4 py-2 rounded-full text-sm font-medium hover:bg-black/5 dark:hover:bg-white/10 transition-colors">Pricing</a>
+                <a href="javascript:void(0)" onclick="router.navigate('qualify')" class="px-4 py-2 rounded-full text-sm font-bold bg-brand text-white shadow-lg hover:shadow-glow transition-all ios-btn hidden md:inline-block">Book ($33)</a>
             </nav>
 
             <!-- Tools & CTA -->
             <div class="flex items-center gap-2">
-                <button onclick="randomizeTheme()" class="px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 text-xs font-bold hover:bg-brand hover:text-white transition-colors flex items-center gap-2" title="Randomize Theme Colors">
-                    <i class="fas fa-palette"></i> <span class="hidden sm:inline">Theme</span>
+                <button onclick="randomizeTheme()" class="w-10 h-10 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/20 ios-btn transition-colors" title="Randomize Colors">
+                    <i class="fas fa-swatchbook text-sm"></i>
                 </button>
                 <button onclick="toggleDarkMode()" class="w-10 h-10 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/20 ios-btn transition-colors mr-2">
                     <i class="fas fa-moon dark:hidden text-sm"></i>
                     <i class="fas fa-sun hidden dark:block text-yellow-400 text-sm"></i>
                 </button>
-                <a href="/#book-consult" onclick="router.navigate('qualify')" class="hidden lg:inline-flex bg-brand text-white px-6 py-2.5 rounded-full text-sm font-semibold shadow-lg hover:brightness-110 ios-btn transition-colors duration-500">Start</a>
+                <a href="javascript:void(0)" onclick="router.navigate('qualify')" class="hidden lg:inline-flex bg-brand text-white px-6 py-2.5 rounded-full text-sm font-semibold shadow-lg hover:brightness-110 ios-btn transition-colors duration-500">Start</a>
                 <button onclick="toggleMobileMenu()" class="lg:hidden w-10 h-10 flex items-center justify-center text-xl">
                     <i class="fas fa-bars"></i>
                 </button>
@@ -231,179 +210,71 @@
 
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="max-w-7xl mx-auto ios-glass rounded-3xl mt-2 px-6 py-4 flex flex-col gap-2 lg:hidden hidden absolute top-20 left-4 right-4 z-40">
-            <a href="/#home" onclick="router.navigate('home')" class="p-3 hover:bg-black/5 rounded-xl font-medium">Home</a>
-            <a href="/#book-consult" onclick="router.navigate('qualify')" class="p-3 hover:bg-black/5 rounded-xl font-bold text-brand">Qualification Check</a>
-            <a href="/#offer-details" onclick="router.navigate('offer')" class="p-3 hover:bg-black/5 rounded-xl font-medium">What's Included</a>
-            <a href="/#pricing" onclick="router.navigate('pricing')" class="p-3 hover:bg-black/5 rounded-xl font-medium">Pricing</a>
-            <a href="/#non-negotiables" onclick="router.navigate('terms')" class="p-3 hover:bg-black/5 rounded-xl font-medium">Terms</a>
+            <a href="javascript:void(0)" onclick="router.navigate('home')" class="p-3 hover:bg-black/5 rounded-xl font-medium">Home</a>
+            <a href="javascript:void(0)" onclick="router.navigate('qualify')" class="p-3 hover:bg-black/5 rounded-xl font-bold text-brand">Qualification Check</a>
+            <a href="javascript:void(0)" onclick="router.navigate('offer')" class="p-3 hover:bg-black/5 rounded-xl font-medium">What's Included</a>
+            <a href="javascript:void(0)" onclick="router.navigate('pricing')" class="p-3 hover:bg-black/5 rounded-xl font-medium">Pricing</a>
+            <a href="javascript:void(0)" onclick="router.navigate('terms')" class="p-3 hover:bg-black/5 rounded-xl font-medium">Terms</a>
         </div>
     </header>
 
     <!-- Main Content Router Container -->
     <main id="app-container">
 
-        <!-- 1. HOME (VIDEO HERO + LOGO MARQUEE) -->
-        <div id="home" class="page-view active animate-fade-in">
-            <section class="min-h-screen flex items-center justify-center relative overflow-hidden pt-20 pb-20 px-4">
-                
-                <!-- Video Background -->
-                <video id="hero-video" class="video-bg" loop muted playsinline poster="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/5a4d390d-3013-4b33-81b2-2d8786ef1392/image.png?w=1184&h=864">
-                    <source src="https://cdn.coverr.co/videos/coverr-typing-on-computer-keyboard-4648/1080p.mp4" type="video/mp4">
-                </video>
-                
-                <!-- Abstract BG -->
-                <div id="hero-abstract" class="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-brand opacity-15 dark:opacity-20 rounded-full blur-[120px] pointer-events-none -z-10 transition-colors duration-1000"></div>
-
-                <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center relative z-10 w-full">
-                    <div class="text-center lg:text-left">
-                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-brand text-xs font-bold uppercase tracking-wider mb-8 border border-white/20 shadow-sm backdrop-blur-sm">
-                            <span class="w-2 h-2 rounded-full bg-brand animate-pulse"></span> Now Accepting New Clients
+        <!-- 1. HOME (EXPANDED WITH HERO IMAGE & LOGO WALL) -->
+        <div id="view-home" class="page-view active animate-fade-in">
+            <section class="py-20 px-4 relative overflow-hidden">
+                <div class="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-brand opacity-15 dark:opacity-20 rounded-full blur-[120px] pointer-events-none -z-10 transition-colors duration-1000"></div>
+                <div class="max-w-7xl mx-auto">
+                    <div class="grid lg:grid-cols-2 gap-12 items-center">
+                        <div class="text-center lg:text-left">
+                            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-brand text-xs font-bold uppercase tracking-wider mb-8 border border-white/20 shadow-sm">
+                                <span class="w-2 h-2 rounded-full bg-brand animate-pulse"></span> Limited Time Offer
+                            </div>
+                            <h1 class="section-title text-5xl md:text-7xl font-bold mb-8 leading-tight">
+                                Executive Presence. <br />
+                                <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand to-yellow-600">Launched in 7 Days.</span>
+                            </h1>
+                            <p class="text-xl text-muted font-normal mb-10 leading-relaxed">
+                                Stop wasting months on design agencies. The Exec Page template is a results-focused, executive-grade digital presence. Rebranded, streamlined, and proven to convert.
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                                <button onclick="router.navigate('qualify')" class="bg-brand text-white text-lg font-semibold px-8 py-4 rounded-full shadow-lg hover:shadow-glow hover:-translate-y-1 ios-btn min-w-[200px]">Book Consult ($33)</button>
+                                <button onclick="router.navigate('offer')" class="ios-glass text-main text-lg font-semibold px-8 py-4 rounded-full hover:bg-black/5 dark:hover:bg-white/10 ios-btn min-w-[200px]">See Examples</button>
+                            </div>
                         </div>
-                        <h1 class="section-title text-5xl md:text-7xl font-bold mb-8 leading-tight">
-                            Executive Presence. <br />
-                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand to-yellow-600">Launched in 7 Days.</span>
-                        </h1>
-                        <p class="text-xl text-muted font-normal mb-10 leading-relaxed max-w-lg mx-auto lg:mx-0">
-                            The **Exec Page** framework is a results-focused, executive-grade digital presence. Rebranded, streamlined, and proven to convert high-ticket clients.
-                        </p>
-                        <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                            <button onclick="router.navigate('qualify')" class="bg-brand text-white text-lg font-semibold px-8 py-4 rounded-full shadow-lg hover:shadow-glow hover:-translate-y-1 ios-btn min-w-[200px]">Book Consult ($33)</button>
-                            <button onclick="router.navigate('offer')" class="ios-glass text-main text-lg font-semibold px-8 py-4 rounded-full hover:bg-black/5 dark:hover:bg-white/10 ios-btn min-w-[200px]">See Examples</button>
-                        </div>
-                    </div>
-                    <!-- Right Side: Hero Image -->
-                    <div class="relative group hidden lg:block">
-                         <div class="absolute -inset-1 bg-gradient-to-r from-brand to-purple-600 rounded-[2rem] blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
-                        <img src="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/5a4d390d-3013-4b33-81b2-2d8786ef1392/image.png?w=1184&h=864" alt="Exec Page Preview" class="relative rounded-[2rem] shadow-2xl border border-white/10 w-full transform transition hover:scale-[1.01] duration-500">
-                        <div class="absolute bottom-6 right-6 bg-white/90 dark:bg-black/80 backdrop-blur-md px-4 py-2 rounded-xl text-xs font-bold border border-white/20 shadow-lg">
-                            <i class="fas fa-video text-brand mr-2"></i> Video Header Available (+ $111)
+                        <!-- VISUAL ASSET: HERO IMAGE -->
+                        <div class="relative group">
+                            <div class="absolute -inset-1 bg-gradient-to-r from-brand to-purple-600 rounded-[2rem] blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+                            <img src="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/5a4d390d-3013-4b33-81b2-2d8786ef1392/image.png?w=1184&h=864" alt="Exec Page Preview" class="relative rounded-[2rem] shadow-2xl border border-white/10 w-full transform transition hover:scale-[1.01] duration-500">
                         </div>
                     </div>
-                </div>
 
-                <!-- NEW: ANIMATED LOGO SCROLL -->
-                <div class="absolute bottom-0 left-0 w-full border-t border-black/5 dark:border-white/5 bg-surface/50 backdrop-blur-sm py-6 overflow-hidden">
-                    <p class="text-center text-[10px] uppercase tracking-widest font-bold text-muted mb-4 opacity-70">Powering Leading Brands</p>
-                    <div class="flex w-full whitespace-nowrap overflow-hidden relative">
-                         <!-- Marquee Track -->
-                        <div class="flex animate-scroll hover:[animation-play-state:paused] items-center space-x-16 px-8">
-                            <!-- Logo 1: Stratos -->
-                            <div class="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
-                                <i class="fas fa-chart-line text-2xl text-brand"></i>
-                                <span class="text-lg font-bold tracking-tight">Stratos Capital</span>
-                            </div>
-                            <!-- Logo 2: Nexus -->
-                            <div class="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
-                                <i class="fas fa-cube text-2xl text-brand"></i>
-                                <span class="text-lg font-bold tracking-tight">Nexus Systems</span>
-                            </div>
-                            <!-- Logo 3: Apex -->
-                            <div class="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
-                                <i class="fas fa-mountain text-2xl text-brand"></i>
-                                <span class="text-lg font-bold tracking-tight">Apex Logic</span>
-                            </div>
-                             <!-- Logo 4: Ventura -->
-                            <div class="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
-                                <i class="fas fa-microchip text-2xl text-brand"></i>
-                                <span class="text-lg font-bold tracking-tight">Ventura Tech</span>
-                            </div>
-                             <!-- Logo 5: IronClad -->
-                            <div class="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
-                                <i class="fas fa-shield-alt text-2xl text-brand"></i>
-                                <span class="text-lg font-bold tracking-tight">IronClad Security</span>
-                            </div>
-                             <!-- Logo 6: Horizon -->
-                            <div class="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
-                                <i class="fas fa-sun text-2xl text-brand"></i>
-                                <span class="text-lg font-bold tracking-tight">Horizon Ventures</span>
-                            </div>
-                            <!-- DUPLICATE FOR INFINITE SCROLL -->
-                            <div class="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
-                                <i class="fas fa-chart-line text-2xl text-brand"></i>
-                                <span class="text-lg font-bold tracking-tight">Stratos Capital</span>
-                            </div>
-                            <div class="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
-                                <i class="fas fa-cube text-2xl text-brand"></i>
-                                <span class="text-lg font-bold tracking-tight">Nexus Systems</span>
-                            </div>
-                             <div class="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
-                                <i class="fas fa-mountain text-2xl text-brand"></i>
-                                <span class="text-lg font-bold tracking-tight">Apex Logic</span>
-                            </div>
-                            <div class="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
-                                <i class="fas fa-microchip text-2xl text-brand"></i>
-                                <span class="text-lg font-bold tracking-tight">Ventura Tech</span>
-                            </div>
-                             <div class="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
-                                <i class="fas fa-shield-alt text-2xl text-brand"></i>
-                                <span class="text-lg font-bold tracking-tight">IronClad Security</span>
-                            </div>
-                             <div class="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
-                                <i class="fas fa-sun text-2xl text-brand"></i>
-                                <span class="text-lg font-bold tracking-tight">Horizon Ventures</span>
-                            </div>
-                        </div>
+                    <!-- VISUAL ASSET: LOGO WALL / TRUST -->
+                    <div class="mt-20 pt-10 border-t border-black/5 dark:border-white/5">
+                        <p class="text-center text-sm font-bold uppercase tracking-widest text-muted mb-8">Trusted Framework Used By</p>
+                        <img src="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/9f2bb21a-2e20-4d1d-a8b7-4b5b83b0f5aa/image.png?w=1184&h=864" alt="Trusted Partners" class="w-full h-auto opacity-70 dark:opacity-50 hover:opacity-100 transition-opacity">
                     </div>
-                </div>
-
-            </section>
-        </div>
-
-        <!-- 2. THE PROBLEM -->
-        <div id="why-it-works" class="page-view animate-fade-in">
-            <section class="py-20 px-4 bg-white dark:bg-white/5">
-                <div class="max-w-4xl mx-auto">
-                    <h2 class="text-4xl font-bold mb-12 text-center">The 3 Big Problems with Web Design</h2>
-                    <div class="space-y-12">
-                        <div class="flex gap-6 items-start">
-                            <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xl font-bold flex-shrink-0"><i class="fas fa-times"></i></div>
-                            <div>
-                                <h3 class="text-2xl font-bold mb-3">1. The "Agency Trap" ($5,000+)</h3>
-                                <p class="text-lg text-muted leading-relaxed">Most agencies charge a fortune for "custom design" that takes 6-12 weeks to launch. They bill you for meetings, wireframes, and mood boards—none of which actually help you sell.</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-6 items-start">
-                            <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xl font-bold flex-shrink-0"><i class="fas fa-times"></i></div>
-                            <div>
-                                <h3 class="text-2xl font-bold mb-3">2. The "DIY Nightmare" ($0 but 100 hrs)</h3>
-                                <p class="text-lg text-muted leading-relaxed">You try Wix or Squarespace. You spend weeks fiddling with fonts and mobile layouts. It never looks professional, the mobile version is broken, and you waste valuable time.</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-6 items-start">
-                            <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xl font-bold flex-shrink-0"><i class="fas fa-times"></i></div>
-                            <div>
-                                <h3 class="text-2xl font-bold mb-3">3. The "Scope Creep"</h3>
-                                <p class="text-lg text-muted leading-relaxed">Projects that start small usually balloon into massive headaches. Designers ask for endless revisions, copywriters miss deadlines, and momentum dies.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="py-20 px-4">
-                <div class="max-w-4xl mx-auto text-center">
-                    <h2 class="text-4xl font-bold mb-8">The Solution: The Exec Page Standard</h2>
-                    <p class="text-xl text-muted mb-12">We removed the fluff. We stripped away the meetings. We built a system.</p>
-                    <img src="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/5e69bceb-a99b-42f3-9313-a13da42600fc/image.png?w=1184&h=864" alt="Comparison Table" class="w-full shadow-2xl rounded-3xl hover:scale-[1.01] transition-transform">
                 </div>
             </section>
         </div>
 
-        <!-- 3. QUALIFICATION -->
-        <div id="book-consult" class="page-view animate-fade-in">
+        <!-- 2. QUALIFICATION -->
+        <div id="view-qualify" class="page-view animate-fade-in">
             <section class="pt-10 px-4 min-h-screen flex flex-col items-center justify-start relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-2/3 h-full bg-gradient-to-l from-brand/10 to-transparent pointer-events-none"></div>
 
                 <div class="max-w-4xl w-full relative z-10">
                     <div class="text-center mb-12">
                         <h1 class="text-4xl md:text-5xl font-bold mb-4">Qualification Check</h1>
-                        <p class="text-xl text-muted">We only work with clients who are ready to move fast.</p>
-                        <p class="text-sm text-muted mt-4 max-w-2xl mx-auto">Confirm your readiness before booking the $33 consult. No refunds for missed appointments.</p>
+                        <p class="text-xl text-muted">Strict SOP. 7-Day Guarantee. Are you ready?</p>
+                        <p class="text-sm text-muted mt-4 max-w-2xl mx-auto">We filter for commitment. Confirm your readiness before booking the $33 consult. No refunds for missed appointments.</p>
                     </div>
 
                     <div class="grid lg:grid-cols-2 gap-12 items-start">
                         <!-- Left: Scan Tool -->
                         <div class="w-full">
+                            <!-- Step 1: Input -->
                             <div id="scan-step-1" class="ios-glass p-8 rounded-[2.5rem]">
                                 <div class="space-y-4">
                                     <div>
@@ -433,7 +304,7 @@
                                 </div>
                             </div>
 
-                            <!-- Step 2: Animation -->
+                            <!-- Step 2: Animation (Hidden by default) -->
                             <div id="scan-step-2" class="ios-glass p-12 rounded-[2.5rem] hidden text-center relative overflow-hidden">
                                 <div class="scan-line"></div>
                                 <div class="mb-8 relative">
@@ -444,7 +315,7 @@
                                 <p class="text-muted text-sm">Checking Availability & Fit</p>
                             </div>
 
-                            <!-- Step 3: Success -->
+                            <!-- Step 3: Success (Hidden by default) -->
                             <div id="scan-step-3" class="ios-glass p-8 rounded-[2.5rem] hidden text-center">
                                 <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-lg animate-bounce">
                                     <i class="fas fa-check"></i>
@@ -458,33 +329,24 @@
                             </div>
                         </div>
 
-                        <!-- Right: Who Is This For? -->
+                        <!-- Right: How it Works & FAQ -->
                         <div class="space-y-8">
                             <div class="ios-glass p-8 rounded-4xl">
-                                <h3 class="text-2xl font-bold mb-6">Who Is This For?</h3>
-                                <ul class="space-y-4">
-                                    <li class="flex gap-4">
-                                        <i class="fas fa-check-circle text-brand text-xl mt-1"></i>
-                                        <div>
-                                            <h4 class="font-bold">Consultants & Coaches</h4>
-                                            <p class="text-sm text-muted">You need a professional face for your high-ticket offers, fast.</p>
-                                        </div>
-                                    </li>
-                                    <li class="flex gap-4">
-                                        <i class="fas fa-check-circle text-brand text-xl mt-1"></i>
-                                        <div>
-                                            <h4 class="font-bold">Service Businesses</h4>
-                                            <p class="text-sm text-muted">Agencies, financial advisors, and real estate pros who need credibility.</p>
-                                        </div>
-                                    </li>
-                                    <li class="flex gap-4">
-                                        <i class="fas fa-check-circle text-brand text-xl mt-1"></i>
-                                        <div>
-                                            <h4 class="font-bold">SaaS Founders</h4>
-                                            <p class="text-sm text-muted">You need a landing page to validate your idea before building the product.</p>
-                                        </div>
-                                    </li>
-                                </ul>
+                                <h3 class="text-2xl font-bold mb-6">The Process</h3>
+                                <div class="space-y-6">
+                                    <div class="flex gap-4">
+                                        <div class="w-8 h-8 rounded-full bg-brand text-white flex items-center justify-center font-bold flex-shrink-0">1</div>
+                                        <div><h4 class="font-bold">Book ($33)</h4><p class="text-sm text-muted">Non-refundable. Filters for commitment. Covers your 20-min consult.</p></div>
+                                    </div>
+                                    <div class="flex gap-4">
+                                        <div class="w-8 h-8 rounded-full bg-brand text-white flex items-center justify-center font-bold flex-shrink-0">2</div>
+                                        <div><h4 class="font-bold">Pay ($300)</h4><p class="text-sm text-muted">Paid after qualification. Triggers the build process.</p></div>
+                                    </div>
+                                    <div class="flex gap-4">
+                                        <div class="w-8 h-8 rounded-full bg-brand text-white flex items-center justify-center font-bold flex-shrink-0">3</div>
+                                        <div><h4 class="font-bold">Launch (7 Days)</h4><p class="text-sm text-muted">We build using the Exec Page template. Custom domain & email included.</p></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -493,75 +355,55 @@
             </section>
         </div>
 
-        <!-- 4. WHAT'S INCLUDED -->
-        <div id="offer-details" class="page-view animate-fade-in">
+        <!-- 3. WHAT'S INCLUDED (EXPANDED WITH COMPARISON) -->
+        <div id="view-offer" class="page-view animate-fade-in">
             <section class="py-10 px-4">
-                <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-12 items-start mb-16">
-                    <div class="md:w-1/2 sticky top-24">
-                        <h1 class="text-5xl font-bold mb-6">Technical Specs</h1>
-                        <p class="text-xl text-muted mb-8">We don't do "mystery code." You get a clean, lightweight, SEO-optimized asset.</p>
-                        
-                        <div class="ios-glass p-8 rounded-4xl mb-8">
-                             <h3 class="text-xl font-bold mb-4">Core Deliverables</h3>
-                             <ul class="space-y-3">
-                                <li class="flex justify-between border-b border-black/5 dark:border-white/10 pb-2"><span>Framework</span> <span class="font-mono text-xs bg-black/5 dark:bg-white/10 px-2 py-1 rounded">HTML5 / Tailwind</span></li>
-                                <li class="flex justify-between border-b border-black/5 dark:border-white/10 pb-2"><span>Hosting</span> <span class="font-mono text-xs bg-black/5 dark:bg-white/10 px-2 py-1 rounded">Netlify / Vercel</span></li>
-                                <li class="flex justify-between border-b border-black/5 dark:border-white/10 pb-2"><span>Asset Optimization</span> <span class="font-mono text-xs bg-black/5 dark:bg-white/10 px-2 py-1 rounded">WebP Compression</span></li>
-                                <li class="flex justify-between border-b border-black/5 dark:border-white/10 pb-2"><span>Analytics</span> <span class="font-mono text-xs bg-black/5 dark:bg-white/10 px-2 py-1 rounded">G4 Integration</span></li>
-                             </ul>
-                        </div>
-
+                <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-12 items-center mb-16">
+                    <div class="md:w-1/2">
+                        <h1 class="text-5xl font-bold mb-6">What You Get</h1>
+                        <p class="text-xl text-muted mb-8">We don't do endless revisions. We deploy a proven framework that includes everything a serious business needs to operate.</p>
+                        <ul class="space-y-4 text-lg">
+                            <li class="flex items-center gap-3"><i class="fas fa-check text-brand"></i> <strong>Exec Page Template:</strong> High-converting, mobile-first design.</li>
+                            <li class="flex items-center gap-3"><i class="fas fa-check text-brand"></i> <strong>5 Core Sections:</strong> Home, About, Services, Pricing, Contact.</li>
+                            <li class="flex items-center gap-3"><i class="fas fa-check text-brand"></i> <strong>Tech Stack:</strong> Custom domain configuration & professional email setup.</li>
+                            <li class="flex items-center gap-3"><i class="fas fa-check text-brand"></i> <strong>Asset Integration:</strong> Your Logo, Hex Colors, and Copy fully integrated.</li>
+                        </ul>
                         <div class="mt-8">
-                             <a href="/#book-consult" onclick="router.navigate('qualify')" class="bg-brand text-white px-8 py-4 rounded-full font-bold shadow-lg hover:brightness-110 ios-btn w-full block text-center">Start Build Process</a>
+                             <a href="#" onclick="router.navigate('qualify')" class="bg-brand text-white px-8 py-4 rounded-full font-bold shadow-lg hover:brightness-110 ios-btn">Start Now</a>
                         </div>
                     </div>
-                    <div class="md:w-1/2 space-y-8">
-                        <div>
-                            <h3 class="text-2xl font-bold mb-4">1. Brand Integration</h3>
-                            <p class="text-muted leading-relaxed">We take your Hex Codes and Logo and inject them into the CSS root variables. This ensures every button, hover state, and accent color matches your brand perfectly.</p>
-                        </div>
-                        <div>
-                            <h3 class="text-2xl font-bold mb-4">2. Copy Implementation</h3>
-                            <p class="text-muted leading-relaxed">We paste your copy into the 5 core sections: Hero, About, Services, Pricing, and Contact. We format it with proper H1/H2 tags for SEO.</p>
-                        </div>
-                        <div>
-                            <h3 class="text-2xl font-bold mb-4">3. Mobile Optimization</h3>
-                            <p class="text-muted leading-relaxed">Most agencies design for desktop and break on mobile. We design mobile-first. Your site will pass Google's Mobile-Friendly test with a score of 95+.</p>
-                        </div>
-                        <div>
-                            <h3 class="text-2xl font-bold mb-4">4. Domain & Email</h3>
-                            <p class="text-muted leading-relaxed">We handle the DNS records. We connect your domain (e.g., yourname.com) and set up your professional G-Suite or Outlook email so you look legit.</p>
-                        </div>
-                         <!-- VISUAL ASSET: ICON SET -->
-                        <img src="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/64df8a31-3278-4814-9f09-dde177ae47a9/image.png?w=1184&h=864" alt="Technical Features" class="shadow-xl rounded-3xl mt-8">
+                    <div class="md:w-1/2">
+                        <!-- VISUAL ASSET: COMPARISON TABLE -->
+                        <img src="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/5e69bceb-a99b-42f3-9313-a13da42600fc/image.png?w=1184&h=864" alt="Exec Page vs Freelancers Comparison" class="shadow-2xl hover:scale-[1.02] transition-transform duration-500">
                     </div>
                 </div>
             </section>
         </div>
 
-        <!-- 5. SOP WORKFLOW -->
-        <div id="sop-workflow" class="page-view animate-fade-in">
+        <!-- 4. SOP WORKFLOW (EXPANDED WITH TIMELINE) -->
+        <div id="view-process" class="page-view animate-fade-in">
             <section class="py-10 px-4 text-center">
                 <div class="max-w-5xl mx-auto">
                     <h1 class="text-5xl font-bold mb-6">The 7-Day Sprint</h1>
                     <p class="text-xl text-muted mb-12">Our SOP is designed for speed. We don't waste time on meetings. We build.</p>
                     
+                    <!-- VISUAL ASSET: PROCESS TIMELINE -->
                     <div class="mb-16">
-                         <img src="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/78315457-4902-407e-8733-605d3b7268d1/image.png?w=1184&h=864" alt="7 Day Process Timeline" class="w-full shadow-lg rounded-3xl">
+                         <img src="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/78315457-4902-407e-8733-605d3b7268d1/image.png?w=1184&h=864" alt="7 Day Process Timeline" class="w-full shadow-lg">
                     </div>
 
                     <div class="grid md:grid-cols-3 gap-6">
-                        <div class="ios-glass p-8 rounded-4xl text-left">
+                        <div class="ios-glass p-8 rounded-4xl">
                             <div class="text-4xl font-bold text-brand mb-4">01</div>
                             <h3 class="text-xl font-bold mb-2">Book ($33)</h3>
                             <p class="text-sm text-muted">Schedule your 20-minute fit check. Strict time limits apply.</p>
                         </div>
-                        <div class="ios-glass p-8 rounded-4xl text-left">
+                        <div class="ios-glass p-8 rounded-4xl">
                             <div class="text-4xl font-bold text-brand mb-4">02</div>
                             <h3 class="text-xl font-bold mb-2">Build ($300)</h3>
                             <p class="text-sm text-muted">Submit logo, colors, and copy. Pay balance to trigger build.</p>
                         </div>
-                        <div class="ios-glass p-8 rounded-4xl text-left">
+                        <div class="ios-glass p-8 rounded-4xl">
                             <div class="text-4xl font-bold text-brand mb-4">03</div>
                             <h3 class="text-xl font-bold mb-2">Launch</h3>
                             <p class="text-sm text-muted">We go live in 7 days or less on your custom domain.</p>
@@ -571,75 +413,8 @@
             </section>
         </div>
 
-        <!-- 6. PRICING -->
-        <div id="pricing" class="page-view animate-fade-in">
-            <section class="py-10 px-4">
-                <div class="max-w-6xl mx-auto">
-                    <h1 class="text-5xl font-bold text-center mb-16">Simple Investment</h1>
-                    
-                    <!-- NEW: Add-on Section (Video Upsell) -->
-                    <div class="mb-12 ios-glass p-8 rounded-3xl border border-brand/30 bg-brand/5 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
-                        <div class="absolute top-0 right-0 bg-brand text-white text-xs font-bold px-3 py-1 rounded-bl-xl">POPULAR ADD-ON</div>
-                        <div class="flex items-center gap-6">
-                            <div class="w-16 h-16 rounded-full bg-brand text-white flex items-center justify-center text-2xl shadow-glow animate-pulse">
-                                <i class="fas fa-video"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold">Video Hero Upgrade</h3>
-                                <p class="text-sm text-muted">Replace the static image with a cinematic video background. Instantly boosts authority.</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-6">
-                            <div class="text-3xl font-bold">+$111</div>
-                            <button onclick="router.navigate('qualify')" class="px-6 py-3 bg-brand text-white rounded-full font-bold shadow-lg hover:shadow-glow transition-all">Add to Plan</button>
-                        </div>
-                    </div>
-
-                    <div class="grid md:grid-cols-3 gap-8">
-                        <!-- Consult -->
-                        <div class="ios-glass p-8 rounded-4xl flex flex-col hover:-translate-y-2 transition-transform duration-300">
-                            <h3 class="text-xl font-bold text-muted mb-4">Step 1</h3>
-                            <div class="text-4xl font-bold mb-6">$33</div>
-                            <p class="text-sm text-muted mb-8">Appointment & Consult.</p>
-                            <ul class="space-y-4 mb-8 flex-1">
-                                <li class="flex gap-3 text-sm"><i class="fas fa-check text-brand"></i> Non-refundable</li>
-                                <li class="flex gap-3 text-sm"><i class="fas fa-check text-brand"></i> Qualification Check</li>
-                            </ul>
-                            <a href="/#book-consult" onclick="router.navigate('qualify')" class="w-full py-4 rounded-full border border-brand text-brand font-bold text-center hover:bg-brand hover:text-white transition-colors">Book Now</a>
-                        </div>
-                        <!-- Build -->
-                        <div class="p-1 rounded-4xl bg-gradient-to-b from-brand to-yellow-500 shadow-2xl scale-105 z-10">
-                            <div class="bg-surface h-full w-full rounded-[2.3rem] p-8 flex flex-col ios-glass border-none">
-                                <div class="text-center mb-4"><span class="bg-brand text-white text-xs font-bold px-3 py-1 rounded-full">CORE OFFER</span></div>
-                                <h3 class="text-xl font-bold text-brand mb-4">Step 2</h3>
-                                <div class="text-4xl font-bold mb-6">$300</div>
-                                <p class="text-sm text-muted mb-8">Build & Launch.</p>
-                                <ul class="space-y-4 mb-8 flex-1">
-                                    <li class="flex gap-3 text-sm"><i class="fas fa-check text-brand"></i> Exec Page Template</li>
-                                    <li class="flex gap-3 text-sm"><i class="fas fa-check text-brand"></i> Custom Domain</li>
-                                    <li class="flex gap-3 text-sm"><i class="fas fa-check text-brand"></i> 7-Day Turnaround</li>
-                                </ul>
-                                <a href="/#book-consult" onclick="router.navigate('qualify')" class="w-full py-4 rounded-full bg-brand text-white font-bold text-center hover:brightness-110 shadow-lg transition-all">Get Started</a>
-                            </div>
-                        </div>
-                        <!-- Total -->
-                        <div class="ios-glass p-8 rounded-4xl flex flex-col hover:-translate-y-2 transition-transform duration-300">
-                            <h3 class="text-xl font-bold text-muted mb-4">Total</h3>
-                            <div class="text-4xl font-bold mb-6">$333</div>
-                            <p class="text-sm text-muted mb-8">Full Investment.</p>
-                            <ul class="space-y-4 mb-8 flex-1">
-                                <li class="flex gap-3 text-sm"><i class="fas fa-check text-brand"></i> Add-on Pages: $111</li>
-                                <li class="flex gap-3 text-sm"><i class="fas fa-check text-brand"></i> Rebuilds: $333</li>
-                            </ul>
-                            <a href="/#book-consult" onclick="router.navigate('qualify')" class="w-full py-4 rounded-full border border-brand text-brand font-bold text-center hover:bg-brand hover:text-white transition-colors">Check Eligibility</a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-        <!-- 7. NON-NEGOTIABLES -->
-        <div id="non-negotiables" class="page-view animate-fade-in">
+        <!-- 5. NON-NEGOTIABLES (WITH GUARANTEE BADGE) -->
+        <div id="view-terms" class="page-view animate-fade-in">
              <section class="py-10 px-4">
                 <div class="max-w-5xl mx-auto text-center">
                     <h1 class="text-5xl font-bold mb-6">Non-Negotiables</h1>
@@ -655,12 +430,126 @@
                                     <li class="flex justify-between border-b border-white/10 pb-2"><span>Missed Apt</span> <span>New $33 Fee</span></li>
                                     <li class="flex justify-between border-b border-white/10 pb-2"><span>Scope Creep</span> <span>Not Tolerated</span></li>
                                 </ul>
-                                <a href="/#book-consult" onclick="router.navigate('qualify')" class="bg-brand text-white px-8 py-3 rounded-full inline-block">I Agree</a>
+                                <a href="#" onclick="router.navigate('qualify')" class="bg-brand text-white px-8 py-3 rounded-full inline-block">I Agree</a>
                             </div>
                             <div class="flex justify-center">
+                                <!-- VISUAL ASSET: GUARANTEE BADGE -->
                                 <img src="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/1746a7da-b256-495d-8148-8454af174d40/image.png?w=1184&h=864" alt="Execution Guarantee" class="w-64 hover:rotate-3 transition-transform duration-300">
                             </div>
                         </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 6. PRICING -->
+        <div id="view-pricing" class="page-view animate-fade-in">
+            <section class="py-10 px-4">
+                <div class="max-w-6xl mx-auto">
+                    <h1 class="text-5xl font-bold text-center mb-16">Simple Investment</h1>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <!-- Consult -->
+                        <div class="ios-glass p-8 rounded-4xl flex flex-col hover:-translate-y-2 transition-transform duration-300">
+                            <h3 class="text-xl font-bold text-muted mb-4">Step 1</h3>
+                            <div class="text-4xl font-bold mb-6">$33</div>
+                            <p class="text-sm text-muted mb-8">Appointment & Consult.</p>
+                            <ul class="space-y-4 mb-8 flex-1">
+                                <li class="flex gap-3 text-sm"><i class="fas fa-check text-brand"></i> Non-refundable</li>
+                                <li class="flex gap-3 text-sm"><i class="fas fa-check text-brand"></i> Qualification Check</li>
+                            </ul>
+                            <a href="#" onclick="router.navigate('qualify')" class="w-full py-4 rounded-full border border-brand text-brand font-bold text-center hover:bg-brand hover:text-white transition-colors">Book Now</a>
+                        </div>
+                        <!-- Build -->
+                        <div class="p-1 rounded-4xl bg-gradient-to-b from-brand to-yellow-500 shadow-2xl scale-105 z-10">
+                            <div class="bg-surface h-full w-full rounded-[2.3rem] p-8 flex flex-col ios-glass border-none">
+                                <div class="text-center mb-4"><span class="bg-brand text-white text-xs font-bold px-3 py-1 rounded-full">CORE OFFER</span></div>
+                                <h3 class="text-xl font-bold text-brand mb-4">Step 2</h3>
+                                <div class="text-4xl font-bold mb-6">$300</div>
+                                <p class="text-sm text-muted mb-8">Build & Launch.</p>
+                                <ul class="space-y-4 mb-8 flex-1">
+                                    <li class="flex gap-3 text-sm"><i class="fas fa-check text-brand"></i> Exec Page Template</li>
+                                    <li class="flex gap-3 text-sm"><i class="fas fa-check text-brand"></i> Custom Domain</li>
+                                    <li class="flex gap-3 text-sm"><i class="fas fa-check text-brand"></i> 7-Day Turnaround</li>
+                                </ul>
+                                <a href="#" onclick="router.navigate('qualify')" class="w-full py-4 rounded-full bg-brand text-white font-bold text-center hover:brightness-110 shadow-lg transition-all">Get Started</a>
+                            </div>
+                        </div>
+                        <!-- Total -->
+                        <div class="ios-glass p-8 rounded-4xl flex flex-col hover:-translate-y-2 transition-transform duration-300">
+                            <h3 class="text-xl font-bold text-muted mb-4">Total</h3>
+                            <div class="text-4xl font-bold mb-6">$333</div>
+                            <p class="text-sm text-muted mb-8">Full Investment.</p>
+                            <ul class="space-y-4 mb-8 flex-1">
+                                <li class="flex gap-3 text-sm"><i class="fas fa-check text-brand"></i> Add-on Pages: $111</li>
+                                <li class="flex gap-3 text-sm"><i class="fas fa-check text-brand"></i> Rebuilds: $333</li>
+                            </ul>
+                            <a href="#" onclick="router.navigate('qualify')" class="w-full py-4 rounded-full border border-brand text-brand font-bold text-center hover:bg-brand hover:text-white transition-colors">Check Eligibility</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- 7. 7-DAY TURNAROUND -->
+        <div id="view-speed" class="page-view animate-fade-in">
+            <section class="py-10 px-4 text-center">
+                <h1 class="text-5xl font-bold mb-8">7-Day Guarantee</h1>
+                <p class="text-xl text-muted mb-16 max-w-2xl mx-auto">We understand that money loves speed. Here is how we guarantee your launch in one week.</p>
+                
+                <div class="max-w-4xl mx-auto">
+                    <div class="ios-glass p-8 rounded-4xl text-left mb-8 hover:scale-[1.01] transition-transform">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-full bg-brand text-white flex items-center justify-center font-bold text-xl flex-shrink-0">1</div>
+                            <div>
+                                <h3 class="text-2xl font-bold mb-2">The Timer</h3>
+                                <p class="text-muted">The 7-day clock starts ONLY when we receive your $300 build payment AND all your assets (Logo, Colors, Copy).</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ios-glass p-8 rounded-4xl text-left mb-8 hover:scale-[1.01] transition-transform">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-full bg-brand text-white flex items-center justify-center font-bold text-xl flex-shrink-0">2</div>
+                            <div>
+                                <h3 class="text-2xl font-bold mb-2">The Pause</h3>
+                                <p class="text-muted">If you delay sending an asset, the timer pauses. We do not rush bad work; we wait for the right inputs.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ios-glass p-8 rounded-4xl text-left hover:scale-[1.01] transition-transform">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-full bg-brand text-white flex items-center justify-center font-bold text-xl flex-shrink-0">3</div>
+                            <div>
+                                <h3 class="text-2xl font-bold mb-2">The Launch</h3>
+                                <p class="text-muted">On Day 7, your site goes live on your custom domain, fully tested and mobile-optimized.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 8. WHY IT CONVERTS -->
+        <div id="view-roi" class="page-view animate-fade-in">
+            <section class="py-10 px-4 text-center">
+                <h1 class="text-5xl font-bold mb-8">Why It Converts</h1>
+                <p class="text-xl text-muted mb-16 max-w-2xl mx-auto">This isn't vanity design. This is an asset built for ROI.</p>
+                
+                <div class="max-w-6xl mx-auto grid md:grid-cols-4 gap-6">
+                    <div class="ios-glass p-8 rounded-4xl">
+                        <h3 class="text-5xl font-bold text-brand mb-2">7</h3>
+                        <p class="text-sm font-bold uppercase tracking-widest text-muted">Day Turnaround</p>
+                    </div>
+                    <div class="ios-glass p-8 rounded-4xl">
+                        <h3 class="text-5xl font-bold text-brand mb-2">100%</h3>
+                        <p class="text-sm font-bold uppercase tracking-widest text-muted">Template Based</p>
+                    </div>
+                    <div class="ios-glass p-8 rounded-4xl">
+                        <h3 class="text-5xl font-bold text-brand mb-2">Mobile</h3>
+                        <p class="text-sm font-bold uppercase tracking-widest text-muted">First Design</p>
+                    </div>
+                    <div class="ios-glass p-8 rounded-4xl">
+                        <h3 class="text-5xl font-bold text-brand mb-2">$333</h3>
+                        <p class="text-sm font-bold uppercase tracking-widest text-muted">Total Cost</p>
                     </div>
                 </div>
             </section>
@@ -675,25 +564,21 @@
                 <div class="flex items-center gap-2 mb-4 font-bold text-xl">
                     <i class="fas fa-bolt text-brand"></i> Exec Page
                 </div>
-                <p class="text-sm text-muted max-w-sm mb-4">Results-focused, executive-grade digital presence. Rebranded, streamlined, and proven to convert.</p>
-                <div class="text-xs text-muted">
-                    <p>South Fulton, GA &middot; Global Operations</p>
-                    <p class="mt-2">SEO Optimized &middot; Mobile First &middot; Rapid Deployment</p>
-                </div>
+                <p class="text-sm text-muted max-w-sm">Results-focused, executive-grade digital presence. Rebranded, streamlined, and proven to convert.</p>
             </div>
             <div>
                 <h4 class="font-bold mb-4">Offer</h4>
                 <ul class="space-y-2 text-sm text-muted">
-                    <li><a href="/#offer-details" onclick="router.navigate('offer')" class="hover:text-brand">What's Included</a></li>
-                    <li><a href="/#sop-workflow" onclick="router.navigate('process')" class="hover:text-brand">Process</a></li>
-                    <li><a href="/#pricing" onclick="router.navigate('pricing')" class="hover:text-brand">Pricing</a></li>
+                    <li><a href="javascript:void(0)" onclick="router.navigate('offer')" class="hover:text-brand">What's Included</a></li>
+                    <li><a href="javascript:void(0)" onclick="router.navigate('process')" class="hover:text-brand">Process</a></li>
+                    <li><a href="javascript:void(0)" onclick="router.navigate('pricing')" class="hover:text-brand">Pricing</a></li>
                 </ul>
             </div>
             <div>
                 <h4 class="font-bold mb-4">Legal</h4>
                 <ul class="space-y-2 text-sm text-muted">
-                    <li><a href="/#non-negotiables" onclick="router.navigate('terms')" class="hover:text-brand">Terms & Conditions</a></li>
-                    <li><a href="/#book-consult" onclick="router.navigate('qualify')" class="hover:text-brand">Book Now</a></li>
+                    <li><a href="javascript:void(0)" onclick="router.navigate('terms')" class="hover:text-brand">Terms & Conditions</a></li>
+                    <li><a href="javascript:void(0)" onclick="router.navigate('qualify')" class="hover:text-brand">Book Now</a></li>
                 </ul>
             </div>
         </div>
@@ -713,12 +598,13 @@
             navigate: (viewId) => {
                 // Update URL Hash
                 const routeMap = {
-                    'home': 'home',
+                    'home': '',
                     'offer': 'offer-details',
-                    'why': 'why-it-works',
                     'process': 'sop-workflow',
                     'terms': 'non-negotiables',
                     'pricing': 'pricing',
+                    'roi': 'why-it-converts',
+                    'speed': '7-day-turnaround',
                     'qualify': 'book-consult'
                 };
                 
@@ -734,14 +620,14 @@
                 });
                 
                 // Show target view
-                const target = document.getElementById(hash);
+                const target = document.getElementById('view-' + viewId);
                 if(target) {
                     target.classList.add('active');
                     // Re-trigger animation
                     setTimeout(() => target.classList.add('animate-fade-in'), 10);
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
-                    document.getElementById('home').classList.add('active', 'animate-fade-in');
+                    document.getElementById('view-home').classList.add('active', 'animate-fade-in');
                 }
 
                 // Close mobile menu
@@ -751,24 +637,6 @@
                 }
             }
         };
-
-        // Video Toggle Logic
-        function toggleVideoMode() {
-            const video = document.getElementById('hero-video');
-            const abstract = document.getElementById('hero-abstract');
-            
-            if(video.classList.contains('active')) {
-                // Turn Off
-                video.classList.remove('active');
-                video.pause();
-                abstract.style.opacity = '0.2';
-            } else {
-                // Turn On
-                video.classList.add('active');
-                video.play();
-                abstract.style.opacity = '0';
-            }
-        }
 
         // Scan Animation Logic (Repurposed for Qualification)
         function startScanAnimation() {
@@ -812,19 +680,20 @@
         window.addEventListener('hashchange', () => {
             const hash = window.location.hash.replace('#', '');
             const reverseRouteMap = {
-                'home': 'home',
-                'offer-details': 'offer-details',
-                'why-it-works': 'why-it-works',
-                'sop-workflow': 'sop-workflow',
-                'non-negotiables': 'non-negotiables',
+                '': 'home',
+                'offer-details': 'offer',
+                'sop-workflow': 'process',
+                'non-negotiables': 'terms',
                 'pricing': 'pricing',
-                'book-consult': 'book-consult'
+                'why-it-converts': 'roi',
+                '7-day-turnaround': 'speed',
+                'book-consult': 'qualify'
             };
             
             const viewId = reverseRouteMap[hash] || 'home';
             // Manually trigger view update without setting hash again
             document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active', 'animate-fade-in'));
-            const target = document.getElementById(viewId);
+            const target = document.getElementById('view-' + viewId);
             if(target) {
                 target.classList.add('active', 'animate-fade-in');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -845,7 +714,7 @@
             document.documentElement.classList.toggle('dark');
         }
 
-        // Theme Randomizer - Generates random brand colors
+        // Randomizer
         function randomizeTheme() {
             const root = document.documentElement;
             const randomBrandHue = Math.floor(Math.random() * 360);
@@ -861,3 +730,4 @@
     </script>
 </body>
 </html>
+
