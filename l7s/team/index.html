@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>L7S Workspace</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Font Awesome (Replacing Lucide for inline compatibility) -->
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <!-- React & ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     
-    <!-- Babel for JSX -->
+    <!-- Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
@@ -63,7 +63,7 @@
                 ${active ? 'bg-red-600 text-white shadow-lg' : 'text-gray-400 hover:bg-gray-900 hover:text-white'} 
                 ${collapsed ? 'justify-center px-2' : ''}`}
             >
-                <i className={`fas ${icon} text-lg`}></i>
+                <i className={`fas ${icon} text-lg w-6 text-center`}></i>
                 {!collapsed && <span className="font-semibold tracking-wide text-sm">{label}</span>}
             </button>
         );
@@ -85,7 +85,7 @@
 
         const WorkforceCard = ({ agent, onClick }) => (
             <div onClick={() => onClick(agent)} className="bg-white p-5 rounded-xl border border-gray-200 hover:shadow-xl hover:border-red-200 transition-all duration-300 group cursor-pointer relative overflow-hidden">
-                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute top-2 right-2 opacity-0 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                     <div className="bg-black text-white text-[10px] px-2 py-1 rounded font-bold uppercase flex items-center gap-1">
                         Launch <i className="fas fa-paper-plane"></i>
                     </div>
@@ -112,7 +112,6 @@
             const handleSend = async () => {
                 if (!input.trim()) return;
                 
-                // Get Key from Storage
                 const storedKey = localStorage.getItem('l7s_gemini_key');
                 if (!storedKey) {
                     setMessages(prev => [...prev, { role: 'user', text: input }, { role: 'model', text: "⚠️ ERROR: API Key missing. Please go to Settings and enter your Gemini API Key." }]);
@@ -148,7 +147,7 @@
 
             return (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-                    <div className="bg-white w-full max-w-2xl h-[80vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in">
+                    <div className="bg-white w-full max-w-2xl h-[90vh] md:h-[80vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in">
                         <div className="h-16 bg-black flex items-center justify-between px-6 shrink-0">
                             <div className="flex items-center gap-3">
                                 <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-white/10 text-white`}>
@@ -161,10 +160,10 @@
                             </div>
                             <button onClick={onClose} className="text-gray-400 hover:text-white"><i className="fas fa-times text-xl"></i></button>
                         </div>
-                        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
+                        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-gray-50">
                             {messages.map((msg, idx) => (
                                 <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm font-medium leading-relaxed ${msg.role === 'user' ? 'bg-red-600 text-white rounded-br-none' : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none shadow-sm'}`}>
+                                    <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm font-medium leading-relaxed ${msg.role === 'user' ? 'bg-red-600 text-white rounded-br-none' : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none shadow-sm'}`}>
                                         {msg.text}
                                     </div>
                                 </div>
@@ -188,6 +187,7 @@
         const App = () => {
             const [activeTab, setActiveTab] = useState('dashboard');
             const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+            const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // Mobile Menu State
             const [currentDate, setCurrentDate] = useState(new Date());
             const [activeAgent, setActiveAgent] = useState(null);
             
@@ -211,77 +211,117 @@
                 alert("API Key Saved Securely to Browser Storage!");
             };
 
+            const handleTabChange = (tab) => {
+                setActiveTab(tab);
+                setMobileMenuOpen(false); // Close mobile menu on navigate
+            };
+
             const formattedTime = currentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
             const formattedDate = currentDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
             return (
-                <div className="flex h-screen overflow-hidden">
+                <div className="flex h-screen overflow-hidden bg-[#F3F4F6]">
                     {activeAgent && <ChatInterface agent={activeAgent} onClose={() => setActiveAgent(null)} />}
 
+                    {/* Mobile Menu Overlay */}
+                    <div 
+                        className={`fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                        onClick={() => setMobileMenuOpen(false)}
+                    ></div>
+
                     {/* Sidebar */}
-                    <aside className={`bg-black h-full transition-all duration-300 flex flex-col ${sidebarCollapsed ? 'w-20' : 'w-64'}`}>
-                        <div className="h-20 flex items-center justify-center border-b border-gray-800">
+                    <aside className={`
+                        fixed inset-y-0 left-0 z-50 w-64 bg-black transition-transform duration-300 ease-in-out
+                        ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+                        md:relative md:translate-x-0 md:flex md:flex-col
+                        ${sidebarCollapsed ? 'md:w-20' : 'md:w-64'}
+                    `}>
+                        <div className="h-20 flex items-center justify-center border-b border-gray-800 relative">
                             <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 bg-red-600 rounded flex items-center justify-center text-white font-black text-xl">L7</div>
-                                {!sidebarCollapsed && <div><h1 className="text-white font-black text-lg leading-none brand-font">L7S INC.</h1><p className="text-gray-500 text-[9px] uppercase font-bold tracking-[0.2em]">Workspace</p></div>}
+                                <div className="w-8 h-8 bg-red-600 rounded flex items-center justify-center text-white font-black text-xl shrink-0">L7</div>
+                                <div className={`transition-opacity duration-200 ${sidebarCollapsed ? 'hidden md:hidden' : 'block'}`}>
+                                    <h1 className="text-white font-black text-lg leading-none brand-font">L7S INC.</h1>
+                                    <p className="text-gray-500 text-[9px] uppercase font-bold tracking-[0.2em]">Workspace</p>
+                                </div>
                             </div>
+                            {/* Close button for mobile */}
+                            <button className="absolute right-4 text-gray-400 md:hidden" onClick={() => setMobileMenuOpen(false)}>
+                                <i className="fas fa-times text-xl"></i>
+                            </button>
                         </div>
-                        <nav className="flex-1 py-6 space-y-1">
-                            <SidebarItem icon="fa-th-large" label="Dashboard" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} collapsed={sidebarCollapsed} />
-                            <SidebarItem icon="fa-robot" label="AI Workforce" active={activeTab === 'workforce'} onClick={() => setActiveTab('workforce')} collapsed={sidebarCollapsed} />
-                            <SidebarItem icon="fa-calendar-alt" label="A.B.C.S. Calendar" active={activeTab === 'abcs'} onClick={() => setActiveTab('abcs')} collapsed={sidebarCollapsed} />
-                            <SidebarItem icon="fa-handshake" label="Partners" active={activeTab === 'partners'} onClick={() => setActiveTab('partners')} collapsed={sidebarCollapsed} />
-                            <SidebarItem icon="fa-file-alt" label="Documents" active={activeTab === 'docs'} onClick={() => setActiveTab('docs')} collapsed={sidebarCollapsed} />
+
+                        <nav className="flex-1 py-6 space-y-1 overflow-y-auto">
+                            <SidebarItem icon="fa-th-large" label="Dashboard" active={activeTab === 'dashboard'} onClick={() => handleTabChange('dashboard')} collapsed={sidebarCollapsed} />
+                            <SidebarItem icon="fa-robot" label="AI Workforce" active={activeTab === 'workforce'} onClick={() => handleTabChange('workforce')} collapsed={sidebarCollapsed} />
+                            <SidebarItem icon="fa-calendar-alt" label="A.B.C.S. Calendar" active={activeTab === 'abcs'} onClick={() => handleTabChange('abcs')} collapsed={sidebarCollapsed} />
+                            <SidebarItem icon="fa-handshake" label="Partners" active={activeTab === 'partners'} onClick={() => handleTabChange('partners')} collapsed={sidebarCollapsed} />
+                            <SidebarItem icon="fa-file-alt" label="Documents" active={activeTab === 'docs'} onClick={() => handleTabChange('docs')} collapsed={sidebarCollapsed} />
                         </nav>
+
                         <div className="p-4 border-t border-gray-800">
-                            <SidebarItem icon="fa-cog" label="Settings" active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} collapsed={sidebarCollapsed} />
-                            <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} className="w-full text-center text-gray-500 hover:text-white mt-4 text-sm">{sidebarCollapsed ? '→' : '← Collapse'}</button>
+                            <SidebarItem icon="fa-cog" label="Settings" active={activeTab === 'settings'} onClick={() => handleTabChange('settings')} collapsed={sidebarCollapsed} />
+                            <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} className="w-full text-center text-gray-500 hover:text-white mt-4 text-sm hidden md:block">
+                                {sidebarCollapsed ? <i className="fas fa-chevron-right"></i> : <span><i className="fas fa-chevron-left mr-2"></i> Collapse</span>}
+                            </button>
                         </div>
                     </aside>
 
                     {/* Main Content */}
-                    <main className="flex-1 flex flex-col h-full bg-[#F3F4F6] relative">
-                        <header className="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-8 shrink-0">
-                            <div>
-                                <h2 className="text-xl font-bold text-gray-800 brand-font">
-                                    {activeTab === 'dashboard' && 'Executive Command Center'}
-                                    {activeTab === 'workforce' && 'AI Workforce Management'}
-                                    {activeTab === 'abcs' && 'A.B.C.S. Schedule (Q1 2026)'}
-                                    {activeTab === 'settings' && 'System Configuration'}
+                    <main className="flex-1 flex flex-col h-full overflow-hidden relative">
+                        {/* Header */}
+                        <header className="h-16 md:h-20 bg-white border-b border-gray-200 flex items-center justify-between px-4 md:px-8 shrink-0 z-30">
+                            <div className="flex items-center gap-4">
+                                {/* Hamburger Menu */}
+                                <button 
+                                    className="md:hidden text-gray-600 focus:outline-none" 
+                                    onClick={() => setMobileMenuOpen(true)}
+                                >
+                                    <i className="fas fa-bars text-2xl"></i>
+                                </button>
+                                
+                                <h2 className="text-lg md:text-xl font-bold text-gray-800 brand-font truncate max-w-[200px] md:max-w-none">
+                                    {activeTab === 'dashboard' && 'Command Center'}
+                                    {activeTab === 'workforce' && 'AI Workforce'}
+                                    {activeTab === 'abcs' && 'A.B.C.S. Schedule'}
+                                    {activeTab === 'settings' && 'Configuration'}
+                                    {activeTab === 'partners' && 'Partnerships'}
+                                    {activeTab === 'docs' && 'Documents'}
                                 </h2>
                             </div>
-                            <div className="flex items-center gap-6">
-                                <div className="flex items-center gap-3 pl-6 border-l border-gray-200">
+                            
+                            <div className="flex items-center gap-3 md:gap-6">
+                                <div className="hidden md:flex items-center gap-3 pl-6 border-l border-gray-200">
                                     <div className="text-right">
                                         <p className="text-sm font-bold text-gray-900">Luckie Goggins</p>
                                         <p className="text-[10px] text-gray-500 font-bold uppercase">Founder / CEO</p>
                                     </div>
-                                    <div className="w-10 h-10 bg-black rounded-full border-2 border-red-600 flex items-center justify-center text-white font-bold text-xs">LG</div>
                                 </div>
+                                <div className="w-8 h-8 md:w-10 md:h-10 bg-black rounded-full border-2 border-red-600 flex items-center justify-center text-white font-bold text-xs">LG</div>
                             </div>
                         </header>
 
-                        <div className="flex-1 overflow-y-auto p-8">
+                        {/* Scrollable Content Area */}
+                        <div className="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth">
                             
                             {/* DASHBOARD */}
                             {activeTab === 'dashboard' && (
-                                <div className="space-y-8 max-w-7xl mx-auto animate-in">
-                                    <div className="bg-gradient-to-r from-black to-gray-900 rounded-2xl p-8 text-white relative overflow-hidden shadow-2xl">
-                                        <div className="absolute top-0 right-0 w-64 h-64 bg-red-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 -mr-10 -mt-10"></div>
-                                        <div className="relative z-10 flex justify-between items-start">
+                                <div className="space-y-6 md:space-y-8 max-w-7xl mx-auto animate-in">
+                                    <div className="bg-gradient-to-r from-black to-gray-900 rounded-2xl p-6 md:p-8 text-white relative overflow-hidden shadow-2xl">
+                                        <div className="absolute top-0 right-0 w-40 h-40 md:w-64 md:h-64 bg-red-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 -mr-10 -mt-10"></div>
+                                        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-start gap-4">
                                             <div>
                                                 <p className="text-red-500 font-bold uppercase text-xs mb-2">Good {currentDate.getHours() < 12 ? 'Morning' : 'Afternoon'}, Luckie</p>
-                                                <h2 className="text-4xl font-black mb-2 tracking-tight brand-font">Let's A.I.M. for the S.T.A.R.S.™</h2>
+                                                <h2 className="text-3xl md:text-4xl font-black mb-2 tracking-tight brand-font leading-tight">Let's A.I.M. for the S.T.A.R.S.™</h2>
                                                 <p className="text-gray-400 max-w-xl text-sm mt-4">Critical Deadline: <span className="text-white font-bold border-b border-red-500">Jan 5, 5:00 PM EST</span>.</p>
                                             </div>
-                                            <div className="text-right">
-                                                <p className="text-5xl font-black text-white tracking-tighter brand-font">{formattedTime}</p>
+                                            <div className="text-left md:text-right w-full md:w-auto mt-2 md:mt-0 pt-4 md:pt-0 border-t border-gray-800 md:border-0">
+                                                <p className="text-4xl md:text-5xl font-black text-white tracking-tighter brand-font">{formattedTime}</p>
                                                 <p className="text-gray-400 font-bold uppercase text-sm mt-1">{formattedDate}</p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                                         <StatCard label="Active Clients" value="42" trend="+12%" trendUp={true} icon="fa-users" />
                                         <StatCard label="Pending Executions" value="3" trend="Urgent" trendUp={false} icon="fa-bolt" />
                                         <StatCard label="Est. Revenue" value="$125k" trend="+8%" trendUp={true} icon="fa-chart-line" />
@@ -289,8 +329,8 @@
                                     </div>
 
                                     <div>
-                                        <h3 className="text-xl font-bold text-gray-900 mb-6 brand-font"><i className="fas fa-robot text-red-600 mr-2"></i>AI Workforce</h3>
-                                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                        <h3 className="text-xl font-bold text-gray-900 mb-4 md:mb-6 brand-font"><i className="fas fa-robot text-red-600 mr-2"></i>AI Workforce</h3>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                                             {AI_WORKFORCE.slice(0, 4).map(agent => (
                                                 <WorkforceCard key={agent.id} agent={agent} onClick={setActiveAgent} />
                                             ))}
@@ -303,7 +343,7 @@
                             {activeTab === 'workforce' && (
                                 <div className="max-w-7xl mx-auto animate-in">
                                     <h2 className="text-2xl font-black text-gray-900 mb-6 brand-font">Your AI Team</h2>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-6">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
                                         {AI_WORKFORCE.map(agent => (
                                             <WorkforceCard key={agent.id} agent={agent} onClick={setActiveAgent} />
                                         ))}
@@ -318,8 +358,9 @@
                                         <h2 className="text-2xl font-black text-gray-900 brand-font">A.B.C.S. Schedule</h2>
                                         <span className="bg-red-100 text-red-700 px-3 py-1 rounded font-bold text-xs uppercase">Q1 2026</span>
                                     </div>
-                                    <div className="flex gap-6 flex-1">
-                                        <div className="w-72 bg-white rounded-xl shadow-sm border border-gray-200 p-4 h-fit">
+                                    <div className="flex flex-col lg:flex-row gap-6 flex-1">
+                                        {/* Calendar Widget */}
+                                        <div className="w-full lg:w-72 bg-white rounded-xl shadow-sm border border-gray-200 p-4 h-fit">
                                             <div className="text-center font-bold text-lg mb-4 brand-font">January 2026</div>
                                             <div className="grid grid-cols-7 gap-1 text-center text-xs font-bold text-gray-400 mb-2"><div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div></div>
                                             <div className="grid grid-cols-7 gap-1 text-center text-sm font-medium text-gray-700">
@@ -327,11 +368,12 @@
                                                 {[...Array(31).keys()].map(i => {
                                                     const day = i + 1;
                                                     const isToday = day === 4;
-                                                    return <div key={day} className={`p-2 rounded-full ${isToday ? 'bg-black text-white' : 'hover:bg-gray-100'} ${day===5 ? 'text-red-600 font-black':''}`}>{day}</div>
+                                                    return <div key={day} className={`p-2 rounded-full cursor-pointer transition-colors ${isToday ? 'bg-black text-white' : 'hover:bg-gray-100'} ${day===5 ? 'text-red-600 font-black':''}`}>{day}</div>
                                                 })}
                                             </div>
                                         </div>
-                                        <div className="flex-1 bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">
+                                        {/* Agenda List */}
+                                        <div className="flex-1 bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6 space-y-4">
                                             {ABCS_EVENTS.map(event => (
                                                 <div key={event.id} className="flex gap-4 p-4 rounded-lg border border-gray-100 hover:border-red-200 hover:bg-red-50/30 transition-all">
                                                     <div className="flex flex-col items-center justify-center w-16 bg-gray-50 rounded-lg shrink-0">
@@ -339,8 +381,8 @@
                                                         <span className="text-xl font-black text-gray-900">{event.date.split(' ')[2]}</span>
                                                     </div>
                                                     <div>
-                                                        <h4 className="font-bold text-gray-900 text-lg brand-font">{event.title}</h4>
-                                                        <p className="text-sm text-gray-500 font-medium"><i className="far fa-clock mr-1"></i> {event.time}</p>
+                                                        <h4 className="font-bold text-gray-900 text-base md:text-lg brand-font leading-tight">{event.title}</h4>
+                                                        <p className="text-sm text-gray-500 font-medium mt-1"><i className="far fa-clock mr-1"></i> {event.time}</p>
                                                     </div>
                                                 </div>
                                             ))}
@@ -353,19 +395,19 @@
                             {activeTab === 'settings' && (
                                 <div className="max-w-2xl mx-auto animate-in">
                                     <h2 className="text-2xl font-black text-gray-900 mb-8 brand-font">System Configuration</h2>
-                                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 space-y-8">
+                                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 space-y-6 md:space-y-8">
                                         <div>
                                             <h3 className="font-bold text-lg mb-4">Gemini API Access</h3>
-                                            <p className="text-sm text-gray-500 mb-4">To enable AI Chat in this standalone file, enter your Google Gemini API Key below. It will be saved to your browser's local storage.</p>
-                                            <div className="flex gap-2">
+                                            <p className="text-sm text-gray-500 mb-4 leading-relaxed">To enable AI Chat in this standalone file, enter your Google Gemini API Key below. It will be saved to your browser's local storage.</p>
+                                            <div className="flex flex-col sm:flex-row gap-2">
                                                 <input 
                                                     type="password" 
                                                     value={apiKeyInput}
                                                     onChange={(e) => setApiKeyInput(e.target.value)}
                                                     placeholder="Paste AIza... key here"
-                                                    className="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 outline-none focus:border-red-600"
+                                                    className="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-red-600 transition-colors"
                                                 />
-                                                <button onClick={saveApiKey} className="bg-black text-white px-6 py-2 rounded-lg font-bold hover:bg-gray-800 transition-colors">
+                                                <button onClick={saveApiKey} className="bg-black text-white px-6 py-3 rounded-lg font-bold hover:bg-gray-800 transition-colors w-full sm:w-auto">
                                                     {savedKey ? 'Updated' : 'Save Key'}
                                                 </button>
                                             </div>
