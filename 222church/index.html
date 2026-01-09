@@ -4,7 +4,7 @@
 <html lang="en" class="scroll-smooth antialiased">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=2.5, maximum-scale=5.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>222 Church | Presence-Based Worship Center</title>
     <meta name="description" content="A Presence-Based Worship Center and Sending Church. Rooted in Acts 2:42 and 2 Timothy 2:2.">
     
@@ -25,7 +25,7 @@
                         brand: {
                             navy: '#0F172A', 
                             slate: '#1E293B',
-                            accent: '#F59E0B'
+                            accent: '#3B82F6'
                         }
                     }
                 }
@@ -293,7 +293,7 @@
             <div class="flex items-center gap-2 md:gap-4">
                 <button onclick="toggleDarkMode()" class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
                     <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
-                    <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-500"></i>
+                    <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-blue-500"></i>
                 </button>
                 <a href="javascript:void(0)" onclick="navigate('give')" class="hidden sm:flex px-6 py-2 rounded-full text-[11px] font-black btn-brand uppercase tracking-widest shadow-md">
                     Give
@@ -331,7 +331,7 @@
         <div id="home-view" class="page-view flex flex-col items-center">
             
             <!-- Hero Section -->
-            <section class="w-full mb-6 relative flex items-start justify-center pt-0 md:min-h-[95vh]">
+            <section class="w-full mb-6 relative flex items-start justify-center pt-0">
                 <div class="glass-panel w-full rounded-b-[4rem] rounded-t-none pt-32 pb-12 md:pt-40 md:pb-16 flex flex-col items-center justify-center text-center scale-up shine-card">
                     
                     <!-- HERO LOGO -->
@@ -827,7 +827,7 @@
             const btn = e.target.querySelector('button');
             const originalText = btn.innerText;
             btn.innerText = "REQUEST SENT";
-            btn.style.backgroundColor = "#F59E0B";
+            btn.style.backgroundColor = "#3B82F6";
             setTimeout(() => {
                 btn.innerText = originalText;
                 btn.style.backgroundColor = "";
