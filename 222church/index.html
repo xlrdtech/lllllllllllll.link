@@ -665,16 +665,18 @@
         <!-- GIVE VIEW -->
         <div id="give-view" class="page-view hidden px-6 pt-[140px]">
             <section class="max-w-4xl mx-auto py-16 text-center">
-                <div class="glass-panel p-16 md:p-24 rounded-[5rem] reveal shine-card">
+                <!-- Reduced padding on mobile (p-8 instead of p-16) to give text more room -->
+                <div class="glass-panel p-8 md:p-24 rounded-[3rem] md:rounded-[5rem] reveal shine-card">
                     <div class="w-16 h-16 bg-brand-navy dark:bg-white rounded-full flex items-center justify-center mx-auto mb-10 shadow-xl text-white dark:text-black">
                         <i data-lucide="heart" class="w-8 h-8"></i>
                     </div>
-                    <h2 class="text-6xl md:text-8xl font-black mb-8 tracking-tighter uppercase text-brand-navy dark:text-white">Generosity</h2>
-                    <p class="text-xl md:text-2xl font-bold mb-12 max-w-3xl mx-auto leading-relaxed text-brand-navy dark:text-white">
+                    <!-- Adjusted font size: text-4xl on mobile, scaling up to text-8xl on desktop -->
+                    <h2 class="text-4xl sm:text-6xl md:text-8xl font-black mb-8 tracking-tighter uppercase text-brand-navy dark:text-white break-words">Generosity</h2>
+                    <p class="text-lg md:text-2xl font-bold mb-12 max-w-3xl mx-auto leading-relaxed text-brand-navy dark:text-white">
                         Your support fuels the ministry of 222 Church, allowing us to disciple, equip, and lead.
                     </p>
-                    <a href="#" class="inline-flex items-center gap-4 btn-brand px-12 py-5 rounded-2xl font-black text-xl shadow-3xl hover:scale-[1.02] transition-all shine-card">
-                        <i data-lucide="external-link" class="w-6 h-6"></i> PAYPAL GIVING
+                    <a href="#" class="inline-flex items-center gap-4 btn-brand px-8 py-5 rounded-2xl font-black text-lg md:text-xl shadow-3xl hover:scale-[1.02] transition-all shine-card max-w-full">
+                        <i data-lucide="external-link" class="w-5 h-5 md:w-6 md:h-6"></i> PAYPAL GIVING
                     </a>
                 </div>
             </section>
