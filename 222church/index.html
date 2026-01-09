@@ -275,51 +275,12 @@
         
         /* Mobile responsive sizing - 200% larger */
         @media (max-width: 768px) {
-            /* Increase all font sizes by 200% */
-            html, body { font-size: 32px; }
-            h1 { font-size: 3.75rem !important; }
-            h2 { font-size: 3.75rem !important; }
-            h3 { font-size: 2.25rem !important; }
-            h4 { font-size: 1.875rem !important; }
-            p { font-size: 1.5rem !important; }
-            span { font-size: 1.5rem !important; }
-            a { font-size: 1.5rem !important; }
+            /* Scale entire main content for easier control */
+            main { transform: scale(2); transform-origin: top center; }
             
-            /* Double all padding */
-            [class*="p-"] { padding: calc(var(--padding) * 2) !important; }
-            input, textarea, select { 
-                font-size: 18px !important; 
-                padding: 2.5rem !important;
-            }
-            
-            /* Double margins and gaps */
-            [class*="m-"] { margin: calc(var(--margin) * 2) !important; }
-            [class*="gap-"] { gap: calc(var(--gap) * 2) !important; }
-            
-            /* Scale buttons and clickable elements */
-            button { padding: 1rem 2rem !important; font-size: 1.25rem !important; }
-            .btn-brand { padding: 1.5rem 2.5rem !important; }
-            
-            /* Increase icon sizes */
-            [data-lucide] { width: 3rem !important; height: 3rem !important; }
-            i[data-lucide] { width: 3rem !important; height: 3rem !important; }
-            
-            /* Scale images */
-            img { max-width: 100%; }
-            
-            /* Increase spacing in sections */
-            section { padding: 2rem !important; }
-            
-            /* Make containers bigger */
-            .glass-panel { padding: 2rem !important; }
-            .nav-capsule { padding: 1.5rem !important; }
-            
-            /* Grid gaps */
-            .grid { gap: 2rem !important; }
-            
-            /* Text line height */
-            h1, h2, h3 { line-height: 1.2; }
-            p { line-height: 1.6; }
+            /* Adjust spacing to prevent layout shift from scale */
+            #main-header { transform: scale(1); }
+            footer { transform: scale(1); }
         }
 
         .scale-up { transform: scale(0.98); opacity: 0; animation: scaleUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
