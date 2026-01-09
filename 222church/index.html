@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>222 Church | Presence-Based Worship Center</title>
+    <meta name="description" content="A Presence-Based Worship Center and Sending Church. Rooted in Acts 2:42 and 2 Timothy 2:2.">
+    
+    <!-- Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Manrope', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            navy: '#0F172A', 
+                            slate: '#1E293B',
+                            accent: '#F59E0B'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --color-bg: #FFFFFF;
+            --text-header: #0F172A; /* Midnight Navy */
+            --text-body: #1E293B; 
+            --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --glass-edge: rgba(255, 255, 255, 0.95);
+            --glass-shadow: rgba(15, 23, 42, 0.08);
+            --glass-blur: 50px;
+            --mouse-x: -150%;
+            /* Navy Blue Tinted Glass for Light Mode */
+            --btn-glass-bg: rgba(15, 23, 42, 0.75);
+            --btn-glass-text: #FFFFFF;
+            --engrave-shadow: rgba(0, 0, 0, 0.15);
+            --engrave-highlight: rgba(255, 255, 255, 0.5);
+        }
+
+        .dark {
+            --color-bg: #0A0A0B;
+            --text-header: #FFFFFF; 
+            --text-body: #E2E8F0; 
+            --glass-bg: linear-gradient(135deg, rgba(30, 30, 40, 0.6) 0%, rgba(15, 15, 20, 0.4) 100%);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --glass-edge: rgba(255, 255, 255, 0.25);
+            --glass-shadow: rgba(0, 0, 0, 0.6);
+            --glass-blur: 40px;
+            /* Navy Blue Glass for Dark Mode */
+            --btn-glass-bg: rgba(30, 41, 59, 0.5);
+            --btn-glass-text: #FFFFFF;
+            --engrave-shadow: rgba(0, 0, 0, 0.8);
+            --engrave-highlight: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Background Pulse Animations */
+        @keyframes bg-pulse-light {
+            0%, 100% { background-color: #FFFFFF; }
+            50% { background-color: #CBD5E1; } /* Slate-300: Significant shift */
+        }
+
+        @keyframes bg-pulse-dark {
+            0%, 100% { background-color: #0A0A0B; }
+            50% { background-color: #1E293B; } /* Slate-800: Deep Navy shift */
+        }
+
+        body { 
+            font-family: 'Manrope', sans-serif; 
+            background-color: var(--color-bg);
+            color: var(--text-body);
+            overflow-x: hidden;
+            font-variant-numeric: lining-nums;
+            transition: background-color 1s cubic-bezier(0.16, 1, 0.3, 1);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--text-header);
+            letter-spacing: -0.025em;
+            font-weight: 800;
+        }
+
+        /* HEAVENLY BACKGROUND */
+        #glow-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+            background-color: var(--color-bg);
+            animation: bg-pulse-light 8s ease-in-out infinite;
+        }
+
+        .dark #glow-container {
+            animation: bg-pulse-dark 8s ease-in-out infinite;
+        }
+
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(140px);
+            opacity: 0.22; 
+            transition: all 1.5s ease;
+            animation: float 28s infinite alternate ease-in-out;
+            mix-blend-mode: multiply; 
+        }
+        
+        .dark .glow-orb { mix-blend-mode: screen; opacity: 0.25; }
+
+        .orb-1 { width: 85vw; height: 85vw; top: -20%; left: -15%; background: #D8B4FE; } 
+        .orb-2 { width: 75vw; height: 75vw; bottom: -15%; right: -10%; background: #FBCFE8; animation-delay: -6s; } 
+        .orb-3 { width: 65vw; height: 65vw; top: 15%; right: -15%; background: #FED7AA; animation-delay: -12s; } 
+        .orb-4 { width: 55vw; height: 55vw; bottom: 20%; left: -5%; background: #BAE6FD; animation-delay: -18s; } 
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(10%, 10%) scale(1.1); }
+        }
+
+        /* HYPER-REALISTIC SHINY GLASS */
+        .glass-panel, .nav-capsule {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur)) saturate(210%);
+            -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(210%);
+            border: 1px solid var(--glass-border);
+            border-top: 2px solid var(--glass-edge); 
+            box-shadow: 0 15px 40px -10px var(--glass-shadow), inset 0 1px 2px 0 rgba(255, 255, 255, 0.2); 
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-capsule {
+            background: rgba(255, 255, 255, 0.85); 
+        }
+        .dark .nav-capsule {
+            background: rgba(20, 20, 30, 0.9);
+        }
+
+        /* ENGRAVED LOGO PHYSICS */
+        .logo-engraved {
+            /* Simulates an etched outline carved into the glass panel */
+            filter: 
+                drop-shadow(1.5px 1.5px 1px var(--engrave-highlight))
+                drop-shadow(-1.5px -1.5px 1px var(--engrave-shadow));
+            mix-blend-mode: multiply;
+            opacity: 0.85;
+            transition: all 0.5s ease;
+        }
+        .dark .logo-engraved {
+            mix-blend-mode: screen;
+            opacity: 0.7;
+        }
+
+        /* ACTIVE PAGE HIGHLIGHTING */
+        .nav-link {
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .nav-link.active {
+            background-color: rgba(0, 0, 0, 0.05); 
+            color: var(--brand-navy);
+            font-weight: 800;
+        }
+        .dark .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.05); 
+            color: #FFFFFF;
+        }
+
+        /* Specular Shine Logic */
+        .shine-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+            transform: skewX(-20deg);
+            left: var(--mouse-x);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 5;
+        }
+        .shine-card:hover::after { opacity: 1; }
+        .dark .shine-card::after { background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent); }
+
+        header {
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
+        }
+
+        /* BUTTON STYLE: Navy Blue Tinted Glass Layer */
+        .btn-brand {
+            background: var(--btn-glass-bg);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            color: var(--btn-glass-text);
+            font-weight: 800;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1.5px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-brand:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px -8px var(--glass-shadow);
+            filter: brightness(1.2);
+        }
+
+        /* Form Elements */
+        input, textarea, select {
+            width: 100%;
+            padding: 1.25rem;
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0,0,0,0.1);
+            outline: none;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            color: var(--brand-navy);
+        }
+        .dark input, .dark textarea, .dark select {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+        }
+        input:focus, textarea:focus, select:focus {
+            box-shadow: 0 0 0 2px var(--brand-navy);
+            transform: scale(1.01);
+        }
+        .dark input:focus, .dark textarea:focus, .dark select:focus {
+            box-shadow: 0 0 0 2px white;
+        }
+
+        /* Mobile Menu Transitions */
+        #mobile-menu {
+            transition: opacity 0.4s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal { opacity: 0; transform: translateY(15px); animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
+
+        .scale-up { transform: scale(0.98); opacity: 0; animation: scaleUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes scaleUp { to { transform: scale(1); opacity: 1; } }
+
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+    </style>
+</head>
+<body class="antialiased">
+    
+    <div id="glow-container">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+        <div class="glow-orb orb-3"></div>
+        <div class="glow-orb orb-4"></div>
+    </div>
+
+    <!-- Floating Navbar -->
+    <header id="main-header" class="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 md:px-6 pointer-events-none reveal">
+        <div class="pointer-events-auto nav-capsule rounded-full px-5 md:px-8 py-2.5 flex items-center justify-between w-full max-w-5xl shine-card">
+            
+            <a href="javascript:void(0)" onclick="navigate('home')" class="flex items-center gap-4 group">
+                <img id="nav-logo" src="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/04fcc15e-1415-441a-b60f-6b52e29404e3/IMG_0290.png" 
+                     alt="222 Church" class="h-8 w-auto object-contain transition-transform group-hover:scale-105">
+                <span class="font-extrabold tracking-tight text-brand-navy dark:text-white hidden md:inline-block text-base uppercase">222 Church</span>
+            </a>
+
+            <nav class="hidden lg:flex items-center gap-1">
+                <a href="javascript:void(0)" onclick="navigate('home')" class="px-5 py-2 rounded-full text-[12px] font-extrabold hover:bg-black/5 dark:hover:bg-white/5 transition-all nav-link active" id="link-home">Home</a>
+                <a href="javascript:void(0)" onclick="navigate('about')" class="px-5 py-2 rounded-full text-[12px] font-extrabold hover:bg-black/5 dark:hover:bg-white/5 transition-all nav-link" id="link-about">Story</a>
+                <a href="javascript:void(0)" onclick="navigate('discipleship')" class="px-5 py-2 rounded-full text-[12px] font-extrabold hover:bg-black/5 dark:hover:bg-white/5 transition-all nav-link" id="link-discipleship">Growth</a>
+                <a href="javascript:void(0)" onclick="navigate('connect')" class="px-5 py-2 rounded-full text-[12px] font-extrabold hover:bg-black/5 dark:hover:bg-white/5 transition-all nav-link" id="link-connect">Connect</a>
+            </nav>
+
+            <div class="flex items-center gap-2 md:gap-4">
+                <button onclick="toggleDarkMode()" class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                    <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
+                    <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-500"></i>
+                </button>
+                <a href="javascript:void(0)" onclick="navigate('give')" class="hidden sm:flex px-6 py-2 rounded-full text-[11px] font-black btn-brand uppercase tracking-widest shadow-md">
+                    Give
+                </a>
+                <button onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors -mr-2">
+                    <i data-lucide="menu" class="w-6 h-6 text-brand-navy dark:text-white"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-[100] bg-white/95 dark:bg-[#0A0A0B]/95 backdrop-blur-3xl translate-y-[-100%] opacity-0 pointer-events-none flex flex-col items-center justify-center">
+        <button onclick="toggleMobileMenu()" class="absolute top-8 right-8 p-4 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+            <i data-lucide="x" class="w-8 h-8 text-brand-navy dark:text-white"></i>
+        </button>
+        
+        <nav class="flex flex-col items-center gap-8 w-full px-6">
+            <a href="javascript:void(0)" onclick="navigate('home')" class="text-3xl font-black uppercase tracking-tight text-brand-navy dark:text-white hover:text-amber-500 transition-colors">Home</a>
+            <a href="javascript:void(0)" onclick="navigate('about')" class="text-3xl font-black uppercase tracking-tight text-brand-navy dark:text-white hover:text-amber-500 transition-colors">Story</a>
+            <a href="javascript:void(0)" onclick="navigate('discipleship')" class="text-3xl font-black uppercase tracking-tight text-brand-navy dark:text-white hover:text-amber-500 transition-colors">Growth</a>
+            <a href="javascript:void(0)" onclick="navigate('connect')" class="text-3xl font-black uppercase tracking-tight text-brand-navy dark:text-white hover:text-amber-500 transition-colors">Connect</a>
+            
+            <div class="w-20 h-[1px] bg-slate-200 dark:bg-white/10 my-2"></div>
+
+            <a href="javascript:void(0)" onclick="navigate('give')" class="px-10 py-4 rounded-full text-sm font-black btn-brand uppercase tracking-widest shadow-xl w-full max-w-xs text-center">
+                Give
+            </a>
+        </nav>
+    </div>
+
+    <main id="main-content" class="relative z-10">
+
+        <!-- HOME VIEW -->
+        <div id="home-view" class="page-view flex flex-col items-center">
+            
+            <!-- Hero Section -->
+            <section class="w-full mb-6 relative flex items-start justify-center pt-0 min-h-[95vh]">
+                <div class="glass-panel w-full rounded-b-[4rem] rounded-t-none pt-32 pb-12 md:pt-40 md:pb-16 flex flex-col items-center justify-center text-center scale-up shine-card">
+                    
+                    <!-- HERO LOGO -->
+                    <div class="mb-0 -mt-6 relative group pointer-events-auto cursor-pointer" onclick="navigate('about')">
+                        <div class="absolute inset-0 bg-stone-500/5 rounded-full blur-[60px] opacity-10"></div>
+                        <img id="hero-logo" src="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/04fcc15e-1415-441a-b60f-6b52e29404e3/IMG_0290.png" 
+                             alt="222 Church" class="h-64 md:h-80 lg:h-[600px] w-auto object-contain transition-all duration-1000 group-hover:scale-[1.01] logo-engraved">
+                    </div>
+
+                    <div class="reveal px-6 -mt-6">
+                        <h1 class="text-4xl md:text-6xl font-black tracking-tighter mb-2 leading-none uppercase text-brand-navy dark:text-white">
+                            Presence First.
+                        </h1>
+                        <p class="text-sm md:text-xl font-bold uppercase tracking-[0.6em] mb-10 text-brand-navy dark:text-white">
+                            Committed to the Faithful.
+                        </p>
+                        <button onclick="navigate('connect')" class="px-14 py-4 rounded-full font-black shadow-xl btn-brand pointer-events-auto text-xs tracking-widest uppercase">Experience Presence</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Feature Row -->
+            <section class="w-full max-w-6xl mx-auto px-6 py-8">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="glass-panel p-10 rounded-[3rem] text-center hover:bg-white/40 transition-all duration-500 shine-card">
+                        <div class="w-12 h-12 bg-stone-900 dark:bg-stone-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white dark:text-black">
+                            <i data-lucide="sun" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="text-xl font-extrabold mb-3 uppercase tracking-tight text-brand-navy dark:text-white">Divine Presence</h3>
+                        <p class="text-sm leading-relaxed font-bold">A sanctuary designed for sincere worship and encounters with the living God.</p>
+                    </div>
+                    
+                    <div class="glass-panel p-10 rounded-[3rem] text-center hover:bg-white/40 transition-all duration-500 shine-card">
+                        <div class="w-12 h-12 bg-stone-900 dark:bg-stone-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white dark:text-black">
+                            <i data-lucide="book-open" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="text-xl font-extrabold mb-3 uppercase tracking-tight text-brand-navy dark:text-white">Faithful Training</h3>
+                        <p class="text-sm leading-relaxed font-bold">Commiting the truth to faithful leaders who will teach others. 2 Timothy 2:2.</p>
+                    </div>
+
+                    <div class="glass-panel p-10 rounded-[3rem] text-center hover:bg-white/40 transition-all duration-500 shine-card">
+                        <div class="w-12 h-12 bg-stone-900 dark:bg-stone-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white dark:text-black">
+                            <i data-lucide="navigation" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="text-xl font-extrabold mb-3 uppercase tracking-tight text-brand-navy dark:text-white">On Mission</h3>
+                        <p class="text-sm leading-relaxed font-bold">Carrying the light into our families, neighborhoods, and workplaces.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- STORY / ABOUT VIEW -->
+        <div id="about-view" class="page-view hidden px-6 pt-[140px]">
+            <section class="max-w-5xl mx-auto py-12 flex flex-col items-center">
+                
+                <!-- Page Title -->
+                <div class="text-center mb-20 w-full reveal">
+                    <h2 class="text-6xl md:text-8xl font-black tracking-tighter mb-8 uppercase text-brand-navy dark:text-white">Our Story</h2>
+                    <p class="text-xl md:text-2xl font-bold leading-relaxed max-w-3xl mx-auto text-brand-navy dark:text-white opacity-90">
+                        222 Church is a Spirit-filled community where followers of Jesus gather to worship the one true God and encounter His presence.
+                    </p>
+                </div>
+                
+                <!-- Identity Panel: Merged Image (Left) & Text (Right) -->
+                <div class="glass-panel rounded-[3rem] overflow-hidden mb-20 w-full reveal shine-card flex flex-col md:flex-row min-h-[500px]">
+                    <!-- Image Side -->
+                    <div class="relative w-full md:w-5/12 h-80 md:h-auto">
+                         <img src="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/9833a755-b9d4-470a-a8dd-12ef7ef9a212/original.jpeg" 
+                             class="absolute inset-0 w-full h-full object-cover">
+                         <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent md:hidden"></div>
+                    </div>
+                    <!-- Text Side -->
+                    <div class="p-10 md:p-16 w-full md:w-7/12 flex flex-col justify-center relative">
+                        <div class="absolute top-0 left-0 w-full h-full bg-white/40 dark:bg-black/20 backdrop-blur-sm -z-10"></div>
+                        <h3 class="text-4xl font-black mb-6 uppercase tracking-tight text-brand-navy dark:text-white">Identity</h3>
+                        <p class="text-lg font-bold leading-relaxed mb-6 text-brand-navy dark:text-gray-200">
+                            We exist to help people walk in their identity, purpose, and calling through relational discipleship, authentic community, biblical teaching, and Spirit-led worship.
+                        </p>
+                        <p class="text-lg font-bold leading-relaxed text-brand-navy dark:text-gray-200">
+                            Whether you are beginning your journey with Christ or seeking deeper spiritual formation, 222 Church is a place to worship, grow, be equipped, and live on mission.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Rooted & Missional Grid -->
+                <div class="grid md:grid-cols-2 gap-8 mb-24 w-full">
+                    <!-- Rooted Card -->
+                    <div class="glass-panel p-10 md:p-12 rounded-[3rem] shine-card reveal group hover:border-blue-500/30 transition-colors">
+                        <div class="w-14 h-14 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center mb-8 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="anchor" class="w-7 h-7"></i>
+                        </div>
+                        <h3 class="text-2xl font-black mb-6 uppercase tracking-widest text-brand-navy dark:text-white">We Are Rooted</h3>
+                        <ul class="space-y-5 font-bold">
+                            <li class="flex items-start gap-4">
+                                <div class="mt-1 bg-blue-100 dark:bg-blue-900/40 p-1 rounded-full"><i data-lucide="check" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i></div>
+                                <span class="text-brand-navy dark:text-gray-200">Worship that honors the one true God</span>
+                            </li>
+                            <li class="flex items-start gap-4">
+                                <div class="mt-1 bg-blue-100 dark:bg-blue-900/40 p-1 rounded-full"><i data-lucide="check" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i></div>
+                                <span class="text-brand-navy dark:text-gray-200">Biblical and apostolic teaching</span>
+                            </li>
+                            <li class="flex items-start gap-4">
+                                <div class="mt-1 bg-blue-100 dark:bg-blue-900/40 p-1 rounded-full"><i data-lucide="check" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i></div>
+                                <span class="text-brand-navy dark:text-gray-200">Prayer and spiritual disciplines</span>
+                            </li>
+                            <li class="flex items-start gap-4">
+                                <div class="mt-1 bg-blue-100 dark:bg-blue-900/40 p-1 rounded-full"><i data-lucide="check" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i></div>
+                                <span class="text-brand-navy dark:text-gray-200">Intentional discipleship and equipping</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Missional Card -->
+                    <div class="glass-panel p-10 md:p-12 rounded-[3rem] shine-card reveal group hover:border-blue-500/30 transition-colors">
+                        <div class="w-14 h-14 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center mb-8 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="globe-2" class="w-7 h-7"></i>
+                        </div>
+                        <h3 class="text-2xl font-black mb-6 uppercase tracking-widest text-brand-navy dark:text-white">We Live on Mission</h3>
+                        <ul class="space-y-5 font-bold">
+                            <li class="flex items-start gap-4">
+                                <div class="mt-1 bg-blue-100 dark:bg-blue-900/40 p-1 rounded-full"><i data-lucide="arrow-right" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i></div>
+                                <span class="text-brand-navy dark:text-gray-200">Carrying God’s presence into everyday life</span>
+                            </li>
+                            <li class="flex items-start gap-4">
+                                <div class="mt-1 bg-blue-100 dark:bg-blue-900/40 p-1 rounded-full"><i data-lucide="arrow-right" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i></div>
+                                <span class="text-brand-navy dark:text-gray-200">Making disciples in homes and communities</span>
+                            </li>
+                            <li class="flex items-start gap-4">
+                                <div class="mt-1 bg-blue-100 dark:bg-blue-900/40 p-1 rounded-full"><i data-lucide="arrow-right" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i></div>
+                                <span class="text-brand-navy dark:text-gray-200">Serving with humility and love</span>
+                            </li>
+                            <li class="flex items-start gap-4">
+                                <div class="mt-1 bg-blue-100 dark:bg-blue-900/40 p-1 rounded-full"><i data-lucide="arrow-right" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i></div>
+                                <span class="text-brand-navy dark:text-gray-200">Passing the faith on to future generations</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Vision & Mission GOSPEL Container -->
+                <div class="w-full reveal">
+                     
+                     <!-- Vision Section -->
+                     <div class="text-center mb-20 px-4">
+                        <span class="text-blue-500 font-black tracking-widest uppercase text-sm mb-4 block">The Vision</span>
+                        <h2 class="text-3xl md:text-5xl font-black mb-8 uppercase text-brand-navy dark:text-white leading-tight">
+                            "To create a Spirit-filled, presence-focused community where the gospel is central."
+                        </h2>
+                        <div class="w-24 h-1.5 bg-blue-500 mx-auto rounded-full"></div>
+                     </div>
+
+                     <!-- GOSPEL Timeline -->
+                     <div class="max-w-3xl mx-auto glass-panel p-8 md:p-16 rounded-[4rem] shine-card">
+                        <div class="text-center mb-16">
+                            <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase text-brand-navy dark:text-white">Our Mission</h2>
+                            <p class="text-blue-500 font-black tracking-[0.5em] text-sm mt-2 uppercase">The G.O.S.P.E.L.</p>
+                        </div>
+
+                        <!-- Timeline Vertical Container -->
+                        <div class="relative border-l-4 border-blue-100 dark:border-blue-900/30 ml-4 md:ml-6 space-y-12 pb-4">
+                            
+                            <!-- Item G -->
+                            <div class="relative pl-12 md:pl-16">
+                                <div class="absolute -left-[1.3rem] top-0 w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-blue-500/30 border-4 border-white dark:border-[#1E293B]">G</div>
+                                <h4 class="text-2xl font-black uppercase text-brand-navy dark:text-white mb-2">Grow as Disciples</h4>
+                                <p class="text-base font-medium opacity-80 leading-relaxed">Growing in spiritual maturity through God’s Word, obedience, prayer, and awareness of His presence.</p>
+                            </div>
+
+                            <!-- Item O -->
+                            <div class="relative pl-12 md:pl-16">
+                                <div class="absolute -left-[1.3rem] top-0 w-10 h-10 rounded-full bg-white dark:bg-[#1E293B] text-blue-500 border-4 border-blue-500 flex items-center justify-center font-black text-xl">O</div>
+                                <h4 class="text-2xl font-black uppercase text-brand-navy dark:text-white mb-2">Operate in Community</h4>
+                                <p class="text-base font-medium opacity-80 leading-relaxed">Living life together in fellowship, discipleship, and authentic accountability.</p>
+                            </div>
+
+                            <!-- Item S -->
+                            <div class="relative pl-12 md:pl-16">
+                                <div class="absolute -left-[1.3rem] top-0 w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-blue-500/30 border-4 border-white dark:border-[#1E293B]">S</div>
+                                <h4 class="text-2xl font-black uppercase text-brand-navy dark:text-white mb-2">Share the Message</h4>
+                                <p class="text-base font-medium opacity-80 leading-relaxed">Equipping disciples to share the gospel and release God’s presence with clarity and boldness.</p>
+                            </div>
+
+                            <!-- Item P -->
+                            <div class="relative pl-12 md:pl-16">
+                                <div class="absolute -left-[1.3rem] top-0 w-10 h-10 rounded-full bg-white dark:bg-[#1E293B] text-blue-500 border-4 border-blue-500 flex items-center justify-center font-black text-xl">P</div>
+                                <h4 class="text-2xl font-black uppercase text-brand-navy dark:text-white mb-2">Prepare for Purpose</h4>
+                                <p class="text-base font-medium opacity-80 leading-relaxed">Helping believers discover their identity, gifts, and calling.</p>
+                            </div>
+
+                            <!-- Item E -->
+                            <div class="relative pl-12 md:pl-16">
+                                <div class="absolute -left-[1.3rem] top-0 w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-blue-500/30 border-4 border-white dark:border-[#1E293B]">E</div>
+                                <h4 class="text-2xl font-black uppercase text-brand-navy dark:text-white mb-2">Equip to Multiply</h4>
+                                <p class="text-base font-medium opacity-80 leading-relaxed">Discipleship that is lived, modeled, and reproduced.</p>
+                            </div>
+
+                            <!-- Item L -->
+                            <div class="relative pl-12 md:pl-16">
+                                <div class="absolute -left-[1.3rem] top-0 w-10 h-10 rounded-full bg-white dark:bg-[#1E293B] text-blue-500 border-4 border-blue-500 flex items-center justify-center font-black text-xl">L</div>
+                                <h4 class="text-2xl font-black uppercase text-brand-navy dark:text-white mb-2">Lead Generations</h4>
+                                <p class="text-base font-medium opacity-80 leading-relaxed">Modeling a faith future generations can follow.</p>
+                            </div>
+
+                        </div>
+                     </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- GROWTH / DISCIPLESHIP VIEW -->
+        <div id="discipleship-view" class="page-view hidden px-6 pt-[140px]">
+            <section class="max-w-6xl mx-auto py-12">
+                <div class="text-center mb-16 reveal">
+                    <h2 class="text-6xl md:text-8xl font-black tracking-tighter uppercase text-brand-navy dark:text-white">The Rhythm</h2>
+                    <p class="text-xl font-black mt-4 uppercase tracking-[0.4em] text-brand-navy dark:text-white opacity-40">Grow. Equip. Lead.</p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="p-10 glass-panel rounded-[3.5rem] text-center transform hover:scale-105 duration-500 reveal shine-card">
+                        <h3 class="text-2xl font-black mb-4 uppercase tracking-widest text-brand-navy dark:text-white">COME</h3>
+                        <p class="text-base font-bold">Expect to Grow. We gather to worship the one true God and encounter His presence together.</p>
+                    </div>
+                    <div class="p-10 glass-panel rounded-[3.5rem] text-center transform hover:scale-105 duration-500 reveal shine-card" style="animation-delay: 0.1s">
+                        <h3 class="text-2xl font-black mb-4 uppercase tracking-widest text-brand-navy dark:text-white">JOIN</h3>
+                        <p class="text-base font-bold">Expect to be Taught. Relational Discipleship through Biblical teaching.</p>
+                    </div>
+                    <div class="p-10 glass-panel rounded-[3.5rem] text-center transform hover:scale-105 duration-500 reveal shine-card" style="animation-delay: 0.2s">
+                        <h3 class="text-2xl font-black mb-4 uppercase tracking-widest text-brand-navy dark:text-white">STAY</h3>
+                        <p class="text-base font-bold">Expect to be Sent. Carry God's presence into your city and multiply disciples.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- CONNECT VIEW -->
+        <div id="connect-view" class="page-view hidden px-6 pt-[140px]">
+            <section class="max-w-5xl mx-auto py-12 flex flex-col items-center">
+                
+                <!-- Next Steps Grid -->
+                <div class="w-full mb-12 reveal">
+                    <h2 class="text-4xl font-black mb-8 text-center uppercase text-brand-navy dark:text-white">Your Next Step</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <button class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
+                            <i data-lucide="info" class="w-8 h-8 mx-auto mb-3 text-brand-navy dark:text-white group-hover:text-amber-500 transition-colors"></i>
+                            <span class="block text-xs font-black uppercase">About 222</span>
+                        </button>
+                         <button class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
+                            <i data-lucide="hand-heart" class="w-8 h-8 mx-auto mb-3 text-brand-navy dark:text-white group-hover:text-amber-500 transition-colors"></i>
+                            <span class="block text-xs font-black uppercase">Serve</span>
+                        </button>
+                        <button class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
+                            <i data-lucide="droplets" class="w-8 h-8 mx-auto mb-3 text-brand-navy dark:text-white group-hover:text-amber-500 transition-colors"></i>
+                            <span class="block text-xs font-black uppercase">Baptism</span>
+                        </button>
+                        <button class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
+                            <i data-lucide="users" class="w-8 h-8 mx-auto mb-3 text-brand-navy dark:text-white group-hover:text-amber-500 transition-colors"></i>
+                            <span class="block text-xs font-black uppercase">Discipleship</span>
+                        </button>
+                        <button class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
+                            <i data-lucide="user-check" class="w-8 h-8 mx-auto mb-3 text-brand-navy dark:text-white group-hover:text-amber-500 transition-colors"></i>
+                            <span class="block text-xs font-black uppercase">Fellas-Ship</span>
+                        </button>
+                        <button class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
+                            <i data-lucide="heart-handshake" class="w-8 h-8 mx-auto mb-3 text-brand-navy dark:text-white group-hover:text-amber-500 transition-colors"></i>
+                            <span class="block text-xs font-black uppercase">Counseling</span>
+                        </button>
+                        <button class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
+                            <i data-lucide="baby" class="w-8 h-8 mx-auto mb-3 text-brand-navy dark:text-white group-hover:text-amber-500 transition-colors"></i>
+                            <span class="block text-xs font-black uppercase">222 Kids</span>
+                        </button>
+                        <button class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
+                            <i data-lucide="calendar-check" class="w-8 h-8 mx-auto mb-3 text-brand-navy dark:text-white group-hover:text-amber-500 transition-colors"></i>
+                            <span class="block text-xs font-black uppercase">Plan a Visit</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Prayer Request Form -->
+                <div class="glass-panel p-12 md:p-16 rounded-[4rem] w-full relative reveal shine-card mb-12">
+                    <div class="text-center mb-12">
+                        <h2 class="text-4xl font-black mb-2 tracking-tighter uppercase text-brand-navy dark:text-white">Need Prayer?</h2>
+                        <p class="text-xl font-bold text-brand-navy dark:text-white">Standing by to stand with you.</p>
+                    </div>
+                    
+                    <form onsubmit="handlePrayer(event)" class="space-y-4">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <input type="text" placeholder="Your Name" required>
+                            <input type="email" placeholder="Email" required>
+                        </div>
+                        
+                        <select class="appearance-none" required>
+                            <option value="" disabled selected>Prayer Category (Optional)</option>
+                            <option value="healing">Healing</option>
+                            <option value="guidance">Guidance / Direction</option>
+                            <option value="family">Family</option>
+                            <option value="salvation">Salvation</option>
+                            <option value="grief">Grief / Loss</option>
+                            <option value="thanksgiving">Thanksgiving / Praise</option>
+                            <option value="other">Other</option>
+                        </select>
+
+                        <textarea placeholder="How can we pray with you?" rows="4" class="resize-none" required></textarea>
+                        
+                        <label class="flex items-center gap-3 px-2 cursor-pointer group">
+                            <input type="checkbox" class="w-5 h-5 rounded border-gray-300 text-brand-navy focus:ring-brand-navy">
+                            <span class="font-bold text-sm text-brand-navy dark:text-white group-hover:text-amber-500 transition-colors">I would like someone from 222 Church to follow up with me</span>
+                        </label>
+
+                        <button type="submit" class="w-full py-5 rounded-2xl font-black text-sm btn-brand shadow-xl tracking-widest uppercase shine-card">Submit Prayer Request</button>
+                    </form>
+                </div>
+
+                <!-- Engagement Request -->
+                <div class="glass-panel p-12 md:p-16 rounded-[4rem] w-full relative reveal shine-card">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-black mb-2 tracking-tighter uppercase text-brand-navy dark:text-white">Engagement Request</h2>
+                        <p class="text-base font-bold opacity-80 max-w-2xl mx-auto">
+                            Thank you for considering 222 Church, Inc. for your event. Each request is reviewed prayerfully and thoughtfully. Please submit requests at least 30 days prior to your event date.
+                        </p>
+                    </div>
+                    <div class="text-center">
+                         <button class="px-10 py-4 rounded-full font-black text-xs btn-brand shadow-xl tracking-widest uppercase mb-8">Submit Engagement Request</button>
+                         <div class="text-center opacity-60">
+                            <p class="font-black uppercase text-xs tracking-widest">Pastor Atiba Adams, MA</p>
+                            <p class="font-bold text-[10px] uppercase tracking-wider">222 Church, Inc.</p>
+                         </div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+
+        <!-- GIVE VIEW -->
+        <div id="give-view" class="page-view hidden px-6 pt-[140px]">
+            <section class="max-w-4xl mx-auto py-16 text-center">
+                <div class="glass-panel p-16 md:p-24 rounded-[5rem] reveal shine-card">
+                    <div class="w-16 h-16 bg-brand-navy dark:bg-white rounded-full flex items-center justify-center mx-auto mb-10 shadow-xl text-white dark:text-black">
+                        <i data-lucide="heart" class="w-8 h-8"></i>
+                    </div>
+                    <h2 class="text-6xl md:text-8xl font-black mb-8 tracking-tighter uppercase text-brand-navy dark:text-white">Generosity</h2>
+                    <p class="text-xl md:text-2xl font-bold mb-12 max-w-3xl mx-auto leading-relaxed text-brand-navy dark:text-white">
+                        Your support fuels the ministry of 222 Church, allowing us to disciple, equip, and lead.
+                    </p>
+                    <a href="#" class="inline-flex items-center gap-4 btn-brand px-12 py-5 rounded-2xl font-black text-xl shadow-3xl hover:scale-[1.02] transition-all shine-card">
+                        <i data-lucide="external-link" class="w-6 h-6"></i> PAYPAL GIVING
+                    </a>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-20 border-t border-slate-200 dark:border-white/5 pt-24 pb-[7px] px-6 relative z-10 glass-panel !rounded-none !border-x-0 shine-card">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-12 text-center items-center">
+            
+            <!-- Desktop Logo Column (Hidden on Mobile) -->
+            <div class="hidden md:flex space-y-4 flex-col items-center md:items-start">
+                <img id="footer-logo" src="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/04fcc15e-1415-441a-b60f-6b52e29404e3/IMG_0290.png" 
+                     class="h-16 w-auto mb-4 object-contain">
+                <p class="text-xs font-black uppercase tracking-[0.4em] leading-loose text-brand-navy dark:text-white text-center md:text-left">Presence First. Disciples Forever.</p>
+            </div>
+            
+            <!-- Links Columns (Modified for Mobile Layout) -->
+            <div class="grid grid-cols-3 md:grid-cols-2 gap-2 md:gap-8 w-full items-start">
+                <div class="flex flex-col items-center">
+                    <h4 class="font-black mb-8 uppercase tracking-widest text-[11px] text-brand-navy dark:text-gray-400">Ministry</h4>
+                    <ul class="space-y-4 font-extrabold text-[12px] uppercase tracking-wider">
+                        <li><a href="javascript:void(0)" onclick="navigate('about')" class="hover:text-amber-600 transition-colors">Story</a></li>
+                        <li><a href="javascript:void(0)" onclick="navigate('discipleship')" class="hover:text-amber-600 transition-colors">Growth</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Mobile Logo (Visible Mobile, Hidden Desktop) -->
+                <div class="flex md:hidden flex-col items-center justify-center pt-2">
+                    <img id="mobile-footer-logo" src="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/04fcc15e-1415-441a-b60f-6b52e29404e3/IMG_0290.png" 
+                         class="h-12 w-auto object-contain hover:scale-105 transition-transform" onclick="navigate('home')">
+                </div>
+
+                <div class="flex flex-col items-center">
+                    <h4 class="font-black mb-8 uppercase tracking-widest text-[11px] text-brand-navy dark:text-gray-400">Action</h4>
+                    <ul class="space-y-4 font-extrabold text-[12px] uppercase tracking-wider">
+                        <li><a href="javascript:void(0)" onclick="navigate('connect')" class="hover:text-amber-600 transition-colors">Prayer</a></li>
+                        <li><a href="javascript:void(0)" onclick="navigate('give')" class="hover:text-amber-600 transition-colors">Give</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-center gap-8">
+                <button onclick="navigate('connect')" class="btn-brand px-12 py-4 rounded-full text-[11px] font-black uppercase tracking-widest shadow-2xl w-fit shine-card">Connect</button>
+                <div class="flex gap-8 justify-center">
+                    <i data-lucide="instagram" class="w-6 h-6 hover:text-amber-600 cursor-pointer transition-colors text-brand-navy dark:text-white"></i>
+                    <i data-lucide="facebook" class="w-6 h-6 hover:text-amber-600 cursor-pointer transition-colors text-brand-navy dark:text-white"></i>
+                    <i data-lucide="youtube" class="w-6 h-6 hover:text-amber-600 cursor-pointer transition-colors text-brand-navy dark:text-white"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto pt-20 text-center text-[10px] font-black uppercase tracking-[1em] text-black dark:text-white">
+            &copy; 2026 222 Church, Inc. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        const LOGO_DARK_MODE = "https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/b296e0aa-180d-4190-92bd-b6c5b6d240f2/IMG_0289.png"; 
+        const LOGO_LIGHT_MODE = "https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/04fcc15e-1415-441a-b60f-6b52e29404e3/IMG_0290.png";
+
+        // Specular Shine Logic
+        document.addEventListener('mousemove', (e) => {
+            const cards = document.querySelectorAll('.shine-card');
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                card.style.setProperty('--mouse-x', `${x - 50}%`); 
+            });
+        });
+
+        // Scroll Logic for Nav Retraction
+        let lastScrollY = window.scrollY;
+        const header = document.getElementById('main-header');
+
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+            if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                header.style.transform = 'translateX(-110%)';
+                header.style.opacity = '0';
+            } else {
+                header.style.transform = 'translateX(0)';
+                header.style.opacity = '1';
+            }
+            lastScrollY = currentScrollY;
+        });
+
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            updateAssets(isDark);
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const isOpen = !menu.classList.contains('translate-y-[-100%]');
+            
+            if (isOpen) {
+                menu.classList.add('translate-y-[-100%]', 'opacity-0', 'pointer-events-none');
+                document.body.style.overflow = 'auto';
+            } else {
+                menu.classList.remove('translate-y-[-100%]', 'opacity-0', 'pointer-events-none');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function updateAssets(isDark) {
+            const logo = isDark ? LOGO_DARK_MODE : LOGO_LIGHT_MODE;
+            document.getElementById('nav-logo').src = logo;
+            document.getElementById('hero-logo').src = logo;
+            document.getElementById('footer-logo').src = logo;
+            
+            const mobileFooterLogo = document.getElementById('mobile-footer-logo');
+            if(mobileFooterLogo) mobileFooterLogo.src = logo;
+        }
+
+        function navigate(viewId) {
+            document.querySelectorAll('.page-view').forEach(v => v.classList.add('hidden'));
+            const target = document.getElementById(`${viewId}-view`);
+            if (target) {
+                target.classList.remove('hidden');
+                target.classList.add('reveal');
+            }
+
+            // Close mobile menu if open
+            const menu = document.getElementById('mobile-menu');
+            if (!menu.classList.contains('translate-y-[-100%]')) {
+                toggleMobileMenu();
+            }
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            const activeLink = document.getElementById(`link-${viewId}`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function handlePrayer(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerText;
+            btn.innerText = "REQUEST SENT";
+            btn.style.backgroundColor = "#F59E0B";
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.style.backgroundColor = "";
+                e.target.reset();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
