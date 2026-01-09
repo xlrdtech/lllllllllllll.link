@@ -3,7 +3,7 @@
 <html lang="en" class="scroll-smooth antialiased">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=6.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>222 Church | Presence-Based Worship Center</title>
     <meta name="description" content="A Presence-Based Worship Center and Sending Church. Rooted in Acts 2:42 and 2 Timothy 2:2.">
     
@@ -77,6 +77,12 @@
             50% { background-color: #1E293B; } /* Slate-800: Deep Navy shift */
         }
 
+        html, body { 
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
         body { 
             font-family: 'Manrope', sans-serif; 
             background-color: var(--color-bg);
@@ -85,6 +91,16 @@
             font-variant-numeric: lining-nums;
             transition: background-color 1s cubic-bezier(0.16, 1, 0.3, 1);
             line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        main { 
+            flex: 1;
+        }
+        
+        footer {
+            margin-top: auto;
         }
 
         h1, h2, h3, h4 {
@@ -256,6 +272,12 @@
 
         .reveal { opacity: 0; transform: translateY(15px); animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
+        
+        /* Mobile responsive sizing */
+        @media (max-width: 640px) {
+            h1, h2, h3 { line-height: 1.2; }
+            input, textarea, select { font-size: 16px !important; }
+        }
 
         .scale-up { transform: scale(0.98); opacity: 0; animation: scaleUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes scaleUp { to { transform: scale(1); opacity: 1; } }
