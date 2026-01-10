@@ -1,13 +1,17 @@
 
-
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth antialiased">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=2.5, maximum-scale=5.0, user-scalable=yes">
     <title>222 Church | Presence-Based Worship Center</title>
     <meta name="description" content="A Presence-Based Worship Center and Sending Church. Rooted in Acts 2:42 and 2 Timothy 2:2.">
     
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/04fcc15e-1415-441a-b60f-6b52e29404e3/IMG_0290.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/04fcc15e-1415-441a-b60f-6b52e29404e3/IMG_0290.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/04fcc15e-1415-441a-b60f-6b52e29404e3/IMG_0290.png">
+
     <!-- Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -225,29 +229,89 @@
             filter: brightness(1.2);
         }
 
-        /* Form Elements */
-        input, textarea, select {
+        /* Form Elements Global Reset */
+        input:not([type="checkbox"]), textarea, select {
             width: 100%;
-            padding: 1.25rem;
             border-radius: 1rem;
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(0,0,0,0.1);
+            background-color: #FFFFFF;
+            border: 1px solid rgba(15, 23, 42, 0.1);
             outline: none;
             transition: all 0.3s ease;
             font-weight: 700;
             color: var(--brand-navy);
+            font-size: 1rem;
+            line-height: normal;
+            appearance: none;
+            -webkit-appearance: none;
+            display: block; /* Ensure block behavior */
         }
-        .dark input, .dark textarea, .dark select {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(255,255,255,0.1);
+
+        /* Specific Padding - Tuned to User Preference */
+        input:not([type="checkbox"]) {
+            padding: 1.25rem 1.5rem; /* "Placed right" */
+        }
+        
+        /* Increased padding for Dropdown and Textarea to fix "too far left" */
+        textarea, select {
+            padding: 1.25rem 2.5rem;
+        }
+
+        /* Dark Mode Base Styles */
+        .dark input:not([type="checkbox"]), .dark textarea {
+            background-color: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: white;
         }
-        input:focus, textarea:focus, select:focus {
-            box-shadow: 0 0 0 2px var(--brand-navy);
+
+        /* Focus States */
+        input:not([type="checkbox"]):focus, textarea:focus, select:focus {
+            box-shadow: 0 0 0 2px var(--brand-accent, #3B82F6);
+            border-color: transparent;
             transform: scale(1.01);
         }
-        .dark input:focus, .dark textarea:focus, .dark select:focus {
+        .dark input:not([type="checkbox"]):focus, .dark textarea:focus, .dark select:focus {
             box-shadow: 0 0 0 2px white;
+        }
+
+        /* Placeholders */
+        input::placeholder, textarea::placeholder { color: var(--brand-navy); opacity: 0.5; font-weight: 600; }
+        .dark input::placeholder, .dark textarea::placeholder { color: white; opacity: 0.5; }
+
+        /* Custom Select Arrow - Light Mode */
+        select {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%230F172A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1.25rem center;
+            background-size: 1.1rem;
+        }
+
+        /* Custom Select Arrow - Dark Mode - Fully Explicit to prevents glitches */
+        .dark select {
+            background-color: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1.25rem center;
+            background-size: 1.1rem;
+        }
+
+        /* Placeholder Style for Dropdown */
+        select option {
+            background: #FFFFFF;
+            color: var(--brand-navy);
+            font-weight: 600;
+        }
+        .dark select option {
+            background: #1E293B;
+            color: #FFFFFF;
+        }
+        select:required:invalid {
+            color: rgba(15, 23, 42, 0.4);
+        }
+        .dark select:required:invalid {
+            color: rgba(255, 255, 255, 0.4);
         }
 
         /* Mobile Menu Transitions */
@@ -260,6 +324,71 @@
 
         .scale-up { transform: scale(0.98); opacity: 0; animation: scaleUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes scaleUp { to { transform: scale(1); opacity: 1; } }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: #FFFFFF;
+            padding: 2.5rem;
+            border-radius: 2rem;
+            max-width: 500px;
+            width: 100%;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .dark .modal-content {
+            background: #1e293b;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .modal-close:hover {
+            background: rgba(0,0,0,0.05);
+        }
+        .dark .modal-close:hover {
+            background: rgba(255,255,255,0.1);
+        }
 
         ::-webkit-scrollbar { width: 0px; background: transparent; }
     </style>
@@ -331,7 +460,7 @@
         <div id="home-view" class="page-view flex flex-col items-center">
             
             <!-- Hero Section -->
-            <section class="w-full mb-6 relative flex items-start justify-center pt-0">
+            <section class="w-full mb-6 relative flex items-start justify-center pt-0 md:min-h-[95vh]">
                 <div class="glass-panel w-full rounded-b-[4rem] rounded-t-none pt-32 pb-12 md:pt-40 md:pb-16 flex flex-col items-center justify-center text-center scale-up shine-card">
                     
                     <!-- HERO LOGO -->
@@ -346,7 +475,7 @@
                             Presence First.
                         </h1>
                         <p class="text-sm md:text-xl font-bold uppercase tracking-[0.6em] mb-10 text-brand-navy dark:text-white">
-                            Committed to the Faithful.
+                            Disciples Making Disciples.
                         </p>
                         <button onclick="navigate('connect')" class="px-14 py-4 rounded-full font-black shadow-xl btn-brand pointer-events-auto text-xs tracking-widest uppercase">Experience Presence</button>
                     </div>
@@ -360,7 +489,7 @@
                         <div class="w-12 h-12 bg-stone-900 dark:bg-stone-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white dark:text-black">
                             <i data-lucide="sun" class="w-5 h-5"></i>
                         </div>
-                        <h3 class="text-xl font-extrabold mb-3 uppercase tracking-tight text-brand-navy dark:text-white">Divine Presence</h3>
+                        <h3 class="text-xl font-extrabold mb-3 uppercase tracking-tight text-brand-navy dark:text-white">Presence-Based</h3>
                         <p class="text-sm leading-relaxed font-bold">A sanctuary designed for sincere worship and encounters with the living God.</p>
                     </div>
                     
@@ -574,35 +703,35 @@
                 <div class="w-full mb-12 reveal">
                     <h2 class="text-4xl font-black mb-8 text-center uppercase text-brand-navy dark:text-white">Your Next Step</h2>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <button class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
+                        <button onclick="openModal('about-modal')" class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
                             <i data-lucide="info" class="w-8 h-8 mx-auto mb-3 text-brand-navy dark:text-white group-hover:text-blue-500 transition-colors"></i>
                             <span class="block text-xs font-black uppercase">About 222</span>
                         </button>
-                         <button class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
+                         <button onclick="openModal('serve-modal')" class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
                             <i data-lucide="hand-heart" class="w-8 h-8 mx-auto mb-3 text-brand-navy dark:text-white group-hover:text-blue-500 transition-colors"></i>
                             <span class="block text-xs font-black uppercase">Serve</span>
                         </button>
-                        <button class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
+                        <button onclick="openModal('baptism-modal')" class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
                             <i data-lucide="droplets" class="w-8 h-8 mx-auto mb-3 text-brand-navy dark:text-white group-hover:text-blue-500 transition-colors"></i>
                             <span class="block text-xs font-black uppercase">Baptism</span>
                         </button>
-                        <button class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
+                        <button onclick="openModal('discipleship-modal')" class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
                             <i data-lucide="users" class="w-8 h-8 mx-auto mb-3 text-brand-navy dark:text-white group-hover:text-blue-500 transition-colors"></i>
                             <span class="block text-xs font-black uppercase">Discipleship</span>
                         </button>
-                        <button class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
+                        <button onclick="openModal('fellas-modal')" class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
                             <i data-lucide="user-check" class="w-8 h-8 mx-auto mb-3 text-brand-navy dark:text-white group-hover:text-blue-500 transition-colors"></i>
                             <span class="block text-xs font-black uppercase">Fellas-Ship</span>
                         </button>
-                        <button class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
+                        <button onclick="openModal('counseling-modal')" class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
                             <i data-lucide="heart-handshake" class="w-8 h-8 mx-auto mb-3 text-brand-navy dark:text-white group-hover:text-blue-500 transition-colors"></i>
                             <span class="block text-xs font-black uppercase">Counseling</span>
                         </button>
-                        <button class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
+                        <button onclick="openModal('kids-modal')" class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
                             <i data-lucide="baby" class="w-8 h-8 mx-auto mb-3 text-brand-navy dark:text-white group-hover:text-blue-500 transition-colors"></i>
                             <span class="block text-xs font-black uppercase">222 Kids</span>
                         </button>
-                        <button class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
+                        <button onclick="openModal('visit-modal')" class="glass-panel p-6 rounded-3xl text-center hover:bg-white/40 transition-all group">
                             <i data-lucide="calendar-check" class="w-8 h-8 mx-auto mb-3 text-brand-navy dark:text-white group-hover:text-blue-500 transition-colors"></i>
                             <span class="block text-xs font-black uppercase">Plan a Visit</span>
                         </button>
@@ -618,11 +747,11 @@
                     
                     <form onsubmit="handlePrayer(event)" class="space-y-4">
                         <div class="grid md:grid-cols-2 gap-4">
-                            <input type="text" placeholder="Your Name" required>
-                            <input type="email" placeholder="Email" required>
+                            <input id="p-name" type="text" placeholder="Your Name" required>
+                            <input id="p-email" type="email" placeholder="Email" required>
                         </div>
                         
-                        <select class="appearance-none" required>
+                        <select id="p-category" required class="cursor-pointer">
                             <option value="" disabled selected>Prayer Category (Optional)</option>
                             <option value="healing">Healing</option>
                             <option value="guidance">Guidance / Direction</option>
@@ -633,7 +762,7 @@
                             <option value="other">Other</option>
                         </select>
 
-                        <textarea placeholder="How can we pray with you?" rows="4" class="resize-none" required></textarea>
+                        <textarea id="p-message" placeholder="How can we pray with you?" rows="4" class="resize-none" required></textarea>
                         
                         <label class="flex items-center gap-3 px-2 cursor-pointer group">
                             <input type="checkbox" class="w-5 h-5 rounded border-gray-300 text-brand-navy focus:ring-brand-navy">
@@ -693,7 +822,7 @@
             <!-- Desktop Logo Column (Hidden on Mobile) -->
             <div class="hidden md:flex space-y-4 flex-col items-center md:items-start">
                 <img id="footer-logo" src="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/04fcc15e-1415-441a-b60f-6b52e29404e3/IMG_0290.png" 
-                     class="h-16 w-auto mb-4 object-contain">
+                     class="h-24 w-auto mb-4 object-contain">
                 <p class="text-xs font-black uppercase tracking-[0.4em] leading-loose text-brand-navy dark:text-white text-center md:text-left">Presence First. Disciples Forever.</p>
             </div>
             
@@ -710,7 +839,7 @@
                 <!-- Mobile Logo (Visible Mobile, Hidden Desktop) -->
                 <div class="flex md:hidden flex-col items-center justify-center pt-2">
                     <img id="mobile-footer-logo" src="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/04fcc15e-1415-441a-b60f-6b52e29404e3/IMG_0290.png" 
-                         class="h-12 w-auto object-contain hover:scale-105 transition-transform" onclick="navigate('home')">
+                         class="h-20 w-auto object-contain hover:scale-105 transition-transform" onclick="navigate('home')">
                 </div>
 
                 <div class="flex flex-col items-center">
@@ -725,17 +854,161 @@
             <div class="flex flex-col items-center gap-8">
                 <button onclick="navigate('connect')" class="btn-brand px-12 py-4 rounded-full text-[11px] font-black uppercase tracking-widest shadow-2xl w-fit shine-card">Connect</button>
                 <div class="flex gap-8 justify-center">
-                    <i data-lucide="instagram" class="w-6 h-6 hover:text-blue-600 cursor-pointer transition-colors text-brand-navy dark:text-white"></i>
-                    <i data-lucide="facebook" class="w-6 h-6 hover:text-blue-600 cursor-pointer transition-colors text-brand-navy dark:text-white"></i>
-                    <i data-lucide="youtube" class="w-6 h-6 hover:text-blue-600 cursor-pointer transition-colors text-brand-navy dark:text-white"></i>
+                    <a href="#" target="_blank" class="hover:scale-110 transition-transform">
+                        <i data-lucide="instagram" class="w-6 h-6 hover:text-blue-600 cursor-pointer transition-colors text-brand-navy dark:text-white"></i>
+                    </a>
+                    <a href="https://www.facebook.com/people/222-Church/61554264689321/" target="_blank" class="hover:scale-110 transition-transform">
+                        <i data-lucide="facebook" class="w-6 h-6 hover:text-blue-600 cursor-pointer transition-colors text-brand-navy dark:text-white"></i>
+                    </a>
+                    <a href="#" target="_blank" class="hover:scale-110 transition-transform">
+                        <i data-lucide="youtube" class="w-6 h-6 hover:text-blue-600 cursor-pointer transition-colors text-brand-navy dark:text-white"></i>
+                    </a>
                 </div>
             </div>
         </div>
         
-        <div class="max-w-7xl mx-auto pt-20 text-center text-[10px] font-black uppercase tracking-[1em] text-black dark:text-white">
+        <div class="max-w-7xl mx-auto pt-20 text-center text-[7px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[1em] text-black dark:text-white whitespace-nowrap overflow-x-hidden">
             &copy; 2026 222 Church, Inc. All Rights Reserved.
         </div>
     </footer>
+
+    <!-- Modals -->
+    
+    <!-- About 222 Modal -->
+    <div id="about-modal" class="modal-overlay" onclick="closeModal(this)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-close" onclick="closeModal(this.closest('.modal-overlay'))">
+                <i data-lucide="x" class="w-6 h-6 text-brand-navy dark:text-white"></i>
+            </div>
+            <h2 class="text-2xl font-black mb-4 uppercase text-brand-navy dark:text-white">About 222 Church</h2>
+            <p class="mb-8 font-medium text-gray-600 dark:text-gray-300 leading-relaxed">
+                222 Church is a Spirit-filled, presence-based worship center and sending church, rooted in Acts 2:42 and 2 Timothy 2:2. We gather to worship, grow as disciples, and carry the gospel into everyday life. Learn more about our story, vision, and leadership.
+            </p>
+            <a href="mailto:222churches@gmail.com?subject=Interested in About 222 Church&body=I would like to learn more about 222 Church." 
+               class="flex items-center justify-center gap-2 w-full py-4 rounded-xl font-black text-xs btn-brand shadow-lg tracking-widest uppercase">
+               <i data-lucide="mail" class="w-4 h-4"></i> Email Us About 222
+            </a>
+        </div>
+    </div>
+
+    <!-- Serve Modal -->
+    <div id="serve-modal" class="modal-overlay" onclick="closeModal(this)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-close" onclick="closeModal(this.closest('.modal-overlay'))">
+                <i data-lucide="x" class="w-6 h-6 text-brand-navy dark:text-white"></i>
+            </div>
+            <h2 class="text-2xl font-black mb-4 uppercase text-brand-navy dark:text-white">Serve</h2>
+            <p class="mb-8 font-medium text-gray-600 dark:text-gray-300 leading-relaxed">
+                We believe every believer is called to serve. At 222 Church, there are opportunities to join ministry teams, serve in the community, and use your gifts for God’s glory. Let us know your interest and we’ll help you get plugged in.
+            </p>
+            <a href="mailto:222churches@gmail.com?subject=Interested in Serving at 222 Church&body=I am interested in serving at 222 Church. Please contact me with next steps." 
+               class="flex items-center justify-center gap-2 w-full py-4 rounded-xl font-black text-xs btn-brand shadow-lg tracking-widest uppercase">
+               <i data-lucide="mail" class="w-4 h-4"></i> Email to Serve
+            </a>
+        </div>
+    </div>
+
+    <!-- Baptism Modal -->
+    <div id="baptism-modal" class="modal-overlay" onclick="closeModal(this)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-close" onclick="closeModal(this.closest('.modal-overlay'))">
+                <i data-lucide="x" class="w-6 h-6 text-brand-navy dark:text-white"></i>
+            </div>
+            <h2 class="text-2xl font-black mb-4 uppercase text-brand-navy dark:text-white">Baptism</h2>
+            <p class="mb-8 font-medium text-gray-600 dark:text-gray-300 leading-relaxed">
+                Baptism is a public declaration of faith in Jesus. If you’re ready to take this next step or want to learn more, we’d love to connect and answer your questions.
+            </p>
+            <a href="mailto:222churches@gmail.com?subject=Interested in Baptism at 222 Church&body=I am interested in baptism at 222 Church. Please contact me with details." 
+               class="flex items-center justify-center gap-2 w-full py-4 rounded-xl font-black text-xs btn-brand shadow-lg tracking-widest uppercase">
+               <i data-lucide="mail" class="w-4 h-4"></i> Email About Baptism
+            </a>
+        </div>
+    </div>
+
+    <!-- Discipleship Modal -->
+    <div id="discipleship-modal" class="modal-overlay" onclick="closeModal(this)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-close" onclick="closeModal(this.closest('.modal-overlay'))">
+                <i data-lucide="x" class="w-6 h-6 text-brand-navy dark:text-white"></i>
+            </div>
+            <h2 class="text-2xl font-black mb-4 uppercase text-brand-navy dark:text-white">Discipleship</h2>
+            <p class="mb-8 font-medium text-gray-600 dark:text-gray-300 leading-relaxed">
+                Discipleship is at the heart of 222 Church. We offer relational, biblical teaching and mentorship to help you grow in faith and walk in your calling. Ask about our discipleship groups and resources.
+            </p>
+            <a href="mailto:222churches@gmail.com?subject=Interested in Discipleship at 222 Church&body=I want to know more about discipleship at 222 Church." 
+               class="flex items-center justify-center gap-2 w-full py-4 rounded-xl font-black text-xs btn-brand shadow-lg tracking-widest uppercase">
+               <i data-lucide="mail" class="w-4 h-4"></i> Email About Discipleship
+            </a>
+        </div>
+    </div>
+
+    <!-- Fellas-Ship Modal -->
+    <div id="fellas-modal" class="modal-overlay" onclick="closeModal(this)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-close" onclick="closeModal(this.closest('.modal-overlay'))">
+                <i data-lucide="x" class="w-6 h-6 text-brand-navy dark:text-white"></i>
+            </div>
+            <h2 class="text-2xl font-black mb-4 uppercase text-brand-navy dark:text-white">Fellas-Ship</h2>
+            <p class="mb-8 font-medium text-gray-600 dark:text-gray-300 leading-relaxed">
+                Fellas-Ship is our men’s ministry—gathering brothers for community, encouragement, and spiritual growth. Want to join or learn more? Reach out below.
+            </p>
+            <a href="mailto:222churches@gmail.com?subject=Interested in Fellas-Ship at 222 Church&body=I am interested in Fellas-Ship at 222 Church." 
+               class="flex items-center justify-center gap-2 w-full py-4 rounded-xl font-black text-xs btn-brand shadow-lg tracking-widest uppercase">
+               <i data-lucide="mail" class="w-4 h-4"></i> Email About Fellas-Ship
+            </a>
+        </div>
+    </div>
+
+    <!-- Counseling Modal -->
+    <div id="counseling-modal" class="modal-overlay" onclick="closeModal(this)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-close" onclick="closeModal(this.closest('.modal-overlay'))">
+                <i data-lucide="x" class="w-6 h-6 text-brand-navy dark:text-white"></i>
+            </div>
+            <h2 class="text-2xl font-black mb-4 uppercase text-brand-navy dark:text-white">Counseling</h2>
+            <p class="mb-8 font-medium text-gray-600 dark:text-gray-300 leading-relaxed">
+                We offer confidential, biblically-based counseling and support for individuals and families. Let us know your needs and we’ll connect you with a caring leader.
+            </p>
+            <a href="mailto:222churches@gmail.com?subject=Interested in Counseling at 222 Church&body=I would like to request counseling or learn more about counseling at 222 Church." 
+               class="flex items-center justify-center gap-2 w-full py-4 rounded-xl font-black text-xs btn-brand shadow-lg tracking-widest uppercase">
+               <i data-lucide="mail" class="w-4 h-4"></i> Email About Counseling
+            </a>
+        </div>
+    </div>
+
+    <!-- 222 Kids Modal -->
+    <div id="kids-modal" class="modal-overlay" onclick="closeModal(this)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-close" onclick="closeModal(this.closest('.modal-overlay'))">
+                <i data-lucide="x" class="w-6 h-6 text-brand-navy dark:text-white"></i>
+            </div>
+            <h2 class="text-2xl font-black mb-4 uppercase text-brand-navy dark:text-white">222 Kids</h2>
+            <p class="mb-8 font-medium text-gray-600 dark:text-gray-300 leading-relaxed">
+                222 Kids is our children’s ministry—safe, fun, and focused on helping kids know and love Jesus. Contact us to learn about programs, safety, and how your family can get involved.
+            </p>
+            <a href="mailto:222churches@gmail.com?subject=Interested in 222 Kids Ministry&body=I want to learn about 222 Kids Ministry at 222 Church." 
+               class="flex items-center justify-center gap-2 w-full py-4 rounded-xl font-black text-xs btn-brand shadow-lg tracking-widest uppercase">
+               <i data-lucide="mail" class="w-4 h-4"></i> Email About 222 Kids
+            </a>
+        </div>
+    </div>
+
+    <!-- Plan a Visit Modal -->
+    <div id="visit-modal" class="modal-overlay" onclick="closeModal(this)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-close" onclick="closeModal(this.closest('.modal-overlay'))">
+                <i data-lucide="x" class="w-6 h-6 text-brand-navy dark:text-white"></i>
+            </div>
+            <h2 class="text-2xl font-black mb-4 uppercase text-brand-navy dark:text-white">Plan a Visit</h2>
+            <p class="mb-8 font-medium text-gray-600 dark:text-gray-300 leading-relaxed">
+                We’d love to welcome you! Let us know when you’re planning to visit and we’ll make sure someone is ready to greet you, answer questions, and help you feel at home.
+            </p>
+            <a href="mailto:222churches@gmail.com?subject=Plan a Visit to 222 Church&body=I am planning a visit to 222 Church. Please send me info about service times and what to expect." 
+               class="flex items-center justify-center gap-2 w-full py-4 rounded-xl font-black text-xs btn-brand shadow-lg tracking-widest uppercase">
+               <i data-lucide="mail" class="w-4 h-4"></i> Plan a Visit Email
+            </a>
+        </div>
+    </div>
 
     <script>
         lucide.createIcons();
@@ -822,17 +1095,42 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        function closeModal(element) {
+            // Allows closing by clicking overlay (this) or close button
+            const modal = element.classList.contains('modal-overlay') ? element : element.closest('.modal-overlay');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto'; 
+            }
+        }
+
         function handlePrayer(e) {
             e.preventDefault();
+            const name = document.getElementById('p-name').value;
+            const email = document.getElementById('p-email').value;
+            const category = document.getElementById('p-category').value;
+            const message = document.getElementById('p-message').value;
+            
+            const subject = encodeURIComponent(`Prayer Request from ${name} [${category}]`);
+            const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nCategory: ${category}\n\nPrayer Request:\n${message}`);
+            
             const btn = e.target.querySelector('button');
             const originalText = btn.innerText;
-            btn.innerText = "REQUEST SENT";
-            btn.style.backgroundColor = "#3B82F6";
+            btn.innerText = "OPENING EMAIL...";
+            
             setTimeout(() => {
+                window.location.href = `mailto:222churches@gmail.com?subject=${subject}&body=${body}`;
                 btn.innerText = originalText;
-                btn.style.backgroundColor = "";
                 e.target.reset();
-            }, 3000);
+            }, 1000);
         }
     </script>
 </body>
