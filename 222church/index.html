@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>222 Church | Presence-Based Worship Center</title>
     <meta name="description" content="A Presence-Based Worship Center and Sending Church. Rooted in Acts 2:42 and 2 Timothy 2:2.">
+
+    <!-- PWA / Mobile Meta -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0F172A">
+    <link rel="manifest" href="manifest.json">
     
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="https://us.chat-img.sintra.ai/807c1317-1ece-4cd6-b4d7-bbc4fd5ac33e/04fcc15e-1415-441a-b60f-6b52e29404e3/IMG_0290.png">
@@ -958,7 +964,7 @@
             </div>
         </div>
         
-        <div class="max-w-7xl mx-auto pt-20 text-center text-[7px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[1em] text-black dark:text-white whitespace-nowrap overflow-x-hidden">
+        <div class="max-w-7xl mx-auto pt-20 text-center text-[10px] md:text-xs font-black uppercase tracking-[0.2em] md:tracking-[1em] text-black dark:text-white whitespace-nowrap overflow-x-hidden">
             &copy; 2026 222 Church, Inc. All Rights Reserved.
         </div>
     </footer>
@@ -1124,10 +1130,10 @@
         window.addEventListener('scroll', () => {
             const currentScrollY = window.scrollY;
             if (currentScrollY > lastScrollY && currentScrollY > 100) {
-                header.style.transform = 'translateX(-110%)';
+                header.style.transform = 'translateY(-200%)';
                 header.style.opacity = '0';
             } else {
-                header.style.transform = 'translateX(0)';
+                header.style.transform = 'translateY(0)';
                 header.style.opacity = '1';
             }
             lastScrollY = currentScrollY;
