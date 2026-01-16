@@ -1,574 +1,464 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth antialiased">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Container Hub v3.0 | Strategic Procurement Edition</title>
+    <title>Container Hub v5.4 | Direct Dial Build</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Manrope', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            navy: 'var(--brand-navy)',
+                            accent: 'var(--brand-accent)',
+                            gold: 'var(--brand-gold)',
+                        }
+                    },
+                    animation: {
+                        'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    },
+                    keyframes: {
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-        
-        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
-
-        .chart-container {
-            position: relative;
-            width: 100%;
-            height: 300px;
+        :root {
+            --brand-navy: #0F172A;
+            --brand-accent: #D97706;
+            --brand-gold: #F59E0B;
+            --color-bg: #F8FAFC;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --glass-edge: rgba(255, 255, 255, 0.9);
+            --glass-shadow: rgba(15, 23, 42, 0.06);
+            --glass-blur: 24px;
+            --orb-1: #F59E0B;
+            --orb-2: #3B82F6;
+            --mouse-x: 50%;
+            --mouse-y: 50%;
+            --accent-rgb: 217, 119, 6;
         }
 
-        canvas { cursor: default; }
-        .pointer-cursor { cursor: pointer !important; }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .dark {
+            --color-bg: #020617;
+            --glass-bg: rgba(15, 23, 42, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-edge: rgba(255, 255, 255, 0.15);
+            --glass-shadow: rgba(0, 0, 0, 0.6);
         }
 
-        .animate-slide-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        body { font-family: 'Manrope', sans-serif; background-color: var(--color-bg); color: var(--text-body); transition: background-color 0.8s ease; overflow-x: hidden; }
         
-        .tab-active { border-bottom: 3px solid #d97706; color: #d97706; }
+        #glow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; overflow: hidden; }
+        .glow-orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.15; animation: float 25s infinite alternate ease-in-out; transition: background 1s ease; }
+        .orb-1 { width: 80vw; height: 80vw; top: -20%; left: -20%; background: var(--orb-1); } 
+        .orb-2 { width: 60vw; height: 60vw; bottom: -10%; right: -10%; background: var(--orb-2); } 
+        @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(5%, 5%) scale(1.05); } }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-top: 1px solid var(--glass-edge); 
+            box-shadow: 0 8px 32px var(--glass-shadow);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-link.active { background: rgba(var(--accent-rgb), 0.15); color: var(--brand-accent); font-weight: 800; }
+        
+        .shine-card { position: relative; overflow: hidden; }
+        .shine-card::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.4) 0%, transparent 60%);
+            opacity: 0; transition: opacity 0.5s ease; pointer-events: none; mix-blend-mode: overlay;
+        }
+        .shine-card:hover::after { opacity: 1; }
+
+        .chart-container { position: relative; height: 280px; width: 100%; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--brand-accent); border-radius: 10px; }
+        
+        .tab-btn.active { background: var(--brand-accent); color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .data-table th { @apply text-[10px] font-black uppercase tracking-widest text-slate-400 pb-4 text-left; }
+        .data-table td { @apply py-4 border-t border-black/5 dark:border-white/5 text-sm font-bold; }
     </style>
 </head>
-<body class="bg-[#fcfaf8] text-slate-900 leading-tight">
+<body class="antialiased selection:bg-brand-accent selection:text-white text-slate-800 dark:text-slate-200">
+    
+    <div id="glow-container">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+    </div>
 
-    <!-- Header Navigation -->
-    <nav class="bg-white border-b border-stone-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20 items-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-amber-600 rounded-xl flex items-center justify-center shadow-xl shadow-amber-200">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                    </div>
-                    <div>
-                        <span class="text-2xl font-black tracking-tighter text-slate-900 block leading-none">Container<span class="text-amber-600">Hub</span></span>
-                        <span class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Strategic Procurement v3.0</span>
-                    </div>
+    <!-- Navigation -->
+    <header class="fixed top-6 left-0 right-0 z-[100] flex justify-center px-4 pointer-events-none animate-slide-up">
+        <div class="pointer-events-auto glass-panel rounded-full px-6 py-3 flex items-center justify-between w-full max-w-6xl shadow-2xl">
+            <a href="javascript:void(0)" onclick="navigate('home')" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 bg-brand-accent rounded-xl flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-all">
+                    <i data-lucide="container" class="w-5 h-5"></i>
                 </div>
-                <div class="hidden lg:flex items-center space-x-8">
-                    <button onclick="scrollToSection('playbook')" class="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-amber-600 transition">Strategic Playbook</button>
-                    <button onclick="scrollToSection('directory')" class="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-amber-600 transition">Provider Directory</button>
-                    <button onclick="scrollToSection('prep')" class="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-amber-600 transition">Site Prep</button>
-                    <div class="h-6 w-px bg-slate-200"></div>
-                    <div class="text-right">
-                        <div class="text-[10px] font-black text-slate-900">FAIRBURN RADIAL</div>
-                        <div class="text-[10px] font-medium text-slate-400">Zip: 30213</div>
+                <div class="flex flex-col">
+                    <span class="font-black tracking-tighter text-brand-navy dark:text-white uppercase text-base leading-none transition-colors">Container<span class="text-brand-accent">Hub</span></span>
+                    <span class="text-[9px] font-bold tracking-[0.1em] opacity-50 uppercase">Fairburn Index v5.4</span>
+                </div>
+            </a>
+
+            <nav class="hidden lg:flex items-center gap-2 bg-slate-100/50 dark:bg-white/5 p-1.5 rounded-full">
+                <a href="javascript:void(0)" onclick="navigate('home')" class="px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest nav-link active transition-all" id="link-home">Radar</a>
+                <a href="javascript:void(0)" onclick="navigate('playbook')" class="px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest nav-link transition-all" id="link-playbook">Playbook</a>
+                <a href="javascript:void(0)" onclick="navigate('directory')" class="px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest nav-link transition-all" id="link-directory">Directory</a>
+                <a href="javascript:void(0)" onclick="navigate('logistics')" class="px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest nav-link transition-all" id="link-logistics">Site Prep</a>
+            </nav>
+
+            <div class="flex items-center gap-2">
+                <button onclick="randomizeTheme()" class="p-3 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-all group" aria-label="Random Theme">
+                    <i data-lucide="wand-2" class="w-4 h-4 group-hover:rotate-12"></i>
+                </button>
+                <button onclick="toggleDarkMode()" class="p-3 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-all" aria-label="Theme Toggle">
+                    <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
+                    <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-brand-gold"></i>
+                </button>
+                <a href="javascript:void(0)" onclick="navigate('verdict')" class="hidden sm:flex px-8 py-3 rounded-full text-[10px] font-black bg-brand-navy dark:bg-brand-accent text-white uppercase tracking-[0.2em] shadow-lg">
+                    Verdict
+                </a>
+                <button onclick="toggleMobileMenu()" class="lg:hidden p-3 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Centered Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-[110] bg-white/95 dark:bg-[#020617]/98 backdrop-blur-xl translate-y-[-100%] opacity-0 pointer-events-none flex flex-col items-center justify-center transition-all duration-500">
+        <button onclick="toggleMobileMenu()" class="absolute top-10 right-10 p-4 rounded-full bg-slate-100 dark:bg-white/10"><i data-lucide="x" class="w-6 h-6"></i></button>
+        <nav class="flex flex-col items-center gap-10 w-full px-8 text-center">
+            <a href="javascript:void(0)" onclick="navigate('home')" class="text-4xl font-black uppercase tracking-tighter hover:text-brand-accent transition-colors">Radar</a>
+            <a href="javascript:void(0)" onclick="navigate('playbook')" class="text-4xl font-black uppercase tracking-tighter hover:text-brand-accent transition-colors">Playbook</a>
+            <a href="javascript:void(0)" onclick="navigate('directory')" class="text-4xl font-black uppercase tracking-tighter hover:text-brand-accent transition-colors">Directory</a>
+            <a href="javascript:void(0)" onclick="navigate('logistics')" class="text-4xl font-black uppercase tracking-tighter hover:text-brand-accent transition-colors">Site Prep</a>
+            <div class="w-32 h-1 bg-slate-200 dark:bg-white/10 my-2 rounded-full"></div>
+            <a href="javascript:void(0)" onclick="navigate('verdict')" class="w-full max-w-xs bg-brand-accent py-6 rounded-3xl text-center font-black uppercase tracking-widest text-white shadow-2xl">Recommendation</a>
+        </nav>
+    </div>
+
+    <main id="main-content" class="pt-36 pb-24 max-w-7xl mx-auto px-4 sm:px-6">
+
+        <!-- RADAR VIEW -->
+        <div id="home-view" class="page-view animate-slide-up">
+            <div class="max-w-6xl mx-auto">
+                <div class="mb-16 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-brand-accent/10 text-[10px] font-black uppercase tracking-widest text-brand-accent mb-6 border border-brand-accent/20">
+                        <span class="w-2 h-2 rounded-full bg-brand-accent animate-pulse-fast"></span>
+                        Intermodal Focus: Zip 30213
+                    </div>
+                    <h1 class="text-6xl md:text-8xl font-black tracking-tighter text-brand-navy dark:text-white mb-6 leading-none">
+                        Market <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-accent to-brand-gold">Intelligence.</span>
+                    </h1>
+                    <p class="text-xl font-bold opacity-60 max-w-3xl leading-relaxed">
+                        Exhaustive analysis of container acquisition near **5390 Cascade Palmetto Hwy**. Sourcing inventory levels from Newnan, Conley, and Morrow depots.
+                    </p>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 glass-panel p-10 rounded-[3rem] shine-card">
+                        <div class="flex justify-between items-center mb-8">
+                            <h3 class="text-lg font-black uppercase tracking-tighter">Mileage Heatmap</h3>
+                            <span class="text-[9px] font-black opacity-30 uppercase tracking-[0.2em]">Radius Check</span>
+                        </div>
+                        <div class="chart-container"><canvas id="distChart"></canvas></div>
+                    </div>
+                    <div class="glass-panel p-10 rounded-[3rem] bg-brand-navy text-white relative overflow-hidden flex flex-col">
+                        <div class="relative z-10">
+                            <h3 class="text-lg font-black uppercase tracking-tighter mb-8">Asset Breakdown</h3>
+                            <div class="chart-container !h-[220px] mb-8"><canvas id="mixChart"></canvas></div>
+                            <div class="space-y-4 pt-6 border-t border-white/10 text-[10px] font-black uppercase">
+                                <div class="flex justify-between"><span>RTO Availability</span><span class="text-brand-accent">60% Of Yards</span></div>
+                                <div class="flex justify-between"><span>Freight Base</span><span>$75 + Load Mile</span></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        
-        <!-- Strategic Overview -->
-        <header class="mb-16">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900 text-white text-[10px] font-black uppercase tracking-[0.2em] mb-6">
-                <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
-                Executive Summary: Priority Ranking Active
-            </div>
-            <h1 class="text-6xl font-black tracking-tighter text-slate-900 mb-6 italic">
-                The Fairburn <span class="text-amber-600 underline decoration-slate-200 underline-offset-8">Acquisition</span> Report
-            </h1>
-            <p class="text-xl text-slate-500 font-medium max-w-4xl leading-relaxed">
-                Logistics corridor analysis for **5390 Cascade Palmetto Hwy**. This tool deconstructs the trade-offs between 40ft High Cube and dual 20ft modularity, optimized for the South Atlanta Intermodal Nexus.
-            </p>
-        </header>
+        <!-- PLAYBOOK VIEW -->
+        <div id="playbook-view" class="page-view hidden animate-slide-up">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="text-5xl md:text-7xl font-black tracking-tighter uppercase mb-6 leading-none italic">Strategic <span class="text-brand-accent">Playbook.</span></h2>
+                    <p class="text-xl font-bold opacity-60">Asset Selection & Financial Delta</p>
+                </div>
 
-        <!-- Playbook Module (NEW: VERBATIM REPORT DATA) -->
-        <section id="playbook" class="mb-20 scroll-mt-10">
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                <div class="lg:col-span-3 bg-white border border-stone-200 rounded-[3rem] p-10 shadow-sm relative overflow-hidden">
-                    <h2 class="text-3xl font-black mb-8 tracking-tighter italic">Strategic <span class="text-amber-600">Playbook</span></h2>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        <div>
-                            <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-4">01. Asset Comparison</h4>
-                            <div class="space-y-4">
-                                <div class="p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                                    <div class="flex justify-between items-center mb-1">
-                                        <span class="font-black text-sm">40ft High Cube</span>
-                                        <span class="text-green-600 text-[10px] font-black italic">RECOMMENDED VALUE</span>
+                <div class="grid lg:grid-cols-2 gap-12 mb-12">
+                    <div class="glass-panel p-10 md:p-14 rounded-[4rem] shine-card">
+                        <h3 class="text-3xl font-black tracking-tighter uppercase mb-8 italic">The $1,200 <span class="text-brand-accent">Delta</span></h3>
+                        <table class="w-full data-table">
+                            <thead><tr><th>Comparison</th><th>1x 40ft HC</th><th>2x 20ft Std</th></tr></thead>
+                            <tbody>
+                                <tr><td>Height</td><td>9ft 6in</td><td>8ft 6in</td></tr>
+                                <tr><td>Interior Volume</td><td>~2,694 cu ft</td><td>~2,344 cu ft</td></tr>
+                                <tr><td>Strategy</td><td class="text-brand-accent">Best Value</td><td>35-50% Premium</td></tr>
+                            </tbody>
+                        </table>
+                        <p class="mt-8 p-6 bg-slate-100 dark:bg-white/5 rounded-3xl text-sm font-bold opacity-70 leading-relaxed italic">
+                            "Buying two 20ft units typically incurs dual dual delivery mechanisms and higher manufacturing costs per square foot."
+                        </p>
+                    </div>
+
+                    <div class="glass-panel p-10 md:p-14 rounded-[4rem] bg-brand-navy text-white relative overflow-hidden">
+                        <div class="relative z-10">
+                            <h3 class="text-3xl font-black tracking-tighter uppercase mb-8 italic text-brand-gold">RTO Mechanics</h3>
+                            <div class="space-y-6">
+                                <div class="flex gap-6">
+                                    <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center font-black text-brand-accent text-xl">R</div>
+                                    <div>
+                                        <p class="text-sm font-black uppercase text-brand-gold">Rental Purchase Agreement</p>
+                                        <p class="text-xs opacity-60 leading-relaxed italic">"Title remains with yard until final payment. Implied multipliers range 2.0x to 2.5x."</p>
                                     </div>
-                                    <p class="text-xs text-slate-500 font-medium">Offers +15% Volume and +1ft Height. Lowest price per cu. ft. (~$2,500 cash).</p>
                                 </div>
-                                <div class="p-5 bg-stone-50 rounded-2xl border border-stone-100 opacity-60">
-                                    <div class="flex justify-between items-center mb-1">
-                                        <span class="font-black text-sm">Two 20ft Standard</span>
-                                        <span class="text-amber-700 text-[10px] font-black italic">35-50% PREMIUM</span>
+                                <div class="flex gap-6">
+                                    <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center font-black text-brand-accent text-xl">P</div>
+                                    <div>
+                                        <p class="text-sm font-black uppercase text-white">Early Payoff Strategy</p>
+                                        <p class="text-xs opacity-60 leading-relaxed">Execute the 90-day "same as cash" option to avoid long-tail rental factors.</p>
                                     </div>
-                                    <p class="text-xs text-slate-500 font-medium">Incurs asset premium (~$1,200 extra) and double delivery fees.</p>
                                 </div>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-4">02. Grading Standards</h4>
-                            <div class="space-y-3">
-                                <div class="flex items-start gap-3">
-                                    <span class="w-6 h-6 shrink-0 bg-amber-600 text-white rounded-lg flex items-center justify-center text-[10px] font-black">WWT</span>
-                                    <div><p class="text-xs font-black">Wind & Water Tight</p><p class="text-[10px] text-slate-400">Industry standard for storage. Guaranteed leak-proof.</p></div>
-                                </div>
-                                <div class="flex items-start gap-3">
-                                    <span class="w-6 h-6 shrink-0 bg-slate-900 text-white rounded-lg flex items-center justify-center text-[10px] font-black">1TR</span>
-                                    <div><p class="text-xs font-black">One-Trip (New)</p><p class="text-[10px] text-slate-400">Pristine floors. Best for visibility on Cascade Hwy.</p></div>
-                                </div>
-                                <div class="flex items-start gap-3">
-                                    <span class="w-6 h-6 shrink-0 bg-slate-200 text-slate-500 rounded-lg flex items-center justify-center text-[10px] font-black">IICL</span>
-                                    <div><p class="text-xs font-black">Institute Repair Standard</p><p class="text-[10px] text-slate-400">Structurally superior; strict repair benchmarks.</p></div>
+                                <div class="mt-10 p-6 bg-white/5 rounded-3xl border border-white/10 text-xs font-bold leading-loose">
+                                    ISO Corten Steel • 1-1/8” Marine Plywood Floors • 58,000lb Structural Capacity
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="bg-amber-600 rounded-[3rem] p-10 text-white shadow-2xl shadow-amber-200/50">
-                    <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-amber-200 mb-6">Financial Verdict</h4>
-                    <p class="text-sm font-medium mb-8 leading-relaxed italic">"RTO multipliers range 2.0x to 2.5x. Strategy: Use RTO for entry, then execute 90-day Early Payoff to kill the interest tail."</p>
-                    <div class="pt-6 border-t border-white/20">
-                        <div class="text-[10px] font-black uppercase text-amber-200">Cash Target</div>
-                        <div class="text-3xl font-black">$2,300 - $2,800</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Interactive Charts -->
-        <section id="analytics" class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16 scroll-mt-24">
-            <div class="lg:col-span-2 bg-white p-10 rounded-[3rem] border border-stone-200 shadow-sm relative overflow-hidden">
-                <div class="flex items-center justify-between mb-8">
-                    <div>
-                        <h2 class="text-2xl font-black italic">Logistics Radar</h2>
-                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Miles from 5390 Cascade Palmetto Hwy</p>
-                    </div>
-                    <span class="bg-slate-100 px-3 py-1 rounded-full text-[10px] font-black uppercase text-slate-500 tracking-tighter">Proximity Data Verified</span>
-                </div>
-                <div class="chart-container">
-                    <canvas id="distanceChart"></canvas>
-                </div>
-            </div>
-            <div class="bg-slate-900 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
-                <h3 class="text-2xl font-black italic">Market Mix</h3>
-                <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mt-1 mb-10">Container RTO vs. Direct Lease</p>
-                <div class="chart-container" style="height: 200px;">
-                    <canvas id="serviceChart"></canvas>
-                </div>
-                <div class="mt-8 space-y-3">
-                    <div class="flex justify-between items-center text-[10px] font-black uppercase border-t border-slate-800 pt-6">
-                        <span class="text-slate-500">RTO ACCESSIBILITY</span>
-                        <span class="text-amber-500">3/5 VERIFIED PROVIDERS</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Directory Filter -->
-        <div class="py-6 bg-[#fcfaf8] mb-8">
-            <div class="flex flex-col md:flex-row gap-4">
-                <div class="flex-grow relative">
-                    <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7s-12 0-7 7 7 0 01-7-7z"></path></svg>
-                    </span>
-                    <input type="text" id="searchInput" placeholder="Search Jenco, Atlanta Container, Conestoga, etc..." class="w-full pl-14 pr-6 py-5 bg-white border border-stone-200 rounded-3xl focus:ring-8 focus:ring-amber-500/5 focus:border-amber-500 outline-none shadow-sm transition-all font-bold placeholder:text-slate-300">
-                </div>
-                <div class="flex gap-2">
-                    <button onclick="toggleType('Container')" id="btnContainer" class="px-8 py-5 bg-amber-600 text-white rounded-3xl text-[10px] font-black uppercase tracking-widest transition shadow-lg">Containers</button>
-                    <button onclick="toggleType('Workshop')" id="btnWorkshop" class="px-8 py-5 bg-white border border-stone-200 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition shadow-sm">Workshop Builders</button>
-                    <button onclick="resetFilters()" class="p-5 bg-slate-900 text-white rounded-3xl hover:bg-slate-800 transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Directory Grid -->
-        <section id="directory" class="mb-20 scroll-mt-10">
-            <div id="providerGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Injected via JS -->
-            </div>
-        </section>
-
-        <!-- Provider Audit Panel -->
-        <section id="details" class="scroll-mt-10 mb-20">
-            <div id="detailPanel" class="bg-white rounded-[3.5rem] border border-stone-200 shadow-2xl overflow-hidden min-h-[600px]">
-                <div class="flex items-center justify-center p-24 text-center" id="detailPlaceholder">
-                    <div class="max-w-xs">
-                        <div class="w-24 h-24 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-8 text-4xl shadow-inner shadow-amber-100">📋</div>
-                        <h2 class="text-3xl font-black text-slate-900 mb-3 tracking-tighter italic">Technical Audit</h2>
-                        <p class="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em]">Load a provider to view verbatim report findings</p>
+        <!-- DIRECTORY VIEW: CALL ALL OPTIONS ENABLED -->
+        <div id="directory-view" class="page-view hidden animate-slide-up">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex flex-col xl:flex-row justify-between items-end mb-12 gap-8">
+                    <div>
+                        <h2 class="text-5xl font-black tracking-tighter uppercase leading-none">Ranked <span class="text-brand-accent italic">Yards.</span></h2>
+                        <p class="text-[10px] font-black uppercase opacity-40 tracking-[0.4em] mt-4">Direct Communication Protocol Active</p>
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+                        <div class="relative w-full md:w-72">
+                            <input type="text" id="dir-search" placeholder="Search yards or features..." oninput="handleSearch(this.value)" 
+                                   class="w-full bg-slate-200 dark:bg-white/10 rounded-full pl-12 pr-6 py-4 text-xs font-bold uppercase tracking-widest outline-none focus:ring-4 focus:ring-brand-accent/20 transition-all text-brand-navy dark:text-white">
+                            <i data-lucide="search" class="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 opacity-40"></i>
+                        </div>
+                        <div class="flex bg-slate-200 dark:bg-white/10 p-1.5 rounded-full">
+                            <button onclick="setFilter('Container')" id="dir-container" class="tab-btn px-8 py-3 rounded-full text-[10px] font-black active transition-all">Containers</button>
+                            <button onclick="setFilter('Workshop')" id="dir-workshop" class="tab-btn px-8 py-3 rounded-full text-[10px] font-black opacity-40 transition-all">Workshops</button>
+                        </div>
                     </div>
                 </div>
-                <div id="detailContent" class="hidden animate-slide-up">
-                    <!-- Injected via JS -->
-                </div>
+                <div id="dir-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[500px]"></div>
             </div>
-        </section>
+        </div>
 
-        <!-- Site Preparation Guide (NEW: VERBATIM REPORT DATA) -->
-        <section id="prep" class="bg-slate-900 rounded-[4rem] p-12 md:p-20 text-white scroll-mt-10 relative overflow-hidden">
-            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-                <div>
-                    <div class="text-amber-500 font-black uppercase text-[10px] tracking-[0.4em] mb-4">Engineering Protocol</div>
-                    <h2 class="text-5xl font-black tracking-tighter mb-8 italic leading-tight">Site <span class="text-amber-600">Preparation</span><br>Guide for 30213</h2>
-                    <p class="text-slate-400 font-medium text-lg leading-relaxed mb-10">Cascade Palmetto Hwy features Georgia red clay. Do not place assets directly on ground. Follow this deployment sequence:</p>
-                    
-                    <ul class="space-y-6">
-                        <li class="flex gap-6 items-start">
-                            <span class="w-10 h-10 shrink-0 bg-white/10 rounded-2xl flex items-center justify-center font-black text-amber-500">01</span>
-                            <div><p class="font-black text-lg">Leveling & Racking</p><p class="text-slate-500 text-sm">Site must be perfectly level. If the container is "twisted," doors will not close.</p></div>
-                        </li>
-                        <li class="flex gap-6 items-start">
-                            <span class="w-10 h-10 shrink-0 bg-white/10 rounded-2xl flex items-center justify-center font-black text-amber-500">02</span>
-                            <div><p class="font-black text-lg">Elevation Blocks</p><p class="text-slate-500 text-sm">Use 6"x6" pressure-treated ties or concrete blocks at 4 corners to prevent floor rot.</p></div>
-                        </li>
-                        <li class="flex gap-6 items-start">
-                            <span class="w-10 h-10 shrink-0 bg-white/10 rounded-2xl flex items-center justify-center font-black text-amber-500">03</span>
-                            <div><p class="font-black text-lg">Gravel Pad (CR-6)</p><p class="text-slate-500 text-sm">Prevents the 15-ton delivery truck from sinking into clay during wet cycles.</p></div>
-                        </li>
-                    </ul>
-                </div>
-                <div class="bg-white/5 border border-white/10 rounded-[3rem] p-10 backdrop-blur-3xl">
-                    <h4 class="text-amber-500 font-black uppercase text-[10px] tracking-[0.3em] mb-10 text-center">Logistics Estimator</h4>
-                    <div class="space-y-8">
-                        <div>
-                            <label class="block text-[10px] font-black uppercase text-slate-500 tracking-widest mb-3">Select Loading Yard</label>
-                            <select id="estimatorProvider" class="w-full bg-slate-800 text-white p-6 rounded-2xl font-bold border-none ring-1 ring-white/10 outline-none focus:ring-amber-500 transition cursor-pointer appearance-none text-lg">
-                                <!-- Options -->
-                            </select>
-                        </div>
-                        <div class="grid grid-cols-2 gap-8 items-end pt-10 border-t border-white/10">
-                            <div>
-                                <div class="text-[9px] font-black uppercase text-slate-500 tracking-widest mb-1">Est. Mobilization</div>
-                                <div id="estValue" class="text-5xl font-black text-amber-600 tracking-tighter">$0.00</div>
+        <!-- LOGISTICS VIEW -->
+        <div id="logistics-view" class="page-view hidden animate-slide-up">
+            <div class="max-w-5xl mx-auto text-center">
+                <h2 class="text-5xl md:text-7xl font-black tracking-tighter uppercase mb-6 leading-none italic">Site <span class="text-brand-accent">Engineering.</span></h2>
+                <p class="text-xl font-bold opacity-60 mb-16">Deployment sequence for Cascade Palmetto Hwy</p>
+                
+                <div class="grid lg:grid-cols-2 gap-12 text-left">
+                    <div class="glass-panel p-10 md:p-14 rounded-[4rem] shine-card">
+                        <div class="space-y-12">
+                            <div class="flex gap-8">
+                                <div class="w-12 h-12 bg-brand-accent rounded-2xl flex items-center justify-center font-black text-white shadow-xl">01</div>
+                                <div><h4 class="font-black uppercase text-base mb-2">Gravel Pad (CR-6)</h4><p class="text-xs font-bold opacity-60 italic">"Gravel pad (#57 stone) is required to prevent the 15-ton truck from sinking in red clay."</p></div>
                             </div>
-                            <div class="text-right">
-                                <div class="text-[9px] font-black uppercase text-slate-500 tracking-widest mb-1">Drayage Transit</div>
-                                <div id="estDist" class="text-2xl font-black">0.0 mi</div>
+                            <div class="flex gap-8">
+                                <div class="w-12 h-12 bg-brand-navy dark:bg-white/10 rounded-2xl flex items-center justify-center font-black text-brand-accent shadow-xl">02</div>
+                                <div><h4 class="font-black uppercase text-base mb-2">Linear Clearance (120ft)</h4><p class="text-xs font-bold opacity-60">Tilt-bed mobilization requires approx. 120ft of straight exit space to slide the unit off safely.</p></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-10 md:p-14 rounded-[4rem] bg-brand-navy text-white flex flex-col justify-center relative overflow-hidden">
+                        <h3 class="text-[10px] font-black uppercase text-brand-accent mb-10 text-center">Mobilization Calculator</h3>
+                        <div class="space-y-8 relative z-10">
+                            <select id="log-select" class="w-full bg-white/10 border-none rounded-2xl p-6 text-sm font-black uppercase outline-none focus:ring-4 focus:ring-brand-accent/50 appearance-none"></select>
+                            <div class="flex justify-between items-end pt-10 border-t border-white/10">
+                                <div><div class="text-[10px] font-black uppercase opacity-40 mb-1">Est. Cost</div><div id="log-price" class="text-6xl font-black text-brand-gold tracking-tighter">$0.00</div></div>
+                                <div class="text-right"><div class="text-[10px] font-black uppercase opacity-40 mb-1">Transit</div><div id="log-dist" class="text-2xl font-black">0.0 mi</div></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Background Decoration -->
-            <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-amber-600/5 rounded-full -mr-40 -mt-40 blur-[100px]"></div>
-        </section>
+        </div>
+
+        <!-- VERDICT VIEW -->
+        <div id="verdict-view" class="page-view hidden animate-slide-up">
+            <div class="max-w-4xl mx-auto py-12">
+                <div class="glass-panel p-16 md:p-24 rounded-[5rem] text-center bg-brand-navy text-white relative overflow-hidden shadow-2xl">
+                    <div class="relative z-10">
+                        <div class="w-24 h-24 bg-brand-accent rounded-3xl flex items-center justify-center mx-auto mb-10 shadow-3xl rotate-6">
+                            <i data-lucide="award" class="w-12 h-12 text-white"></i>
+                        </div>
+                        <h2 class="text-6xl md:text-8xl font-black tracking-tighter uppercase mb-10 leading-none">Final <span class="text-brand-gold italic">Verdict.</span></h2>
+                        <p class="text-2xl md:text-3xl font-bold mb-16 opacity-80 italic">"Buy a single **40ft High Cube WWT**. Use Jenco Sales (Rank 1) for physical verification and lowest freight differential."</p>
+                        <a href="tel:7702540161" class="flex items-center justify-center gap-6 bg-brand-accent px-12 py-6 rounded-3xl font-black text-xl uppercase tracking-widest shadow-2xl hover:scale-105 active:scale-95 transition-all mx-auto w-fit">
+                            <i data-lucide="phone-outgoing" class="w-6 h-6"></i> Call Jenco Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </main>
 
-    <footer class="bg-white border-t border-stone-200 py-24 mt-24">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-            <div>
-                <span class="text-3xl font-black tracking-tighter text-slate-900 leading-none">Container<span class="text-amber-600">Hub</span></span>
-                <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.4em] mt-4 max-w-xs leading-loose">Strategic Procurement Module v3.0<br>South Fulton Intermodal District</p>
-            </div>
-            <div class="text-right">
-                <div class="text-[10px] font-black uppercase text-slate-300 tracking-[0.4em] mb-4">Master Project Asset</div>
-                <div class="text-slate-900 font-black text-2xl tracking-tighter underline decoration-amber-500 underline-offset-8">5390 Cascade Palmetto Hwy</div>
-            </div>
+    <!-- Detail Modal -->
+    <div id="modal-overlay" class="fixed inset-0 z-[120] bg-brand-navy/95 backdrop-blur-xl hidden items-center justify-center p-6 opacity-0 transition-opacity duration-300" onclick="closeModal()">
+        <div class="glass-panel w-full max-w-3xl rounded-[4rem] p-12 md:p-16 scale-95 transition-all duration-300 relative overflow-hidden" id="modal-panel" onclick="event.stopPropagation()">
+            <button onclick="closeModal()" class="absolute top-10 right-10 p-4 rounded-full hover:bg-black/5 dark:hover:bg-white/5"><i data-lucide="x" class="w-8 h-8"></i></button>
+            <div id="modal-body"></div>
         </div>
-    </footer>
+    </div>
 
     <script>
-        const providers = [
-            {
-                id: 1,
-                name: "Jenco Sales, Inc.",
-                category: "Container",
-                location: "Newnan, GA",
-                distance: 12.0,
-                types: ["40ft High Cube", "20ft Std", "Modifications"],
-                hours: "Mon - Fri: 8:00 AM - 5:00 PM",
-                phone: "770-254-0161",
-                email: "Direct Inquiry via jencosales.com",
-                rto: true,
-                rating: 98,
-                avgPriceRate: 4.0,
-                leadTime: "3-5 Days",
-                security: "ISO Standard + Gasket Verified",
-                strategicVerdict: "RANK 1: The highest-ranked recommendation due to its immediate proximity and status as a family-owned asset-based dealer. Allows physical tagging of inventory.",
-                bestFor: "Inspections & Proximity"
-            },
-            {
-                id: 2,
-                name: "Atlanta Container & Trailer (ACT)",
-                category: "Container",
-                location: "Conley, GA",
-                distance: 18.0,
-                types: ["40ft High Cube", "Cold Storage", "Leasing"],
-                hours: "Mon - Fri: 8:00 AM - 4:30 PM",
-                phone: "404-361-0939",
-                email: "office@atlcontainer.com",
-                rto: true,
-                rating: 92,
-                avgPriceRate: 4.8,
-                leadTime: "4-6 Days",
-                security: "Internal Cam-Locks",
-                strategicVerdict: "RANK 2: The 'RTO Specialist'. Offers the most transparent financial tiers ($175-$265/mo for 40ft used).",
-                bestFor: "Structured RTO Contracts"
-            },
-            {
-                id: 3,
-                name: "Container Technology, Inc. (CTI)",
-                category: "Container",
-                location: "Morrow, GA",
-                distance: 16.0,
-                types: ["IICL-5 Graded", "Custom Office Mods"],
-                hours: "Mon - Fri: 8:00 AM - 5:00 PM",
-                phone: "770-960-6210",
-                email: "sales@containertech.com",
-                rto: false,
-                rating: 85,
-                avgPriceRate: 5.2,
-                leadTime: "2-4 Days",
-                security: "High-Security Hasp System",
-                strategicVerdict: "RANK 3: Focuses on high-quality IICL assets. Strong choice if aesthetics or office conversion is required.",
-                bestFor: "Aesthetics & Habitability"
-            },
-            {
-                id: 4,
-                name: "On-Site Storage Solutions",
-                category: "Container",
-                location: "Regional Broker Network",
-                distance: 22.0,
-                types: ["All ISO Sizes", "New/Used"],
-                hours: "24/7 Online",
-                phone: "888-667-4834",
-                email: "Managed via onsite-storage.com",
-                rto: true,
-                rating: 81,
-                avgPriceRate: 5.8,
-                leadTime: "5-10 Days",
-                security: "Smart Lock Options",
-                strategicVerdict: "RANK 4: The 'Aggregator Option'. Aggressive pricing but higher delivery fees. Everyone qualifies (No credit check).",
-                bestFor: "No Credit Check Approvals"
-            },
-            {
-                id: 5,
-                name: "Conestoga Builders",
-                category: "Workshop",
-                location: "Kennesaw/Local Build",
-                distance: 28.0,
-                types: ["Custom Sheds", "Workshops", "Build-on-site"],
-                hours: "Mon - Fri: 9:00 AM - 5:00 PM",
-                phone: "678-576-6852",
-                email: "Inquiry via conestogabuilders.com",
-                rto: true,
-                rating: 90,
-                avgPriceRate: 3.5,
-                leadTime: "10-14 Days",
-                security: "Residential Standard",
-                strategicVerdict: "Factory Direct Workshop Option. Build-on-site model bypasses the 120ft truck clearance requirement.",
-                bestFor: "Custom Workshops / Tight Access"
-            },
-            {
-                id: 6,
-                name: "DuraStor Structures",
-                category: "Workshop",
-                location: "McDonough, GA",
-                distance: 19.5,
-                types: ["Garden Sheds", "Garage Units"],
-                hours: "Mon - Fri: 8:00 AM - 5:00 PM",
-                phone: "478-595-6513",
-                email: "Inquiry via durastorstructures.com",
-                rto: true,
-                rating: 88,
-                avgPriceRate: 4.2,
-                leadTime: "7-12 Days",
-                security: "Reinforced Locking Bars",
-                strategicVerdict: "Local family-owned manufacturer. Heavy-duty floors specifically engineered for vehicle/equipment storage.",
-                bestFor: "Vehicle/Garage Use"
-            }
+        const themes = [
+            { name: "Industrial", navy: "#0F172A", accent: "#D97706", gold: "#F59E0B", orb1: "#F59E0B", orb2: "#3B82F6", rgb: "217, 119, 6" },
+            { name: "Ocean", navy: "#083344", accent: "#0891B2", gold: "#22D3EE", orb1: "#06B6D4", orb2: "#1D4ED8", rgb: "8, 145, 178" },
+            { name: "Cyber", navy: "#1E1B4B", accent: "#7C3AED", gold: "#C084FC", orb1: "#8B5CF6", orb2: "#EC4899", rgb: "124, 58, 237" }
         ];
 
-        let distChart, servChart;
-        let activeType = 'Container';
+        const providers = [
+            { id: 1, name: "Jenco Sales, Inc.", cat: "Container", loc: "Newnan, GA", dist: 12.0, rating: 98, rto: true, rate: 3.8, phone: "770-254-0161", tags: ["Rank #1", "Family Owned"], verdict: "PREMIER RANK: Best choice for Fairburn. Physical gaskets audit available." },
+            { id: 2, name: "Atlanta Container (ACT)", cat: "Container", loc: "Conley, GA", dist: 18.0, rating: 94, rto: true, rate: 4.5, phone: "404-361-0939", tags: ["RTO Specialist", "Transparent Tiers"], verdict: "FINANCIAL LEADER: Published tiers ($175-$265). Uses Rental Purchase Agreement logic." },
+            { id: 3, name: "Container Tech (CTI)", cat: "Container", loc: "Morrow, GA", dist: 16.0, rating: 88, rto: false, rate: 5.0, phone: "770-960-6210", tags: ["IICL-5 Specialist"], verdict: "QUALITY STANDARD: Best for office conversions. Structurally superior repaired standard." },
+            { id: 4, name: "On-Site Storage", cat: "Container", loc: "Depot Hub", dist: 22.0, rating: 82, rto: true, rate: 5.5, phone: "888-667-4834", tags: ["No Credit Check"], verdict: "AGGREGATOR: Guaranteed approvals. Slightly higher mileage-based pricing." },
+            { id: 5, name: "Conestoga Builders", cat: "Workshop", loc: "Fairburn Area", dist: 28.0, rating: 91, rto: true, rate: 3.2, phone: "678-576-6852", tags: ["Build-on-site"], verdict: "CONSTRUCTION ALT: Removes linear truck clearance constraint. Stick-built." },
+            { id: 6, name: "DuraStor Structures", cat: "Workshop", loc: "McDonough, GA", dist: 19.5, rating: 89, rto: true, rate: 4.0, phone: "478-595-6513", tags: ["Heavy Floors"], verdict: "GARAGE OPTION: Flooring engineered for heavy payload vehicles like ATVs." }
+        ];
 
-        function initCharts() {
-            const ctxDist = document.getElementById('distanceChart').getContext('2d');
-            distChart = new Chart(ctxDist, {
-                type: 'line',
-                data: {
-                    labels: providers.map(p => p.name.split(' ')[0]),
-                    datasets: [{
-                        label: 'Distance (Mi)',
-                        data: providers.map(p => p.distance),
-                        borderColor: '#d97706',
-                        backgroundColor: 'rgba(217, 119, 6, 0.05)',
-                        borderWidth: 6,
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#d97706',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 4,
-                        pointRadius: 8,
-                        pointHoverRadius: 14,
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    responsive: true,
-                    onClick: (evt, el) => { if(el.length) showDetails(providers[el[0].index].id); },
-                    onHover: (evt, el) => { evt.native.target.classList.toggle('pointer-cursor', el.length > 0); },
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: '#f1f1f1' }, ticks: { font: { weight: 'bold' } } },
-                        x: { grid: { display: false }, ticks: { font: { weight: 'bold' } } }
-                    }
-                }
-            });
+        let currentThemeIndex = 0;
+        let dChart = null, mChart = null;
+        let activeFilter = 'Container', searchStr = '';
 
-            const ctxServ = document.getElementById('serviceChart').getContext('2d');
-            const rtoCount = providers.filter(p => p.rto).length;
-            servChart = new Chart(ctxServ, {
-                type: 'doughnut',
-                data: {
-                    labels: ['RTO Enabled', 'Standard'],
-                    datasets: [{
-                        data: [rtoCount, providers.length - rtoCount],
-                        backgroundColor: ['#f59e0b', '#334155'],
-                        borderWidth: 0,
-                        hoverOffset: 25
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    cutout: '88%'
-                }
-            });
+        function randomizeTheme() {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            const t = themes[currentThemeIndex];
+            const root = document.documentElement;
+            root.style.setProperty('--brand-navy', t.navy);
+            root.style.setProperty('--brand-accent', t.accent);
+            root.style.setProperty('--brand-gold', t.gold);
+            root.style.setProperty('--orb-1', t.orb1);
+            root.style.setProperty('--orb-2', t.orb2);
+            root.style.setProperty('--accent-rgb', t.rgb);
+            renderCharts();
+            renderDirectory();
         }
 
-        function renderProviders(data) {
-            const grid = document.getElementById('providerGrid');
-            grid.innerHTML = '';
+        function navigate(id) {
+            document.querySelectorAll('.page-view').forEach(v => v.classList.add('hidden'));
+            document.getElementById(id + '-view').classList.remove('hidden');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById('link-' + id)?.classList.add('active');
+            if(id === 'home') setTimeout(renderCharts, 100);
+            if(id === 'directory') renderDirectory();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             
-            data.forEach((p, idx) => {
-                const card = document.createElement('div');
-                card.className = `animate-slide-up bg-white border border-stone-200 rounded-[3rem] p-8 cursor-pointer hover:shadow-2xl hover:border-amber-500/30 transition-all group`;
-                card.style.animationDelay = `${idx * 0.05}s`;
-                card.onclick = () => showDetails(p.id);
-                
-                card.innerHTML = `
-                    <div class="flex justify-between items-start mb-8">
-                        <div class="bg-slate-50 w-14 h-14 rounded-2xl flex items-center justify-center font-black text-slate-300 group-hover:bg-amber-600 group-hover:text-white transition-all shadow-inner text-xl">
-                            ${p.id}
-                        </div>
-                        <div class="text-right">
-                             <div class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Logistics Tier</div>
-                             <span class="text-xs font-black uppercase ${p.category === 'Container' ? 'text-amber-600' : 'text-slate-900'}">
-                                ${p.category}
-                             </span>
-                        </div>
-                    </div>
-                    <h3 class="font-black text-2xl mb-1 leading-none text-slate-900 group-hover:text-amber-600 transition-colors">${p.name}</h3>
-                    <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-8">VERDICT: ${p.bestFor}</p>
-                    
-                    <div class="grid grid-cols-2 gap-4 mb-8">
-                        <div class="bg-stone-50 p-4 rounded-2xl border border-stone-100">
-                            <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Radius</div>
-                            <div class="text-xl font-black">${p.distance}mi</div>
-                        </div>
-                        <div class="bg-stone-50 p-4 rounded-2xl border border-stone-100 text-right">
-                            <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest">RTO?</div>
-                            <div class="text-xl font-black text-amber-600">${p.rto ? 'YES' : 'NO'}</div>
-                        </div>
-                    </div>
+            const mobileMenu = document.getElementById('mobile-menu');
+            if(mobileMenu && !mobileMenu.classList.contains('translate-y-[-100%]')) toggleMobileMenu();
+        }
 
-                    <div class="flex flex-wrap gap-2">
-                        ${p.types.slice(0,2).map(t => `<span class="text-[9px] font-black uppercase bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-xl text-slate-500">${t}</span>`).join('')}
+        function handleSearch(val) { searchStr = val.toLowerCase(); renderDirectory(); }
+        function setFilter(type) { activeFilter = type; renderDirectory(); }
+
+        function renderDirectory() {
+            const grid = document.getElementById('dir-grid'); if(!grid) return; grid.innerHTML = '';
+            document.getElementById('dir-container').className = activeFilter === 'Container' ? "tab-btn px-8 py-3 rounded-full text-[10px] font-black active transition-all" : "tab-btn px-8 py-3 rounded-full text-[10px] font-black opacity-40 transition-all";
+            document.getElementById('dir-workshop').className = activeFilter === 'Workshop' ? "tab-btn px-8 py-3 rounded-full text-[10px] font-black active transition-all" : "tab-btn px-8 py-3 rounded-full text-[10px] font-black opacity-40 transition-all";
+
+            const filtered = providers.filter(p => p.cat === activeFilter && (!searchStr || p.name.toLowerCase().includes(searchStr) || p.verdict.toLowerCase().includes(searchStr)));
+            filtered.forEach((p, i) => {
+                const card = document.createElement('div');
+                card.className = "glass-panel p-8 md:p-10 rounded-[3rem] shine-card group hover:border-brand-accent/40 cursor-pointer transform hover:-translate-y-1 transition-all";
+                card.style.animation = `slideUp 0.6s forwards ${i * 0.05}s`;
+                
+                // Allow card click to open detail EXCEPT for the call button
+                card.onclick = (e) => {
+                    if(!e.target.closest('.call-btn')) openProvider(p.id);
+                };
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-8"><div class="w-14 h-14 bg-slate-100 dark:bg-white/5 rounded-2xl flex items-center justify-center font-black text-slate-400 group-hover:bg-brand-accent group-hover:text-white transition-all text-lg">0${p.id}</div><span class="text-base font-black text-brand-accent">${p.rating}%</span></div>
+                    <h3 class="text-2xl font-black uppercase tracking-tighter mb-2 group-hover:text-brand-accent transition-colors leading-none">${p.name}</h3>
+                    <p class="text-[10px] font-black opacity-30 italic mb-8 tracking-[0.2em]">📍 ${p.loc} (${p.dist} mi)</p>
+                    <div class="flex flex-wrap gap-2 mb-10">${p.tags.map(t => `<span class="px-4 py-2 bg-slate-100 dark:bg-white/5 rounded-xl text-[9px] font-black uppercase tracking-widest">${t}</span>`).join('')}</div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <a href="tel:${p.phone.replace(/\D/g,'')}" class="call-btn flex items-center justify-center gap-2 py-4 bg-brand-accent text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg hover:brightness-110 active:scale-95 transition-all">
+                            <i data-lucide="phone" class="w-3 h-3"></i> Call
+                        </a>
+                        <button class="flex items-center justify-center py-4 bg-brand-navy text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg hover:brightness-125 transition-all">Specs</button>
                     </div>
                 `;
                 grid.appendChild(card);
             });
+            lucide.createIcons();
         }
 
-        function showDetails(id) {
-            const provider = providers.find(p => p.id === id);
-            const content = document.getElementById('detailContent');
-            const placeholder = document.getElementById('detailPlaceholder');
-            placeholder.classList.add('hidden');
-            content.classList.remove('hidden');
-            
-            content.innerHTML = `
-                <div class="p-10 md:p-20">
-                    <div class="flex flex-col lg:flex-row gap-20">
-                        <div class="flex-grow">
-                            <div class="flex items-center gap-4 mb-8">
-                                <span class="bg-amber-600 text-white text-[10px] font-black uppercase px-5 py-2 rounded-full shadow-2xl shadow-amber-200">${provider.category} AUDIT</span>
-                                <span class="text-slate-300 font-black text-[10px] uppercase tracking-[0.4em]">Procurement Spec #0${provider.id}</span>
-                            </div>
-                            <h2 class="text-6xl font-black tracking-tighter text-slate-900 mb-4 leading-none italic">${provider.name}</h2>
-                            <p class="text-2xl font-bold text-amber-600 mb-12">📍 ${provider.location}</p>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
-                                <div>
-                                    <h4 class="text-[10px] font-black uppercase text-slate-400 tracking-[0.4em] mb-8 border-b border-slate-100 pb-4">Verbatim Findings</h4>
-                                    <p class="text-xl text-slate-600 font-medium leading-relaxed mb-10 italic">"${provider.strategicVerdict}"</p>
-                                    
-                                    <div class="space-y-6">
-                                        <div class="flex gap-6"><span class="text-3xl">⏱️</span><div><div class="text-[9px] font-black text-slate-400 uppercase">Avg. Lead Time</div><div class="font-black text-slate-900">${provider.leadTime}</div></div></div>
-                                        <div class="flex gap-6"><span class="text-3xl">🛡️</span><div><div class="text-[9px] font-black text-slate-400 uppercase">Gasket/Security</div><div class="font-black text-slate-900">${provider.security}</div></div></div>
-                                    </div>
-                                </div>
-                                <div class="bg-slate-900 p-12 rounded-[4rem] text-white shadow-3xl relative overflow-hidden">
-                                    <div class="relative z-10">
-                                        <h5 class="text-[10px] font-black uppercase text-slate-500 mb-10 tracking-[0.3em]">Contract Access</h5>
-                                        <div class="space-y-10">
-                                            <div><p class="text-[9px] font-black text-amber-500 uppercase tracking-widest mb-1">Direct Procurement Line</p><p class="text-4xl font-black tracking-tighter">${provider.phone}</p></div>
-                                            <div><p class="text-[9px] font-black text-amber-500 uppercase tracking-widest mb-1">Inquiry/Email</p><p class="text-sm font-bold text-slate-400">${provider.email}</p></div>
-                                        </div>
-                                        <a href="tel:${provider.phone.replace(/\D/g,'')}" class="mt-12 block text-center bg-amber-600 text-white py-6 rounded-3xl font-black uppercase tracking-[0.3em] text-xs hover:bg-amber-500 transition-all shadow-xl">Contact Yard Now</a>
-                                    </div>
-                                    <div class="absolute -bottom-20 -right-20 w-60 h-60 bg-white/5 rounded-full blur-3xl"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        function openProvider(id) {
+            const p = providers.find(x => x.id === id);
+            const overlay = document.getElementById('modal-overlay'), body = document.getElementById('modal-body');
+            overlay.classList.remove('hidden'); setTimeout(() => overlay.classList.add('opacity-100'), 10);
+            body.innerHTML = `
+                <div class="flex items-center gap-4 mb-8"><span class="bg-brand-accent text-white text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-widest">Audit Summary</span><span class="text-[10px] font-black opacity-30 uppercase tracking-[0.4em]">#0${p.id}</span></div>
+                <h2 class="text-5xl font-black uppercase mb-8 italic text-brand-navy dark:text-white leading-none">${p.name}</h2>
+                <div class="p-8 bg-slate-100 dark:bg-white/5 rounded-[3rem] mb-12 border border-black/5"><p class="font-bold text-xl opacity-70 leading-relaxed italic text-brand-navy dark:text-white">"${p.verdict}"</p></div>
+                <div class="grid grid-cols-2 gap-10 mb-12"><div><p class="text-[9px] font-black opacity-30 uppercase mb-2">Transit Radius</p><p class="text-3xl font-black tracking-tighter text-brand-navy dark:text-white">${p.dist} mi</p></div><div class="text-right"><p class="text-[9px] font-black opacity-30 uppercase mb-2">System Rating</p><p class="text-3xl font-black text-brand-accent">${p.rating}/100</p></div></div>
+                <a href="tel:${p.phone.replace(/\D/g,'')}" class="flex items-center justify-center gap-4 w-full py-6 rounded-3xl bg-brand-navy dark:bg-brand-accent text-white font-black uppercase tracking-widest shadow-2xl hover:scale-[1.02] transition-all"><i data-lucide="phone-call" class="w-6 h-6"></i> Dial Depot</a>
             `;
-            scrollToSection('details');
-            updateEstimator(provider.id);
+            lucide.createIcons();
+            updateEst(id);
         }
 
-        function initEstimator() {
-            const select = document.getElementById('estimatorProvider');
-            select.innerHTML = providers.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
-            select.addEventListener('change', (e) => updateEstimator(parseInt(e.target.value)));
-            updateEstimator(providers[0].id);
+        function renderCharts() {
+            const ctxD = document.getElementById('distChart'), ctxM = document.getElementById('mixChart');
+            if(!ctxD || !ctxM) return; if(dChart) dChart.destroy(); if(mChart) mChart.destroy();
+            const isD = document.documentElement.classList.contains('dark'), accent = themes[currentThemeIndex].accent;
+            dChart = new Chart(ctxD.getContext('2d'), { type: 'line', data: { labels: providers.map(p => p.name.split(' ')[0]), datasets: [{ data: providers.map(p => p.dist), borderColor: accent, borderWidth: 6, fill: true, backgroundColor: 'rgba(' + themes[currentThemeIndex].rgb + ', 0.05)', tension: 0.45, pointRadius: 8, pointBackgroundColor: isD ? '#020617' : '#FFF', pointBorderWidth: 4, pointBorderColor: accent }] }, options: { responsive: true, maintainAspectRatio: false, onClick: (e, el) => { if(el.length) openProvider(providers[el[0].index].id); }, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: isD ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }, ticks: { font: { weight: '800' } } }, x: { grid: { display: false }, ticks: { font: { weight: '800' } } } } } });
+            mChart = new Chart(ctxM.getContext('2d'), { type: 'doughnut', data: { labels: ['RTO', 'Cash'], datasets: [{ data: [4, 2], backgroundColor: [accent, isD ? '#1E293B' : '#E2E8F0'], borderWidth: 0, hoverOffset: 25 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '85%' } });
         }
 
-        function updateEstimator(id) {
-            const provider = providers.find(p => p.id === id);
-            const distEl = document.getElementById('estDist');
-            const valEl = document.getElementById('estValue');
-            document.getElementById('estimatorProvider').value = id;
-            distEl.innerText = `${provider.distance} mi`;
-            valEl.innerText = `$${(75 + (provider.distance * provider.avgPriceRate)).toFixed(2)}`;
+        function toggleDarkMode() { document.documentElement.classList.toggle('dark'); renderCharts(); }
+        
+        function toggleMobileMenu() { 
+            const m = document.getElementById('mobile-menu'); if(!m) return;
+            const isOpen = !m.classList.contains('translate-y-[-100%]'); 
+            if(isOpen) {
+                m.classList.add('translate-y-[-100%]', 'opacity-0', 'pointer-events-none');
+                document.body.style.overflow = 'auto';
+            } else {
+                m.classList.remove('translate-y-[-100%]', 'opacity-0', 'pointer-events-none');
+                document.body.style.overflow = 'hidden';
+            }
         }
 
-        function toggleType(type) {
-            activeType = type;
-            document.getElementById('btnContainer').className = type === 'Container' ? "px-8 py-5 bg-amber-600 text-white rounded-3xl text-[10px] font-black uppercase tracking-widest shadow-lg" : "px-8 py-5 bg-white border border-stone-200 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition shadow-sm";
-            document.getElementById('btnWorkshop').className = type === 'Workshop' ? "px-8 py-5 bg-amber-600 text-white rounded-3xl text-[10px] font-black uppercase tracking-widest shadow-lg" : "px-8 py-5 bg-white border border-stone-200 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition shadow-sm";
-            renderProviders(providers.filter(p => p.category === type));
-        }
+        function closeModal() { document.getElementById('modal-overlay').classList.remove('opacity-100'); setTimeout(() => document.getElementById('modal-overlay').classList.add('hidden'), 300); }
+        function initEst() { const s = document.getElementById('log-select'); if(!s) return; s.innerHTML = providers.map(p => `<option value="${p.id}">${p.name}</option>`).join(''); s.onchange = (e) => updateEst(parseInt(e.target.value)); updateEst(1); }
+        function updateEst(id) { const p = providers.find(x => x.id === id); const priceEl = document.getElementById('log-price'); const distEl = document.getElementById('log-dist'); if(priceEl) priceEl.innerText = `$${(75 + (p.dist * p.rate)).toFixed(2)}`; if(distEl) distEl.innerText = `${p.dist} mi`; document.getElementById('log-select').value = id; }
 
-        function resetFilters() {
-            toggleType('Container');
-            document.getElementById('searchInput').value = '';
-        }
-
-        function scrollToSection(id) {
-            const el = document.getElementById(id);
-            if (el) window.scrollTo({ top: el.offsetTop - 40, behavior: 'smooth' });
-        }
-
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase();
-            renderProviders(providers.filter(p => p.name.toLowerCase().includes(term) || p.types.some(t => t.toLowerCase().includes(term))));
-        });
-
-        window.onload = () => { initCharts(); toggleType('Container'); initEstimator(); };
+        let mX = 0, mY = 0; document.addEventListener('mousemove', e => { mX = e.clientX; mY = e.clientY; });
+        function updateShine() { document.querySelectorAll('.shine-card').forEach(c => { const r = c.getBoundingClientRect(); if(r.top < window.innerHeight && r.bottom > 0) { c.style.setProperty('--mouse-x', `${((mX - r.left)/r.width)*100}%`); c.style.setProperty('--mouse-y', `${((mY - r.top)/r.height)*100}%`); } }); requestAnimationFrame(updateShine); }
+        window.onload = () => { lucide.createIcons(); setTimeout(renderCharts, 150); renderDirectory(); initEst(); updateShine(); };
     </script>
 </body>
 </html>
