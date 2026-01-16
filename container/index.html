@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Container Hub v2.0 | Fairburn Logistics Analysis</title>
+    <title>Container Hub v3.0 | Strategic Procurement Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        
-        body { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
 
         .chart-container {
             position: relative;
@@ -17,216 +17,252 @@
             height: 300px;
         }
 
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        canvas { cursor: default; }
+        .pointer-cursor { cursor: pointer !important; }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(231, 229, 228, 0.5);
-        }
-
-        .active-tab {
-            border-bottom: 2px solid #d97706;
-            color: #d97706;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        .animate-slide-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        .tab-active { border-bottom: 3px solid #d97706; color: #d97706; }
     </style>
 </head>
 <body class="bg-[#fcfaf8] text-slate-900 leading-tight">
 
-    <!-- Navigation -->
-    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-stone-200">
+    <!-- Header Navigation -->
+    <nav class="bg-white border-b border-stone-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
+            <div class="flex justify-between h-20 items-center">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-amber-600 rounded-lg flex items-center justify-center shadow-lg shadow-amber-200">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                    <div class="w-10 h-10 bg-amber-600 rounded-xl flex items-center justify-center shadow-xl shadow-amber-200">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                     </div>
                     <div>
-                        <span class="text-xl font-extrabold tracking-tight text-slate-900">Container<span class="text-amber-600">Hub</span></span>
+                        <span class="text-2xl font-black tracking-tighter text-slate-900 block leading-none">Container<span class="text-amber-600">Hub</span></span>
+                        <span class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Strategic Procurement v3.0</span>
                     </div>
                 </div>
-                <div class="hidden md:flex items-center space-x-6">
-                    <button onclick="scrollToSection('analytics')" class="text-sm font-semibold text-slate-600 hover:text-amber-600 transition">Market Data</button>
-                    <button onclick="scrollToSection('directory')" class="text-sm font-semibold text-slate-600 hover:text-amber-600 transition">Directory</button>
-                    <button onclick="scrollToSection('estimator')" class="text-sm font-semibold text-slate-600 hover:text-amber-600 transition">Logistics Tool</button>
-                    <div class="h-4 w-px bg-slate-200"></div>
-                    <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400 bg-slate-100 px-2 py-1 rounded">Fairburn GA 30213</span>
+                <div class="hidden lg:flex items-center space-x-8">
+                    <button onclick="scrollToSection('playbook')" class="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-amber-600 transition">Strategic Playbook</button>
+                    <button onclick="scrollToSection('directory')" class="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-amber-600 transition">Provider Directory</button>
+                    <button onclick="scrollToSection('prep')" class="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-amber-600 transition">Site Prep</button>
+                    <div class="h-6 w-px bg-slate-200"></div>
+                    <div class="text-right">
+                        <div class="text-[10px] font-black text-slate-900">FAIRBURN RADIAL</div>
+                        <div class="text-[10px] font-medium text-slate-400">Zip: 30213</div>
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        
-        <!-- Hero Section -->
-        <header class="mb-12">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div class="max-w-2xl">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-100 text-amber-700 text-xs font-bold uppercase tracking-wider mb-4">
-                        <span class="relative flex h-2 w-2">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-                        </span>
-                        Live Market Report: Q1 2024
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <!-- Strategic Overview -->
+        <header class="mb-16">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900 text-white text-[10px] font-black uppercase tracking-[0.2em] mb-6">
+                <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+                Executive Summary: Priority Ranking Active
+            </div>
+            <h1 class="text-6xl font-black tracking-tighter text-slate-900 mb-6 italic">
+                The Fairburn <span class="text-amber-600 underline decoration-slate-200 underline-offset-8">Acquisition</span> Report
+            </h1>
+            <p class="text-xl text-slate-500 font-medium max-w-4xl leading-relaxed">
+                Logistics corridor analysis for **5390 Cascade Palmetto Hwy**. This tool deconstructs the trade-offs between 40ft High Cube and dual 20ft modularity, optimized for the South Atlanta Intermodal Nexus.
+            </p>
+        </header>
+
+        <!-- Playbook Module (NEW: VERBATIM REPORT DATA) -->
+        <section id="playbook" class="mb-20 scroll-mt-10">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <div class="lg:col-span-3 bg-white border border-stone-200 rounded-[3rem] p-10 shadow-sm relative overflow-hidden">
+                    <h2 class="text-3xl font-black mb-8 tracking-tighter italic">Strategic <span class="text-amber-600">Playbook</span></h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        <div>
+                            <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-4">01. Asset Comparison</h4>
+                            <div class="space-y-4">
+                                <div class="p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="font-black text-sm">40ft High Cube</span>
+                                        <span class="text-green-600 text-[10px] font-black italic">RECOMMENDED VALUE</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 font-medium">Offers +15% Volume and +1ft Height. Lowest price per cu. ft. (~$2,500 cash).</p>
+                                </div>
+                                <div class="p-5 bg-stone-50 rounded-2xl border border-stone-100 opacity-60">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="font-black text-sm">Two 20ft Standard</span>
+                                        <span class="text-amber-700 text-[10px] font-black italic">35-50% PREMIUM</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 font-medium">Incurs asset premium (~$1,200 extra) and double delivery fees.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-4">02. Grading Standards</h4>
+                            <div class="space-y-3">
+                                <div class="flex items-start gap-3">
+                                    <span class="w-6 h-6 shrink-0 bg-amber-600 text-white rounded-lg flex items-center justify-center text-[10px] font-black">WWT</span>
+                                    <div><p class="text-xs font-black">Wind & Water Tight</p><p class="text-[10px] text-slate-400">Industry standard for storage. Guaranteed leak-proof.</p></div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <span class="w-6 h-6 shrink-0 bg-slate-900 text-white rounded-lg flex items-center justify-center text-[10px] font-black">1TR</span>
+                                    <div><p class="text-xs font-black">One-Trip (New)</p><p class="text-[10px] text-slate-400">Pristine floors. Best for visibility on Cascade Hwy.</p></div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <span class="w-6 h-6 shrink-0 bg-slate-200 text-slate-500 rounded-lg flex items-center justify-center text-[10px] font-black">IICL</span>
+                                    <div><p class="text-xs font-black">Institute Repair Standard</p><p class="text-[10px] text-slate-400">Structurally superior; strict repair benchmarks.</p></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <h1 class="text-5xl font-black tracking-tighter text-slate-900 mb-4 italic">
-                        The Fairburn <span class="text-amber-600 italic">Container</span> Index
-                    </h1>
-                    <p class="text-lg text-slate-500 font-medium">
-                        A centralized directory of portable storage solutions within a 25-mile radius of Cascade Palmetto Hwy. Optimized for RTO and 40ft availability.
-                    </p>
                 </div>
-                <div class="flex gap-4">
-                    <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm text-center min-w-[120px]">
-                        <div class="text-2xl font-black text-slate-900">05</div>
-                        <div class="text-[10px] font-bold uppercase text-slate-400">Verified Yards</div>
-                    </div>
-                    <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm text-center min-w-[120px]">
-                        <div class="text-2xl font-black text-amber-600">60%</div>
-                        <div class="text-[10px] font-bold uppercase text-slate-400">RTO Coverage</div>
+
+                <div class="bg-amber-600 rounded-[3rem] p-10 text-white shadow-2xl shadow-amber-200/50">
+                    <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-amber-200 mb-6">Financial Verdict</h4>
+                    <p class="text-sm font-medium mb-8 leading-relaxed italic">"RTO multipliers range 2.0x to 2.5x. Strategy: Use RTO for entry, then execute 90-day Early Payoff to kill the interest tail."</p>
+                    <div class="pt-6 border-t border-white/20">
+                        <div class="text-[10px] font-black uppercase text-amber-200">Cash Target</div>
+                        <div class="text-3xl font-black">$2,300 - $2,800</div>
                     </div>
                 </div>
             </div>
-        </header>
+        </section>
 
-        <!-- Market Analytics Grid -->
-        <section id="analytics" class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-16">
-            <div class="lg:col-span-2 bg-white p-8 rounded-3xl border border-stone-200 shadow-sm">
+        <!-- Interactive Charts -->
+        <section id="analytics" class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16 scroll-mt-24">
+            <div class="lg:col-span-2 bg-white p-10 rounded-[3rem] border border-stone-200 shadow-sm relative overflow-hidden">
                 <div class="flex items-center justify-between mb-8">
                     <div>
-                        <h2 class="text-xl font-bold">Logistics Heatmap</h2>
-                        <p class="text-sm text-slate-400">Proximity comparison by yard location</p>
+                        <h2 class="text-2xl font-black italic">Logistics Radar</h2>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Miles from 5390 Cascade Palmetto Hwy</p>
                     </div>
-                    <div class="flex gap-2">
-                        <span class="px-2 py-1 bg-amber-100 text-amber-700 text-[10px] font-bold rounded">Miles</span>
-                    </div>
+                    <span class="bg-slate-100 px-3 py-1 rounded-full text-[10px] font-black uppercase text-slate-500 tracking-tighter">Proximity Data Verified</span>
                 </div>
                 <div class="chart-container">
                     <canvas id="distanceChart"></canvas>
                 </div>
             </div>
-
-            <div class="bg-slate-900 p-8 rounded-3xl text-white shadow-xl shadow-slate-200 relative overflow-hidden">
-                <div class="relative z-10">
-                    <h3 class="text-lg font-bold mb-2">Service Breakdown</h3>
-                    <p class="text-sm text-slate-400 mb-6">Market availability of Rent-To-Own programs</p>
-                    <div class="chart-container" style="height: 200px;">
-                        <canvas id="serviceChart"></canvas>
-                    </div>
-                    <div class="mt-6 space-y-3">
-                        <div class="flex justify-between items-center text-sm border-t border-slate-800 pt-3">
-                            <span class="text-slate-400">Total RTO Options</span>
-                            <span class="font-bold text-amber-500">3 Providers</span>
-                        </div>
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-slate-400">Avg. Distance</span>
-                            <span class="font-bold">14.9 Miles</span>
-                        </div>
+            <div class="bg-slate-900 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
+                <h3 class="text-2xl font-black italic">Market Mix</h3>
+                <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mt-1 mb-10">Container RTO vs. Direct Lease</p>
+                <div class="chart-container" style="height: 200px;">
+                    <canvas id="serviceChart"></canvas>
+                </div>
+                <div class="mt-8 space-y-3">
+                    <div class="flex justify-between items-center text-[10px] font-black uppercase border-t border-slate-800 pt-6">
+                        <span class="text-slate-500">RTO ACCESSIBILITY</span>
+                        <span class="text-amber-500">3/5 VERIFIED PROVIDERS</span>
                     </div>
                 </div>
-                <!-- Abstract BG Decor -->
-                <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
             </div>
         </section>
 
-        <!-- Search & Filter Bar -->
-        <div class="flex flex-col md:flex-row gap-4 mb-8 sticky top-20 z-40">
-            <div class="flex-grow relative">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7s-12 0-7 7 7 0 01-7-7z"></path></svg>
-                </span>
-                <input type="text" id="searchInput" placeholder="Search provider name or inventory type..." class="w-full pl-12 pr-4 py-4 bg-white border border-stone-200 rounded-2xl focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none shadow-sm transition-all font-medium">
-            </div>
-            <div class="flex gap-2">
-                <button onclick="filterRTO(true)" class="px-6 py-4 bg-white border border-stone-200 rounded-2xl text-sm font-bold hover:bg-slate-50 transition whitespace-nowrap">RTO Only</button>
-                <button onclick="resetFilters()" class="px-6 py-4 bg-slate-900 text-white rounded-2xl text-sm font-bold hover:bg-slate-800 transition">Reset View</button>
+        <!-- Directory Filter -->
+        <div class="py-6 bg-[#fcfaf8] mb-8">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-grow relative">
+                    <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7s-12 0-7 7 7 0 01-7-7z"></path></svg>
+                    </span>
+                    <input type="text" id="searchInput" placeholder="Search Jenco, Atlanta Container, Conestoga, etc..." class="w-full pl-14 pr-6 py-5 bg-white border border-stone-200 rounded-3xl focus:ring-8 focus:ring-amber-500/5 focus:border-amber-500 outline-none shadow-sm transition-all font-bold placeholder:text-slate-300">
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="toggleType('Container')" id="btnContainer" class="px-8 py-5 bg-amber-600 text-white rounded-3xl text-[10px] font-black uppercase tracking-widest transition shadow-lg">Containers</button>
+                    <button onclick="toggleType('Workshop')" id="btnWorkshop" class="px-8 py-5 bg-white border border-stone-200 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition shadow-sm">Workshop Builders</button>
+                    <button onclick="resetFilters()" class="p-5 bg-slate-900 text-white rounded-3xl hover:bg-slate-800 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- Directory Grid -->
-        <section id="directory" class="mb-16">
-            <div id="providerGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section id="directory" class="mb-20 scroll-mt-10">
+            <div id="providerGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Injected via JS -->
             </div>
         </section>
 
-        <!-- Detailed Analytics Panel -->
-        <section id="details" class="scroll-mt-24 mb-16">
-            <div id="detailPanel" class="bg-white rounded-[2.5rem] border border-stone-200 shadow-2xl overflow-hidden min-h-[500px]">
-                <div class="flex items-center justify-center p-20 text-center" id="detailPlaceholder">
-                    <div class="max-w-sm">
-                        <div class="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">🏗️</div>
-                        <h2 class="text-2xl font-black text-slate-900 mb-2">Detailed Provider Audit</h2>
-                        <p class="text-slate-500 font-medium">Select a yard from the directory to review logistics, container grading, and contact info.</p>
+        <!-- Provider Audit Panel -->
+        <section id="details" class="scroll-mt-10 mb-20">
+            <div id="detailPanel" class="bg-white rounded-[3.5rem] border border-stone-200 shadow-2xl overflow-hidden min-h-[600px]">
+                <div class="flex items-center justify-center p-24 text-center" id="detailPlaceholder">
+                    <div class="max-w-xs">
+                        <div class="w-24 h-24 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-8 text-4xl shadow-inner shadow-amber-100">📋</div>
+                        <h2 class="text-3xl font-black text-slate-900 mb-3 tracking-tighter italic">Technical Audit</h2>
+                        <p class="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em]">Load a provider to view verbatim report findings</p>
                     </div>
                 </div>
-                <div id="detailContent" class="hidden animate-fade-in">
+                <div id="detailContent" class="hidden animate-slide-up">
                     <!-- Injected via JS -->
                 </div>
             </div>
         </section>
 
-        <!-- Logistics Estimator -->
-        <section id="estimator" class="bg-amber-600 rounded-[2.5rem] p-8 md:p-12 text-white">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <!-- Site Preparation Guide (NEW: VERBATIM REPORT DATA) -->
+        <section id="prep" class="bg-slate-900 rounded-[4rem] p-12 md:p-20 text-white scroll-mt-10 relative overflow-hidden">
+            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                 <div>
-                    <h2 class="text-3xl font-black tracking-tight mb-4 italic underline decoration-white/30 underline-offset-8">Delivery Fee Estimator</h2>
-                    <p class="text-amber-100 mb-8 font-medium">Based on standard Georgia market rates of $3.50 - $5.50 per loaded mile for tilt-bed delivery from the yard to Fairburn.</p>
-                    
-                    <div class="bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20">
-                        <label class="block text-xs font-bold uppercase tracking-widest mb-2 text-amber-200">Current Provider Selection</label>
-                        <select id="estimatorProvider" class="w-full bg-white text-slate-900 p-4 rounded-xl font-bold appearance-none outline-none focus:ring-4 focus:ring-amber-400 transition cursor-pointer">
-                            <!-- Options injected -->
-                        </select>
-                        <div class="mt-6 flex justify-between items-end">
+                    <div class="text-amber-500 font-black uppercase text-[10px] tracking-[0.4em] mb-4">Engineering Protocol</div>
+                    <h2 class="text-5xl font-black tracking-tighter mb-8 italic leading-tight">Site <span class="text-amber-600">Preparation</span><br>Guide for 30213</h2>
+                    <p class="text-slate-400 font-medium text-lg leading-relaxed mb-10">Cascade Palmetto Hwy features Georgia red clay. Do not place assets directly on ground. Follow this deployment sequence:</p>
+                    
+                    <ul class="space-y-6">
+                        <li class="flex gap-6 items-start">
+                            <span class="w-10 h-10 shrink-0 bg-white/10 rounded-2xl flex items-center justify-center font-black text-amber-500">01</span>
+                            <div><p class="font-black text-lg">Leveling & Racking</p><p class="text-slate-500 text-sm">Site must be perfectly level. If the container is "twisted," doors will not close.</p></div>
+                        </li>
+                        <li class="flex gap-6 items-start">
+                            <span class="w-10 h-10 shrink-0 bg-white/10 rounded-2xl flex items-center justify-center font-black text-amber-500">02</span>
+                            <div><p class="font-black text-lg">Elevation Blocks</p><p class="text-slate-500 text-sm">Use 6"x6" pressure-treated ties or concrete blocks at 4 corners to prevent floor rot.</p></div>
+                        </li>
+                        <li class="flex gap-6 items-start">
+                            <span class="w-10 h-10 shrink-0 bg-white/10 rounded-2xl flex items-center justify-center font-black text-amber-500">03</span>
+                            <div><p class="font-black text-lg">Gravel Pad (CR-6)</p><p class="text-slate-500 text-sm">Prevents the 15-ton delivery truck from sinking into clay during wet cycles.</p></div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-[3rem] p-10 backdrop-blur-3xl">
+                    <h4 class="text-amber-500 font-black uppercase text-[10px] tracking-[0.3em] mb-10 text-center">Logistics Estimator</h4>
+                    <div class="space-y-8">
+                        <div>
+                            <label class="block text-[10px] font-black uppercase text-slate-500 tracking-widest mb-3">Select Loading Yard</label>
+                            <select id="estimatorProvider" class="w-full bg-slate-800 text-white p-6 rounded-2xl font-bold border-none ring-1 ring-white/10 outline-none focus:ring-amber-500 transition cursor-pointer appearance-none text-lg">
+                                <!-- Options -->
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-8 items-end pt-10 border-t border-white/10">
                             <div>
-                                <div class="text-xs font-bold uppercase text-amber-200 mb-1">Estimated Delivery</div>
-                                <div id="estValue" class="text-4xl font-black">$0.00</div>
+                                <div class="text-[9px] font-black uppercase text-slate-500 tracking-widest mb-1">Est. Mobilization</div>
+                                <div id="estValue" class="text-5xl font-black text-amber-600 tracking-tighter">$0.00</div>
                             </div>
                             <div class="text-right">
-                                <div class="text-xs font-bold uppercase text-amber-200 mb-1">One-Way Dist.</div>
-                                <div id="estDist" class="text-xl font-bold">0.0 mi</div>
+                                <div class="text-[9px] font-black uppercase text-slate-500 tracking-widest mb-1">Drayage Transit</div>
+                                <div id="estDist" class="text-2xl font-black">0.0 mi</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="space-y-4">
-                    <div class="flex gap-4 p-4 bg-white/5 rounded-2xl items-start">
-                        <div class="w-10 h-10 shrink-0 bg-white/20 rounded-full flex items-center justify-center font-bold">1</div>
-                        <p class="text-sm">Roll-off delivery requires significant ground clearance (usually 60ft-100ft for a 40ft container).</p>
-                    </div>
-                    <div class="flex gap-4 p-4 bg-white/5 rounded-2xl items-start">
-                        <div class="w-10 h-10 shrink-0 bg-white/20 rounded-full flex items-center justify-center font-bold">2</div>
-                        <p class="text-sm">Standard delivery fees in Fairburn are lowest for <strong>Mobile Modular</strong> due to yard proximity.</p>
-                    </div>
-                    <div class="flex gap-4 p-4 bg-white/5 rounded-2xl items-start">
-                        <div class="w-10 h-10 shrink-0 bg-white/20 rounded-full flex items-center justify-center font-bold">3</div>
-                        <p class="text-sm">Wait times currently average 5-7 business days for most metro yards.</p>
-                    </div>
-                </div>
             </div>
+            <!-- Background Decoration -->
+            <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-amber-600/5 rounded-full -mr-40 -mt-40 blur-[100px]"></div>
         </section>
 
     </main>
 
-    <footer class="bg-white border-t border-stone-200 py-16 mt-20">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+    <footer class="bg-white border-t border-stone-200 py-24 mt-24">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
             <div>
-                <span class="text-xl font-black tracking-tight text-slate-900">Container<span class="text-amber-600">Hub</span></span>
-                <p class="text-slate-400 text-sm mt-2 font-medium max-w-xs">Data verified through direct inquiry and publicly available yard listings within 25mi of 30213.</p>
+                <span class="text-3xl font-black tracking-tighter text-slate-900 leading-none">Container<span class="text-amber-600">Hub</span></span>
+                <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.4em] mt-4 max-w-xs leading-loose">Strategic Procurement Module v3.0<br>South Fulton Intermodal District</p>
             </div>
             <div class="text-right">
-                <div class="text-[10px] font-bold uppercase text-slate-400 tracking-widest mb-2">Market Version</div>
-                <div class="text-slate-900 font-bold">v2.0-Fairburn-Logistics</div>
+                <div class="text-[10px] font-black uppercase text-slate-300 tracking-[0.4em] mb-4">Master Project Asset</div>
+                <div class="text-slate-900 font-black text-2xl tracking-tighter underline decoration-amber-500 underline-offset-8">5390 Cascade Palmetto Hwy</div>
             </div>
         </div>
     </footer>
@@ -235,82 +271,116 @@
         const providers = [
             {
                 id: 1,
-                name: "Mobile Modular Portable Storage",
-                location: "Fairburn / Atlanta Area",
-                distance: 8.4,
-                types: ["20ft Standard", "40ft Standard", "40ft High Cube", "Combo Offices"],
+                name: "Jenco Sales, Inc.",
+                category: "Container",
+                location: "Newnan, GA",
+                distance: 12.0,
+                types: ["40ft High Cube", "20ft Std", "Modifications"],
                 hours: "Mon - Fri: 8:00 AM - 5:00 PM",
-                phone: "(866) 459-7600",
-                email: "info@mobilemodular.com",
+                phone: "770-254-0161",
+                email: "Direct Inquiry via jencosales.com",
                 rto: true,
                 rating: 98,
-                avgPriceRate: 4.5,
-                details: "Highest recommendation for the Fairburn corridor. They maintain a heavy inventory of 40ft High Cubes specifically for long-term storage and modded use. Their local yard minimizes the 'deadhead' delivery mileage cost.",
-                bestFor: "Lowest Delivery Fee"
+                avgPriceRate: 4.0,
+                leadTime: "3-5 Days",
+                security: "ISO Standard + Gasket Verified",
+                strategicVerdict: "RANK 1: The highest-ranked recommendation due to its immediate proximity and status as a family-owned asset-based dealer. Allows physical tagging of inventory.",
+                bestFor: "Inspections & Proximity"
             },
             {
                 id: 2,
-                name: "Container South",
-                location: "Forest Park, GA",
-                distance: 14.2,
-                types: ["20ft New/Used", "40ft New/Used", "Double Door"],
-                hours: "Mon - Fri: 7:30 AM - 4:30 PM",
-                phone: "(404) 363-2727",
-                email: "sales@containersouth.com",
+                name: "Atlanta Container & Trailer (ACT)",
+                category: "Container",
+                location: "Conley, GA",
+                distance: 18.0,
+                types: ["40ft High Cube", "Cold Storage", "Leasing"],
+                hours: "Mon - Fri: 8:00 AM - 4:30 PM",
+                phone: "404-361-0939",
+                email: "office@atlcontainer.com",
                 rto: true,
                 rating: 92,
-                avgPriceRate: 5.0,
-                details: "Dominant player in the 'Used' market. If looking for 'Wind and Water Tight' (WWT) 40ft units for construction site use, their Forest Park inventory is the largest in the south metro.",
-                bestFor: "Used Inventory Selection"
+                avgPriceRate: 4.8,
+                leadTime: "4-6 Days",
+                security: "Internal Cam-Locks",
+                strategicVerdict: "RANK 2: The 'RTO Specialist'. Offers the most transparent financial tiers ($175-$265/mo for 40ft used).",
+                bestFor: "Structured RTO Contracts"
             },
             {
                 id: 3,
-                name: "Atlanta Container & Trailer",
-                location: "Atlanta, GA",
-                distance: 11.5,
-                types: ["20ft", "40ft", "45ft High Cube"],
-                hours: "Mon - Fri: 8:00 AM - 6:00 PM",
-                phone: "(770) 458-1111",
-                email: "contact@atlantacontainer.com",
+                name: "Container Technology, Inc. (CTI)",
+                category: "Container",
+                location: "Morrow, GA",
+                distance: 16.0,
+                types: ["IICL-5 Graded", "Custom Office Mods"],
+                hours: "Mon - Fri: 8:00 AM - 5:00 PM",
+                phone: "770-960-6210",
+                email: "sales@containertech.com",
                 rto: false,
                 rating: 85,
-                avgPriceRate: 4.2,
-                details: "Straightforward leasing model. They focus on commercial fleets. While they lack an RTO path, their monthly rental rates for standard 20ft units are highly competitive for temporary storage.",
-                bestFor: "Commercial Lease"
+                avgPriceRate: 5.2,
+                leadTime: "2-4 Days",
+                security: "High-Security Hasp System",
+                strategicVerdict: "RANK 3: Focuses on high-quality IICL assets. Strong choice if aesthetics or office conversion is required.",
+                bestFor: "Aesthetics & Habitability"
             },
             {
                 id: 4,
-                name: "Onsite Storage",
-                location: "Regional Delivery Hub",
-                distance: 18.0,
-                types: ["20ft", "40ft Standard", "40ft High Cube"],
-                hours: "24/7 Online Inquiries",
-                phone: "(888) 973-6748",
-                email: "support@onsitestorage.com",
+                name: "On-Site Storage Solutions",
+                category: "Container",
+                location: "Regional Broker Network",
+                distance: 22.0,
+                types: ["All ISO Sizes", "New/Used"],
+                hours: "24/7 Online",
+                phone: "888-667-4834",
+                email: "Managed via onsite-storage.com",
                 rto: true,
                 rating: 81,
-                avgPriceRate: 5.5,
-                details: "Tech-forward provider. Their RTO application is the fastest (often instant approval). Delivery is managed through a central dispatch hub, so verify their specific yard location for the 30213 zip.",
-                bestFor: "Speed of Approval"
+                avgPriceRate: 5.8,
+                leadTime: "5-10 Days",
+                security: "Smart Lock Options",
+                strategicVerdict: "RANK 4: The 'Aggregator Option'. Aggressive pricing but higher delivery fees. Everyone qualifies (No credit check).",
+                bestFor: "No Credit Check Approvals"
             },
             {
                 id: 5,
-                name: "Container Alliance",
-                location: "Atlanta Network",
-                distance: 22.1,
-                types: ["20ft", "40ft", "Custom Modded"],
+                name: "Conestoga Builders",
+                category: "Workshop",
+                location: "Kennesaw/Local Build",
+                distance: 28.0,
+                types: ["Custom Sheds", "Workshops", "Build-on-site"],
                 hours: "Mon - Fri: 9:00 AM - 5:00 PM",
-                phone: "(800) 386-2345",
-                email: "sales@containeralliance.com",
-                rto: false,
-                rating: 74,
-                avgPriceRate: 4.8,
-                details: "Best for 'One Trip' containers. If aesthetics are a priority (e.g., container for a residential backyard or visible storefront), they source the newest inventory in the network.",
-                bestFor: "Aesthetic/New Units"
+                phone: "678-576-6852",
+                email: "Inquiry via conestogabuilders.com",
+                rto: true,
+                rating: 90,
+                avgPriceRate: 3.5,
+                leadTime: "10-14 Days",
+                security: "Residential Standard",
+                strategicVerdict: "Factory Direct Workshop Option. Build-on-site model bypasses the 120ft truck clearance requirement.",
+                bestFor: "Custom Workshops / Tight Access"
+            },
+            {
+                id: 6,
+                name: "DuraStor Structures",
+                category: "Workshop",
+                location: "McDonough, GA",
+                distance: 19.5,
+                types: ["Garden Sheds", "Garage Units"],
+                hours: "Mon - Fri: 8:00 AM - 5:00 PM",
+                phone: "478-595-6513",
+                email: "Inquiry via durastorstructures.com",
+                rto: true,
+                rating: 88,
+                avgPriceRate: 4.2,
+                leadTime: "7-12 Days",
+                security: "Reinforced Locking Bars",
+                strategicVerdict: "Local family-owned manufacturer. Heavy-duty floors specifically engineered for vehicle/equipment storage.",
+                bestFor: "Vehicle/Garage Use"
             }
         ];
 
         let distChart, servChart;
+        let activeType = 'Container';
 
         function initCharts() {
             const ctxDist = document.getElementById('distanceChart').getContext('2d');
@@ -322,17 +392,22 @@
                         label: 'Distance (Mi)',
                         data: providers.map(p => p.distance),
                         borderColor: '#d97706',
-                        backgroundColor: 'rgba(217, 119, 6, 0.1)',
-                        borderWidth: 4,
+                        backgroundColor: 'rgba(217, 119, 6, 0.05)',
+                        borderWidth: 6,
                         fill: true,
                         tension: 0.4,
                         pointBackgroundColor: '#d97706',
-                        pointRadius: 6,
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 4,
+                        pointRadius: 8,
+                        pointHoverRadius: 14,
                     }]
                 },
                 options: {
                     maintainAspectRatio: false,
                     responsive: true,
+                    onClick: (evt, el) => { if(el.length) showDetails(providers[el[0].index].id); },
+                    onHover: (evt, el) => { evt.native.target.classList.toggle('pointer-cursor', el.length > 0); },
                     plugins: { legend: { display: false } },
                     scales: {
                         y: { beginAtZero: true, grid: { color: '#f1f1f1' }, ticks: { font: { weight: 'bold' } } },
@@ -346,21 +421,19 @@
             servChart = new Chart(ctxServ, {
                 type: 'doughnut',
                 data: {
-                    labels: ['RTO', 'Rental'],
+                    labels: ['RTO Enabled', 'Standard'],
                     datasets: [{
                         data: [rtoCount, providers.length - rtoCount],
                         backgroundColor: ['#f59e0b', '#334155'],
                         borderWidth: 0,
-                        hoverOffset: 10
+                        hoverOffset: 25
                     }]
                 },
                 options: {
                     maintainAspectRatio: false,
                     responsive: true,
-                    plugins: { 
-                        legend: { display: false }
-                    },
-                    cutout: '80%'
+                    plugins: { legend: { display: false } },
+                    cutout: '88%'
                 }
             });
         }
@@ -368,41 +441,41 @@
         function renderProviders(data) {
             const grid = document.getElementById('providerGrid');
             grid.innerHTML = '';
-            
-            data.forEach((p, index) => {
+            
+            data.forEach((p, idx) => {
                 const card = document.createElement('div');
-                card.className = `animate-fade-in bg-white border border-stone-200 rounded-[2rem] p-8 cursor-pointer hover:shadow-2xl hover:border-amber-500/30 transition-all group`;
-                card.style.animationDelay = `${index * 0.1}s`;
+                card.className = `animate-slide-up bg-white border border-stone-200 rounded-[3rem] p-8 cursor-pointer hover:shadow-2xl hover:border-amber-500/30 transition-all group`;
+                card.style.animationDelay = `${idx * 0.05}s`;
                 card.onclick = () => showDetails(p.id);
-                
+                
                 card.innerHTML = `
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="bg-slate-50 w-12 h-12 rounded-2xl flex items-center justify-center font-black text-slate-400 group-hover:bg-amber-600 group-hover:text-white transition-colors">
-                            0${p.id}
+                    <div class="flex justify-between items-start mb-8">
+                        <div class="bg-slate-50 w-14 h-14 rounded-2xl flex items-center justify-center font-black text-slate-300 group-hover:bg-amber-600 group-hover:text-white transition-all shadow-inner text-xl">
+                            ${p.id}
                         </div>
                         <div class="text-right">
-                             <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Status</div>
-                             <span class="text-xs font-black uppercase ${p.rto ? 'text-green-600' : 'text-slate-400'}">
-                                ${p.rto ? 'RTO Active' : 'Rental Base'}
+                             <div class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Logistics Tier</div>
+                             <span class="text-xs font-black uppercase ${p.category === 'Container' ? 'text-amber-600' : 'text-slate-900'}">
+                                ${p.category}
                              </span>
                         </div>
                     </div>
-                    <h3 class="font-black text-xl mb-1 leading-tight text-slate-900">${p.name}</h3>
-                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-6 italic">Best for: ${p.bestFor}</p>
-                    
-                    <div class="grid grid-cols-2 gap-4 mb-6">
-                        <div class="bg-stone-50 p-3 rounded-xl border border-stone-100">
-                            <div class="text-[10px] font-bold text-slate-400 uppercase">Distance</div>
-                            <div class="text-lg font-black">${p.distance} <span class="text-xs font-medium">mi</span></div>
+                    <h3 class="font-black text-2xl mb-1 leading-none text-slate-900 group-hover:text-amber-600 transition-colors">${p.name}</h3>
+                    <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-8">VERDICT: ${p.bestFor}</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <div class="bg-stone-50 p-4 rounded-2xl border border-stone-100">
+                            <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Radius</div>
+                            <div class="text-xl font-black">${p.distance}mi</div>
                         </div>
-                        <div class="bg-stone-50 p-3 rounded-xl border border-stone-100 text-right">
-                            <div class="text-[10px] font-bold text-slate-400 uppercase">Rating</div>
-                            <div class="text-lg font-black text-amber-600">${p.rating}%</div>
+                        <div class="bg-stone-50 p-4 rounded-2xl border border-stone-100 text-right">
+                            <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest">RTO?</div>
+                            <div class="text-xl font-black text-amber-600">${p.rto ? 'YES' : 'NO'}</div>
                         </div>
                     </div>
 
-                    <div class="flex flex-wrap gap-1.5">
-                        ${p.types.slice(0,3).map(t => `<span class="text-[9px] font-bold uppercase bg-white border border-slate-200 px-2 py-1 rounded-lg text-slate-600">${t}</span>`).join('')}
+                    <div class="flex flex-wrap gap-2">
+                        ${p.types.slice(0,2).map(t => `<span class="text-[9px] font-black uppercase bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-xl text-slate-500">${t}</span>`).join('')}
                     </div>
                 `;
                 grid.appendChild(card);
@@ -413,73 +486,54 @@
             const provider = providers.find(p => p.id === id);
             const content = document.getElementById('detailContent');
             const placeholder = document.getElementById('detailPlaceholder');
-            
             placeholder.classList.add('hidden');
             content.classList.remove('hidden');
-            
+            
             content.innerHTML = `
-                <div class="p-8 md:p-12">
-                    <div class="flex flex-col lg:flex-row gap-12">
+                <div class="p-10 md:p-20">
+                    <div class="flex flex-col lg:flex-row gap-20">
                         <div class="flex-grow">
-                            <div class="flex items-center gap-3 mb-4">
-                                <span class="bg-amber-600 text-white text-[10px] font-black uppercase px-3 py-1 rounded-full">Index Rank #${provider.id}</span>
-                                <span class="text-slate-400 font-bold text-xs uppercase tracking-widest">Fairburn Radius Audit</span>
+                            <div class="flex items-center gap-4 mb-8">
+                                <span class="bg-amber-600 text-white text-[10px] font-black uppercase px-5 py-2 rounded-full shadow-2xl shadow-amber-200">${provider.category} AUDIT</span>
+                                <span class="text-slate-300 font-black text-[10px] uppercase tracking-[0.4em]">Procurement Spec #0${provider.id}</span>
                             </div>
-                            <h2 class="text-5xl font-black tracking-tighter text-slate-900 mb-2">${provider.name}</h2>
-                            <p class="text-2xl font-bold text-amber-600 mb-8 italic">📍 ${provider.location}</p>
-                            
-                            <div class="prose prose-slate max-w-none">
-                                <h4 class="text-xs font-bold uppercase text-slate-400 tracking-widest mb-4 border-b pb-2">Technical Analysis</h4>
-                                <p class="text-lg text-slate-600 font-medium leading-relaxed">${provider.details}</p>
-                            </div>
-
-                            <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100">
-                                    <h5 class="text-xs font-black uppercase text-slate-400 mb-4 tracking-widest">Inventory Matrix</h5>
-                                    <div class="space-y-2">
-                                        ${provider.types.map(t => `
-                                            <div class="flex items-center justify-between text-sm py-2 border-b border-slate-200/50">
-                                                <span class="font-bold text-slate-900">${t}</span>
-                                                <span class="text-green-600">Available</span>
-                                            </div>
-                                        `).join('')}
+                            <h2 class="text-6xl font-black tracking-tighter text-slate-900 mb-4 leading-none italic">${provider.name}</h2>
+                            <p class="text-2xl font-bold text-amber-600 mb-12">📍 ${provider.location}</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+                                <div>
+                                    <h4 class="text-[10px] font-black uppercase text-slate-400 tracking-[0.4em] mb-8 border-b border-slate-100 pb-4">Verbatim Findings</h4>
+                                    <p class="text-xl text-slate-600 font-medium leading-relaxed mb-10 italic">"${provider.strategicVerdict}"</p>
+                                    
+                                    <div class="space-y-6">
+                                        <div class="flex gap-6"><span class="text-3xl">⏱️</span><div><div class="text-[9px] font-black text-slate-400 uppercase">Avg. Lead Time</div><div class="font-black text-slate-900">${provider.leadTime}</div></div></div>
+                                        <div class="flex gap-6"><span class="text-3xl">🛡️</span><div><div class="text-[9px] font-black text-slate-400 uppercase">Gasket/Security</div><div class="font-black text-slate-900">${provider.security}</div></div></div>
                                     </div>
                                 </div>
-                                <div class="bg-slate-900 p-8 rounded-3xl text-white">
-                                    <h5 class="text-xs font-black uppercase text-slate-400 mb-6 tracking-widest">Contact Dispatch</h5>
-                                    <div class="space-y-6">
-                                        <div>
-                                            <div class="text-[10px] font-bold text-amber-500 uppercase">Primary Phone</div>
-                                            <div class="text-2xl font-black underline decoration-amber-500/30 underline-offset-4">${provider.phone}</div>
+                                <div class="bg-slate-900 p-12 rounded-[4rem] text-white shadow-3xl relative overflow-hidden">
+                                    <div class="relative z-10">
+                                        <h5 class="text-[10px] font-black uppercase text-slate-500 mb-10 tracking-[0.3em]">Contract Access</h5>
+                                        <div class="space-y-10">
+                                            <div><p class="text-[9px] font-black text-amber-500 uppercase tracking-widest mb-1">Direct Procurement Line</p><p class="text-4xl font-black tracking-tighter">${provider.phone}</p></div>
+                                            <div><p class="text-[9px] font-black text-amber-500 uppercase tracking-widest mb-1">Inquiry/Email</p><p class="text-sm font-bold text-slate-400">${provider.email}</p></div>
                                         </div>
-                                        <div>
-                                            <div class="text-[10px] font-bold text-amber-500 uppercase">Hours of Operation</div>
-                                            <div class="font-bold">${provider.hours}</div>
-                                        </div>
+                                        <a href="tel:${provider.phone.replace(/\D/g,'')}" class="mt-12 block text-center bg-amber-600 text-white py-6 rounded-3xl font-black uppercase tracking-[0.3em] text-xs hover:bg-amber-500 transition-all shadow-xl">Contact Yard Now</a>
                                     </div>
-                                    <a href="tel:${provider.phone.replace(/\D/g,'')}" class="mt-8 block text-center bg-white text-slate-900 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-amber-500 transition-colors shadow-xl shadow-white/5">
-                                        Initiate Quote
-                                    </a>
+                                    <div class="absolute -bottom-20 -right-20 w-60 h-60 bg-white/5 rounded-full blur-3xl"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
-            
-            document.getElementById('details').scrollIntoView({ behavior: 'smooth' });
+            scrollToSection('details');
             updateEstimator(provider.id);
         }
 
         function initEstimator() {
             const select = document.getElementById('estimatorProvider');
-            select.innerHTML = providers.map(p => `<option value="${p.id}">${p.name} (${p.distance} mi)</option>`).join('');
-            
-            select.addEventListener('change', (e) => {
-                updateEstimator(parseInt(e.target.value));
-            });
-            
-            // Initial calc
+            select.innerHTML = providers.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+            select.addEventListener('change', (e) => updateEstimator(parseInt(e.target.value)));
             updateEstimator(providers[0].id);
         }
 
@@ -487,45 +541,34 @@
             const provider = providers.find(p => p.id === id);
             const distEl = document.getElementById('estDist');
             const valEl = document.getElementById('estValue');
-            const selectEl = document.getElementById('estimatorProvider');
-            
-            selectEl.value = id;
+            document.getElementById('estimatorProvider').value = id;
             distEl.innerText = `${provider.distance} mi`;
-            
-            // Calc logic: $50 base + ($4.50 avg per mile)
-            const base = 75; 
-            const total = base + (provider.distance * provider.avgPriceRate);
-            valEl.innerText = `$${total.toFixed(2)}`;
+            valEl.innerText = `$${(75 + (provider.distance * provider.avgPriceRate)).toFixed(2)}`;
         }
 
-        function filterRTO(val) {
-            const filtered = providers.filter(p => p.rto === val);
-            renderProviders(filtered);
+        function toggleType(type) {
+            activeType = type;
+            document.getElementById('btnContainer').className = type === 'Container' ? "px-8 py-5 bg-amber-600 text-white rounded-3xl text-[10px] font-black uppercase tracking-widest shadow-lg" : "px-8 py-5 bg-white border border-stone-200 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition shadow-sm";
+            document.getElementById('btnWorkshop').className = type === 'Workshop' ? "px-8 py-5 bg-amber-600 text-white rounded-3xl text-[10px] font-black uppercase tracking-widest shadow-lg" : "px-8 py-5 bg-white border border-stone-200 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition shadow-sm";
+            renderProviders(providers.filter(p => p.category === type));
         }
 
         function resetFilters() {
-            renderProviders(providers);
+            toggleType('Container');
             document.getElementById('searchInput').value = '';
         }
 
         function scrollToSection(id) {
-            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+            const el = document.getElementById(id);
+            if (el) window.scrollTo({ top: el.offsetTop - 40, behavior: 'smooth' });
         }
 
         document.getElementById('searchInput').addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
-            const filtered = providers.filter(p => 
-                p.name.toLowerCase().includes(term) || 
-                p.types.some(t => t.toLowerCase().includes(term))
-            );
-            renderProviders(filtered);
+            renderProviders(providers.filter(p => p.name.toLowerCase().includes(term) || p.types.some(t => t.toLowerCase().includes(term))));
         });
 
-        window.onload = () => {
-            initCharts();
-            renderProviders(providers);
-            initEstimator();
-        };
+        window.onload = () => { initCharts(); toggleType('Container'); initEstimator(); };
     </script>
 </body>
 </html>
