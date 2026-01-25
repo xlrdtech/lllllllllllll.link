@@ -1,90 +1,447 @@
-<!DOCTYPE html><html lang="en"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">    <meta name="apple-mobile-web-app-capable" content="yes">    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">    <meta name="theme-color" content="#000000">    <title>Lord Qi AI Command Center</title>    <style>        * {            margin: 0;            padding: 0;            box-sizing: border-box;            -webkit-tap-highlight-color: transparent;        }
-        html, body {            height: 100%;            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;            overflow: hidden;            background: #000;            color: white;        }
-        .app {            position: relative;            height: 100vh;            width: 100vw;            background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #0a0a0f 100%);            overflow: hidden;        }
-        /* Main Command Center */        .command-center {            height: 100vh;            display: flex;            flex-direction: column;            z-index: 1;            position: relative;            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);        }
-        .app.drawer-open .command-center {            transform: scale(0.95);            filter: brightness(0.7);        }
-        /* Control Bar */        .control-bar {            padding: 15px 20px;            background: rgba(10, 10, 15, 0.95);            border-bottom: 1px solid rgba(255, 255, 255, 0.1);            display: flex;            align-items: center;            gap: 15px;            flex-wrap: wrap;        }
-        .control-bar h1 {            font-size: 1.2rem;            font-weight: 700;            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);            -webkit-background-clip: text;            -webkit-text-fill-color: transparent;            flex-shrink: 0;        }
-        .ai-selector {            display: flex;            gap: 10px;            flex: 1;        }
-        .ai-btn {            padding: 8px 16px;            background: rgba(255, 255, 255, 0.05);            border: 1px solid rgba(255, 255, 255, 0.1);            border-radius: 10px;            color: white;            font-size: 0.9rem;            cursor: pointer;            transition: all 0.2s ease;            font-weight: 500;        }
-        .ai-btn:hover {            background: rgba(255, 255, 255, 0.1);            transform: translateY(-1px);        }
-        .ai-btn.active {            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);            border-color: #667eea;        }
-        .display-controls {            display: flex;            gap: 8px;            flex-shrink: 0;        }
-        .display-btn {            width: 36px;            height: 36px;            border-radius: 8px;            border: 2px solid;            background: rgba(255, 255, 255, 0.05);            cursor: pointer;            transition: all 0.2s ease;            display: flex;            align-items: center;            justify-content: center;            font-weight: 700;            font-size: 0.9rem;        }
-        .display-btn.display-1 {            border-color: #ff6b6b;            color: #ff6b6b;        }
-        .display-btn.display-2 {            border-color: #4ecdc4;            color: #4ecdc4;        }
-        .display-btn.display-3 {            border-color: #ffe66d;            color: #ffe66d;        }
-        .display-btn:hover {            transform: scale(1.1);            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);        }
-        /* Main Canvas */        .main-canvas {            flex: 1;            background: #000;            position: relative;            overflow: hidden;        }
-        .main-canvas iframe {            width: 100%;            height: 100%;            border: none;        }
-        .canvas-loading {            position: absolute;            top: 0;            left: 0;            right: 0;            bottom: 0;            background: rgba(0, 0, 0, 0.9);            display: flex;            align-items: center;            justify-content: center;            flex-direction: column;            gap: 1.5rem;        }
-        .canvas-loading.hidden {            display: none;        }
-        .canvas-loading h2 {            font-size: 2rem;            font-weight: 700;            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);            -webkit-background-clip: text;            -webkit-text-fill-color: transparent;        }
-        .canvas-loading p {            opacity: 0.6;            font-size: 1.1rem;        }
-        @keyframes pulse {            0%, 100% { opacity: 1; transform: scale(1); }            50% { opacity: 0.5; transform: scale(1.1); }        }
-        /* Edge Activation Zones */        .edge-zone {            position: fixed;            z-index: 9999;            cursor: pointer;            transition: all 0.3s ease;        }
-        .edge-zone.left {            left: 0;            top: 0;            bottom: 0;            width: 20px;            background: linear-gradient(90deg, rgba(255, 107, 107, 0.3) 0%, transparent 100%);        }
-        .edge-zone.right {            right: 0;            top: 0;            bottom: 0;            width: 20px;            background: linear-gradient(270deg, rgba(78, 205, 196, 0.3) 0%, transparent 100%);        }
-        .edge-zone.bottom {            bottom: 0;            left: 0;            right: 0;            height: 20px;            background: linear-gradient(0deg, rgba(255, 230, 109, 0.3) 0%, transparent 100%);        }
-        .edge-zone:hover {            opacity: 1;        }
-        .edge-zone.left:hover {            background: linear-gradient(90deg, rgba(255, 107, 107, 0.6) 0%, transparent 100%);        }
-        .edge-zone.right:hover {            background: linear-gradient(270deg, rgba(78, 205, 196, 0.6) 0%, transparent 100%);        }
-        .edge-zone.bottom:hover {            background: linear-gradient(0deg, rgba(255, 230, 109, 0.6) 0%, transparent 100%);        }
-        /* Drawer System */        .drawer {            position: fixed;            background: rgba(10, 10, 15, 0.98);            backdrop-filter: blur(40px) saturate(180%);            -webkit-backdrop-filter: blur(40px) saturate(180%);            border-radius: 20px;            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);            z-index: 10000;            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;            display: flex;            flex-direction: column;            border: 1px solid rgba(255, 255, 255, 0.1);        }
-        .drawer.left {            left: 20px;            top: 20px;            bottom: 20px;            width: min(500px, 90vw);            transform: translateX(-120%);            border-left: 3px solid #ff6b6b;        }
-        .drawer.right {            right: 20px;            top: 20px;            bottom: 20px;            width: min(500px, 90vw);            transform: translateX(120%);            border-right: 3px solid #4ecdc4;        }
-        .drawer.bottom {            bottom: 20px;            left: 20px;            right: 20px;            height: min(600px, 80vh);            transform: translateY(120%);            border-bottom: 3px solid #ffe66d;        }
-        .drawer.open {            transform: translate(0, 0);            opacity: 1;        }
-        /* Drawer Header */        .drawer-header {            padding: 20px;            border-bottom: 1px solid rgba(255, 255, 255, 0.1);            display: flex;            justify-content: space-between;            align-items: center;        }
-        .drawer-header h2 {            font-size: 1.2rem;            font-weight: 600;        }
-        .drawer-close {            width: 32px;            height: 32px;            border-radius: 50%;            border: none;            background: rgba(255, 255, 255, 0.1);            color: white;            cursor: pointer;            display: flex;            align-items: center;            justify-content: center;            transition: all 0.2s ease;        }
-        .drawer-close:hover {            background: rgba(255, 255, 255, 0.2);            transform: scale(1.1);        }
-        /* Display Frame */        .display-frame {            flex: 1;            background: #000;            border-radius: 12px;            overflow: hidden;            margin: 20px;            position: relative;        }
-        .display-frame iframe {            width: 100%;            height: 100%;            border: none;        }
-        .loading-overlay {            position: absolute;            top: 0;            left: 0;            right: 0;            bottom: 0;            background: rgba(0, 0, 0, 0.9);            display: flex;            align-items: center;            justify-content: center;            flex-direction: column;            gap: 1rem;        }
-        .loading-overlay.hidden {            display: none;        }
-        .loader {            width: 50px;            height: 50px;            border: 4px solid rgba(255, 255, 255, 0.1);            border-top-color: #667eea;            border-radius: 50%;            animation: spin 1s linear infinite;        }
-        @keyframes spin {            to { transform: rotate(360deg); }        }
-        /* Scrim */        .scrim {            position: fixed;            top: 0;            left: 0;            right: 0;            bottom: 0;            background: rgba(0, 0, 0, 0.7);            backdrop-filter: blur(4px);            z-index: 9998;            opacity: 0;            pointer-events: none;            transition: opacity 0.3s ease;        }
-        .scrim.active {            opacity: 1;            pointer-events: all;        }
-        /* Gesture Hints */        .gesture-hint {            position: absolute;            top: 10px;            left: 50%;            transform: translateX(-50%);            padding: 6px 12px;            background: rgba(255, 255, 255, 0.1);            border-radius: 12px;            font-size: 0.75rem;            opacity: 0.6;            pointer-events: none;        }
-        /* Quick Actions */        .quick-actions {            display: flex;            gap: 0.5rem;            flex-wrap: wrap;            margin-top: 1rem;        }
-        .quick-btn {            padding: 0.5rem 1rem;            background: rgba(255, 255, 255, 0.05);            border: 1px solid rgba(255, 255, 255, 0.1);            border-radius: 12px;            color: white;            font-size: 0.85rem;            cursor: pointer;            transition: all 0.2s ease;        }
-        .quick-btn:hover {            background: rgba(255, 255, 255, 0.1);            transform: translateY(-2px);        }
-        @media (max-width: 768px) {            .display-grid {                grid-template-columns: 1fr;            }
-            .drawer.left, .drawer.right {                width: 95vw;            }
-            .drawer.bottom {                height: 90vh;            }        }    </style></head><body>    <div class="app" id="app">        <!-- Command Center -->        <div class="command-center">            <!-- Control Bar -->            <div class="control-bar">                <h1>🚀 AI COMMAND CENTER</h1>
-                <!-- Main Canvas Selection -->                <div class="ai-selector">                    <button class="ai-btn active" onclick="loadMain('vscode')">💻 VS Code (Claude Code)</button>                    <button class="ai-btn" onclick="loadMain('local')">🖥️ Local VS Code</button>                    <button class="ai-btn" onclick="loadMain('custom')">🌐 Custom URL</button>                </div>
-                <!-- Display Drawer Controls -->                <div class="display-controls">                    <button class="display-btn display-1" onclick="openDrawer('left')" title="Element: Communications">💬</button>                    <button class="display-btn display-2" onclick="openDrawer('right')" title="Google Voice: Calls & SMS">📞</button>                    <button class="display-btn display-3" onclick="openDrawer('bottom')" title="Grok Voice: AI Assistant">🎤</button>                </div>            </div>
-            <!-- Main Control Canvas: VS Code + Claude Code -->            <div class="main-canvas">                <div class="canvas-loading" id="canvasLoading">                    <div class="loader"></div>                    <h2>💻 Initializing VS Code</h2>                    <p>Loading VS Code with Claude Code extension...</p>                </div>                <iframe id="mainCanvas" src="https://vscode.dev" allow="camera; microphone; clipboard-read; clipboard-write; fullscreen"></iframe>            </div>        </div>
-        <!-- Edge Activation Zones -->        <div class="edge-zone left" onclick="openDrawer('left')" title="👈 Display 1"></div>        <div class="edge-zone right" onclick="openDrawer('right')" title="👉 Display 2"></div>        <div class="edge-zone bottom" onclick="openDrawer('bottom')" title="👆 Display 3"></div>
-        <!-- Scrim Overlay -->        <div class="scrim" onclick="closeAllDrawers()"></div>
-        <!-- Element: Communications (Left Drawer) -->        <div class="drawer left" id="leftDrawer">            <div class="gesture-hint">👈 Swipe or click outside to close</div>            <div class="drawer-header">                <h2>💬 Element · Communications</h2>                <button class="drawer-close" onclick="closeDrawer('left')">✕</button>            </div>            <div class="display-frame">                <div class="loading-overlay" id="leftLoading">                    <div class="loader"></div>                    <div>Loading Element messaging...</div>                </div>                <iframe id="leftFrame" src="" allow="camera; microphone; clipboard-read; clipboard-write"></iframe>            </div>        </div>
-        <!-- Google Voice: Calls & SMS (Right Drawer) -->        <div class="drawer right" id="rightDrawer">            <div class="gesture-hint">👉 Swipe or click outside to close</div>            <div class="drawer-header">                <h2>📞 Google Voice · Calls & SMS</h2>                <button class="drawer-close" onclick="closeDrawer('right')">✕</button>            </div>            <div class="display-frame">                <div class="loading-overlay" id="rightLoading">                    <div class="loader"></div>                    <div>Loading Google Voice...</div>                </div>                <iframe id="rightFrame" src="" allow="camera; microphone; clipboard-read; clipboard-write"></iframe>            </div>        </div>
-        <!-- Grok Voice: AI Assistant (Bottom Drawer) -->        <div class="drawer bottom" id="bottomDrawer">            <div class="gesture-hint">👇 Swipe or click outside to close</div>            <div class="drawer-header">                <h2>🎤 Grok Voice · AI Assistant</h2>                <button class="drawer-close" onclick="closeDrawer('bottom')">✕</button>            </div>            <div class="display-frame">                <div class="loading-overlay" id="bottomLoading">                    <div class="loader"></div>                    <div>Loading Grok Voice assistant...</div>                </div>                <iframe id="bottomFrame" src="" allow="camera; microphone; clipboard-read; clipboard-write"></iframe>            </div>        </div>    </div>
-    <script>        // Configuration        const config = {            // Main AI Control Canvas - VS Code with Claude Code            main: {                vscode: 'https://vscode.dev',  // VS Code web version                local: 'http://localhost:8080', // Local VS Code Server if running                custom: ''  // Custom VS Code instance URL            },            // Display Drawers (monitoring interface)            displays: {                left: {                    name: 'Element - Communications',                    url: 'https://app.element.io'  // Messaging hub                },                right: {                    name: 'Google Voice - Calls & SMS',                    url: 'https://voice.google.com'  // Voice/SMS                },                bottom: {                    name: 'Grok Voice - AI Assistant',                    url: 'https://grok.com/voice'  // AI voice assistant                }            }        };
-        let activeDrawers = new Set();        let currentMain = 'vscode';
-        // Load Main Control Interface (VS Code)        function loadMain(mainType) {            const mainCanvas = document.getElementById('mainCanvas');            const canvasLoading = document.getElementById('canvasLoading');            const loadingText = canvasLoading.querySelector('p');            const loadingTitle = canvasLoading.querySelector('h2');
-            // Update active button            document.querySelectorAll('.ai-btn').forEach(btn => btn.classList.remove('active'));            event.target.classList.add('active');
-            if (mainType === 'custom') {                const url = prompt('Enter custom URL (VS Code instance or other):', 'https://');                if (url && url.startsWith('http')) {                    config.main.custom = url;                    currentMain = 'custom';                    loadingTitle.textContent = '🌐 Loading Custom Interface';                    loadingText.textContent = `Loading ${url}...`;                    canvasLoading.classList.remove('hidden');                    mainCanvas.src = url;                } else {                    return;                }            } else if (mainType === 'local') {                currentMain = 'local';                loadingTitle.textContent = '🖥️ Connecting to Local VS Code';                loadingText.textContent = 'Connecting to localhost:8080...';                canvasLoading.classList.remove('hidden');                mainCanvas.src = config.main.local;            } else {                currentMain = 'vscode';                loadingTitle.textContent = '💻 Loading VS Code';                loadingText.textContent = 'Loading VS Code with Claude Code extension...';                canvasLoading.classList.remove('hidden');                mainCanvas.src = config.main.vscode;            }
-            // Hide loading after iframe loads            mainCanvas.onload = () => {                setTimeout(() => {                    canvasLoading.classList.add('hidden');                }, 1500);            };        }
-        function openDrawer(position) {            const drawer = document.getElementById(position + 'Drawer');            const frame = document.getElementById(position + 'Frame');            const loading = document.getElementById(position + 'Loading');            const scrim = document.querySelector('.scrim');            const app = document.getElementById('app');
-            if (drawer && !drawer.classList.contains('open')) {                // Close other drawers if opening left/right                if (position !== 'bottom') {                    closeDrawer('left');                    closeDrawer('right');                }
-                // Load iframe content if not already loaded                if (!frame.src) {                    frame.src = config.displays[position].url;
-                    // Hide loading after iframe loads                    frame.onload = () => {                        setTimeout(() => {                            loading.classList.add('hidden');                        }, 1000);                    };                }
-                // Open drawer                setTimeout(() => {                    drawer.classList.add('open');                    activeDrawers.add(position);                    updateScrim();                    app.classList.add('drawer-open');                }, 50);
-                // Haptic feedback                if (navigator.vibrate) {                    navigator.vibrate(10);                }            }        }
-        function closeDrawer(position) {            const drawer = document.getElementById(position + 'Drawer');            const app = document.getElementById('app');
-            if (drawer && drawer.classList.contains('open')) {                drawer.classList.remove('open');                activeDrawers.delete(position);                updateScrim();
-                if (activeDrawers.size === 0) {                    app.classList.remove('drawer-open');                }            }        }
-        function closeAllDrawers() {            ['left', 'right', 'bottom'].forEach(position => {                closeDrawer(position);            });        }
-        function updateScrim() {            const scrim = document.querySelector('.scrim');            if (activeDrawers.size > 0) {                scrim.classList.add('active');            } else {                scrim.classList.remove('active');            }        }
-        function launchAllDisplays() {            openDrawer('left');            setTimeout(() => openDrawer('right'), 200);            setTimeout(() => openDrawer('bottom'), 400);        }
-        // Keyboard shortcuts        document.addEventListener('keydown', (e) => {            if (e.key === '1') openDrawer('left');            if (e.key === '2') openDrawer('right');            if (e.key === '3') openDrawer('bottom');            if (e.key === 'Escape') closeAllDrawers();            if (e.key === 'a' || e.key === 'A') launchAllDisplays();        });
-        // Touch gestures for mobile        let touchStartX = 0;        let touchStartY = 0;
-        document.addEventListener('touchstart', (e) => {            touchStartX = e.touches[0].clientX;            touchStartY = e.touches[0].clientY;        }, { passive: true });
-        document.addEventListener('touchend', (e) => {            const touchEndX = e.changedTouches[0].clientX;            const touchEndY = e.changedTouches[0].clientY;            const deltaX = touchEndX - touchStartX;            const deltaY = touchEndY - touchStartY;
-            // Swipe from left edge            if (touchStartX < 50 && deltaX > 100) {                openDrawer('left');            }            // Swipe from right edge            else if (touchStartX > window.innerWidth - 50 && deltaX < -100) {                openDrawer('right');            }            // Swipe from bottom edge            else if (touchStartY > window.innerHeight - 50 && deltaY < -100) {                openDrawer('bottom');            }        }, { passive: true });
-        // Initialize main canvas on load        window.addEventListener('load', () => {            const mainCanvas = document.getElementById('mainCanvas');            const canvasLoading = document.getElementById('canvasLoading');
-            mainCanvas.onload = () => {                setTimeout(() => {                    canvasLoading.classList.add('hidden');                }, 1500);            };        });
-        console.log('🚀 AI Command Center initialized');        console.log('💻 Main Canvas: VS Code + Claude Code extension');        console.log('🗨️ Claude Code Chat: Controls webview browser in VS Code');        console.log('📱 Left Drawer: Element (Communications)');        console.log('📞 Right Drawer: Google Voice (Calls & SMS)');        console.log('🎤 Bottom Drawer: Grok Voice (AI Assistant)');        console.log('⚡ Architecture: VS Code control + 3 communication channels');        console.log('🎯 Purpose: Autonomous AI coding & business operations');    </script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Selfown OS - Alpha</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            overscroll-behavior: none; /* Prevents pull-to-refresh on mobile */
+        }
+        
+        /* Custom Scrollbar for inner elements */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        
+        /* Wave Animation */
+        @keyframes wave {
+          0%, 100% { transform: scaleY(1); opacity: 0.4; }
+          50% { transform: scaleY(1.5); opacity: 1; }
+        }
+        .animate-wave { animation: wave 1.2s infinite ease-in-out; }
+    </style>
+</head>
+<body class="bg-black text-slate-200 h-screen w-screen overflow-hidden">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useMemo, useEffect, useRef } = React;
+
+        // --- ICON SYSTEM ---
+        // Replacing lucide-react imports with inline SVGs for standalone compatibility
+        const Icons = {
+            TrendingDown: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>,
+            TrendingUp: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>,
+            Zap: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>,
+            ShieldCheck: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>,
+            ChevronRight: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>,
+            ChevronLeft: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>,
+            BarChart3: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>,
+            Rocket: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg>,
+            MessageSquare: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>,
+            Phone: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>,
+            Mic: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>,
+            Code2: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 16 4-4-4-4"></path><path d="m6 8-4 4 4 4"></path><path d="m14.5 4-5 16"></path></svg>,
+            Terminal: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>,
+            Maximize2: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>,
+            X: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>,
+            Layers: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>,
+            Activity: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>,
+            Cpu: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+        };
+
+        const App = () => {
+          // --- UI State ---
+          const [activeDrawer, setActiveDrawer] = useState(null); // 'left', 'right', 'bottom'
+          const [view, setView] = useState('ops'); // 'roi' (Sales) or 'ops' (Command Center)
+          const [currentSlide, setCurrentSlide] = useState(0);
+          const [isAiThinking, setIsAiThinking] = useState(true);
+          
+          // --- ROI Calculator State ---
+          const [inputs, setInputs] = useState({
+            users: 10000,
+            softwareMo: 833333,
+          });
+
+          // --- Gesture State ---
+          const touchStart = useRef(null);
+          const touchEnd = useRef(null);
+          const minSwipeDistance = 50;
+
+          // --- Swipe Logic ---
+          const onTouchStart = (e) => {
+            touchEnd.current = null;
+            touchStart.current = { x: e.targetTouches[0].clientX, y: e.targetTouches[0].clientY };
+          }
+
+          const onTouchMove = (e) => {
+            touchEnd.current = { x: e.targetTouches[0].clientX, y: e.targetTouches[0].clientY };
+          }
+
+          const onTouchEnd = () => {
+            if (!touchStart.current || !touchEnd.current) return;
+            const distanceX = touchStart.current.x - touchEnd.current.x;
+            const distanceY = touchStart.current.y - touchEnd.current.y;
+            const isHorizontal = Math.abs(distanceX) > Math.abs(distanceY);
+            const isVertical = !isHorizontal;
+
+            if (isHorizontal && Math.abs(distanceX) > minSwipeDistance) {
+                // Swipe Left (distanceX > 0) -> Open Right Drawer or Close Left
+                if (distanceX > 0) {
+                    if (activeDrawer === 'left') setActiveDrawer(null);
+                    else if (!activeDrawer) setActiveDrawer('right');
+                } 
+                // Swipe Right (distanceX < 0) -> Open Left Drawer or Close Right
+                else {
+                    if (activeDrawer === 'right') setActiveDrawer(null);
+                    else if (!activeDrawer) setActiveDrawer('left');
+                }
+            }
+
+            if (isVertical && Math.abs(distanceY) > minSwipeDistance) {
+                // Swipe Up (distanceY > 0) -> Open Bottom Drawer
+                if (distanceY > 0) {
+                    if (!activeDrawer) setActiveDrawer('bottom');
+                }
+                // Swipe Down (distanceY < 0) -> Close Bottom Drawer
+                else {
+                    if (activeDrawer === 'bottom') setActiveDrawer(null);
+                }
+            }
+          }
+
+          // --- ROI Logic (Fortune 500 Killer Math) ---
+          const results = useMemo(() => {
+            const staffSavings = inputs.users * 500 * 12 * 0.5; 
+            const softwareSavings = inputs.softwareMo * 12;
+            const speedValue = inputs.users * 0.3 * 500 * 12;
+            const totalSavings = staffSavings + softwareSavings + speedValue;
+            const enterprisePriceYearly = 49997 * 12;
+            const paybackMonths = (enterprisePriceYearly / totalSavings) * 12;
+
+            return {
+              staffSavings,
+              softwareSavings,
+              speedValue,
+              totalSavings,
+              paybackMonths: paybackMonths.toFixed(2),
+              roiPercentage: ((totalSavings / enterprisePriceYearly) * 100).toLocaleString()
+            };
+          }, [inputs]);
+
+          // --- Pitch Deck Data ---
+          const slides = [
+            {
+              title: "The Trap",
+              subtitle: "The Legacy Software Tax",
+              points: ["$10M+ Annual Waste", "50% Staff Efficiency Drain", "Iframe/Login Blockers", "Vendor Lock-In"],
+              icon: <Icons.TrendingDown className="text-red-500" width={48} height={48} />,
+              color: "border-red-500/30"
+            },
+            {
+              title: "Selfown Architecture",
+              subtitle: "OS-as-a-Service",
+              points: ["macOS VM Backend", "Triple Virtual Displays", "Unblockable Google Logins", "Loopback Audio Routing"],
+              icon: <Icons.Cpu className="text-blue-500" width={48} height={48} />,
+              color: "border-blue-500/30"
+            },
+            {
+              title: "Autonomous ROI",
+              subtitle: "Human OUT of Loop",
+              points: ["AI Agent Desktop Control", "30% Workflow Acceleration", "Payback < 1 Month", "Highest ROI App Store Entry"],
+              icon: <Icons.Zap className="text-yellow-500" width={48} height={48} />,
+              color: "border-yellow-500/30"
+            }
+          ];
+
+          const toggleDrawer = (pos) => setActiveDrawer(activeDrawer === pos ? null : pos);
+
+          return (
+            <div 
+                className="h-screen w-screen bg-black text-slate-200 font-sans overflow-hidden flex flex-col selection:bg-blue-500/30"
+                onTouchStart={onTouchStart}
+                onTouchMove={onTouchMove}
+                onTouchEnd={onTouchEnd}
+                style={{ touchAction: 'none' }} 
+            >
+              
+              {/* 1. TOP CONTROL BAR (iOS 26 Translucency) */}
+              <header className="h-14 border-b border-white/5 bg-black/40 backdrop-blur-xl flex items-center justify-between px-6 z-[100] shrink-0">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 group cursor-pointer" onClick={() => setView('ops')}>
+                    <div className="w-6 h-6 bg-gradient-to-tr from-blue-600 to-indigo-400 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
+                      <Icons.Layers size={14} className="text-white" />
+                    </div>
+                    <h1 className="text-lg font-black tracking-tighter text-white">
+                      SELFOWN <span className="text-[9px] bg-white text-black px-1.5 py-0.5 rounded ml-1 tracking-widest font-black uppercase">Alpha</span>
+                    </h1>
+                  </div>
+                  
+                  <nav className="hidden md:flex bg-white/5 p-0.5 rounded-full border border-white/10 ml-6">
+                    <button 
+                      onClick={() => setView('ops')}
+                      className={`px-5 py-1.5 rounded-full text-[10px] font-black tracking-widest transition-all ${view === 'ops' ? 'bg-white text-black shadow-lg' : 'text-slate-500 hover:text-white'}`}
+                    >
+                      OPS COMMAND
+                    </button>
+                    <button 
+                      onClick={() => setView('roi')}
+                      className={`px-5 py-1.5 rounded-full text-[10px] font-black tracking-widest transition-all ${view === 'roi' ? 'bg-white text-black shadow-lg' : 'text-slate-500 hover:text-white'}`}
+                    >
+                      ROI STRATEGY
+                    </button>
+                  </nav>
+                </div>
+
+                {/* Global Status & Indicators */}
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 pr-4 border-r border-white/10 text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                    <span className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"/> VM ACTIVE</span>
+                    <span className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-blue-500"/> DISPLAY: 3x</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => toggleDrawer('left')} className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${activeDrawer === 'left' ? 'bg-red-500 text-white' : 'bg-white/5 hover:bg-white/10 text-red-500 border border-red-500/20'}`}>
+                      <Icons.MessageSquare size={16} />
+                    </button>
+                    <button onClick={() => toggleDrawer('right')} className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${activeDrawer === 'right' ? 'bg-cyan-500 text-white' : 'bg-white/5 hover:bg-white/10 text-cyan-500 border border-cyan-500/20'}`}>
+                      <Icons.Phone size={16} />
+                    </button>
+                    <button onClick={() => toggleDrawer('bottom')} className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${activeDrawer === 'bottom' ? 'bg-yellow-500 text-white' : 'bg-white/5 hover:bg-white/10 text-yellow-500 border border-yellow-500/20'}`}>
+                      <Icons.Mic size={16} />
+                    </button>
+                  </div>
+                </div>
+              </header>
+
+              {/* 2. MAIN VIEWPORT */}
+              <main className="flex-grow relative overflow-hidden bg-[#0a0a0a]">
+                
+                {/* VIEW A: OPS COMMAND (The VS Code Background Engine) */}
+                <div className={`absolute inset-0 transition-all duration-700 ${view === 'ops' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                  <div className="w-full h-full flex flex-col">
+                    {/* Top Section: VS Code IDE / Claude Code Browser Control */}
+                    <div className="flex-grow relative">
+                      <div className="absolute inset-0 z-0 bg-slate-900 flex items-center justify-center overflow-hidden">
+                         <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+                         <div className="text-center">
+                            <Icons.Code2 size={48} className="text-blue-500/20 mb-4 mx-auto animate-pulse" />
+                            <p className="text-slate-600 font-mono text-[10px] uppercase tracking-[0.3em]">Initializing Core Engine...</p>
+                         </div>
+                      </div>
+                      <iframe 
+                        src="https://vscode.dev" 
+                        className="w-full h-full border-none relative z-10 opacity-90 transition-opacity duration-1000"
+                        title="Selfown IDE"
+                        onLoad={() => setIsAiThinking(false)}
+                      />
+                    </div>
+
+                    {/* Bottom Section: Claude Code Chat Integration */}
+                    <div className="h-[280px] bg-black/80 backdrop-blur-2xl border-t border-white/5 p-4 flex flex-col shrink-0">
+                       <div className="flex items-center justify-between mb-3 px-2">
+                          <div className="flex items-center gap-2">
+                            <Icons.Terminal size={14} className="text-blue-400" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Claude Code v2.1.12</span>
+                          </div>
+                          <div className="flex gap-2">
+                            <div className="w-2 h-2 rounded-full bg-slate-800" />
+                            <div className="w-2 h-2 rounded-full bg-slate-800" />
+                          </div>
+                       </div>
+                       <div className="flex-grow bg-[#0c0c0c] rounded-xl border border-white/5 p-4 font-mono text-[11px] overflow-y-auto space-y-3 custom-scrollbar shadow-inner">
+                          <div className="text-blue-400">⏺ Diagnosing "Connecting..." issue...</div>
+                          <div className="text-slate-500">⏺ Service Check: macOS VM (Display 1: OK, Display 2: OK, Display 3: OK)</div>
+                          <div className="text-green-400">⏺ Success: Bypassing iframe restrictions via native display routing.</div>
+                          <div className="flex gap-2 items-start">
+                            <span className="text-purple-400 shrink-0">❯</span>
+                            <span className="text-slate-300 italic animate-pulse">Waiting for autonomous multimodal desktop control inputs...</span>
+                          </div>
+                       </div>
+                       <div className="mt-3 flex gap-2">
+                          <input type="text" placeholder="Command AI Agent..." className="flex-grow bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-[11px] focus:outline-none focus:border-blue-500/50 transition-all font-mono text-white" />
+                          <button className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all">Execute</button>
+                       </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* VIEW B: ROI STRATEGY (Sales View) */}
+                <div className={`absolute inset-0 transition-all duration-700 bg-black/95 backdrop-blur-2xl p-8 overflow-y-auto ${view === 'roi' ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'}`}>
+                  <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center min-h-[80vh]">
+                    <div className="space-y-6">
+                      <div className="bg-slate-900/50 border border-slate-800 rounded-[32px] p-8 backdrop-blur-sm shadow-2xl relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-green-500/20 transition-all" />
+                        <h2 className="text-2xl font-black text-white mb-8 flex items-center gap-3 tracking-tighter">
+                          <Icons.BarChart3 className="text-green-500" /> FORTUNE 500 KILLER MATH
+                        </h2>
+                        <div className="space-y-4 relative z-10">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="bg-black/40 p-4 rounded-2xl border border-white/5 focus-within:border-green-500/50 transition-all">
+                              <label className="text-[9px] uppercase text-slate-500 font-black tracking-widest block mb-1">Users</label>
+                              <input type="number" className="bg-transparent text-xl font-bold w-full outline-none text-white" value={inputs.users} onChange={e => setInputs({...inputs, users: +e.target.value})} />
+                            </div>
+                            <div className="bg-black/40 p-4 rounded-2xl border border-white/5 focus-within:border-green-500/50 transition-all">
+                              <label className="text-[9px] uppercase text-slate-500 font-black tracking-widest block mb-1">Mo SaaS Spend</label>
+                              <input type="number" className="bg-transparent text-xl font-bold w-full outline-none text-white" value={inputs.softwareMo} onChange={e => setInputs({...inputs, softwareMo: +e.target.value})} />
+                            </div>
+                          </div>
+                          <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-8 rounded-3xl text-black mt-8 shadow-[0_30px_60px_-12px_rgba(16,185,129,0.3)] transform transition-transform hover:scale-[1.02]">
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 mb-2">Year 1 Savings Potential</p>
+                            <p className="text-6xl font-black tracking-tighter text-black">${Math.round(results.totalSavings).toLocaleString()}</p>
+                            <div className="mt-6 pt-6 border-t border-black/10 flex justify-between font-bold text-xs uppercase tracking-widest">
+                              <span>Payback: {results.paybackMonths} Months</span>
+                              <span>{results.roiPercentage}% ROI</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-6">
+                      <div className={`bg-slate-900/40 border-2 ${slides[currentSlide].color} rounded-[40px] p-10 min-h-[450px] flex flex-col justify-center transition-all duration-500 shadow-2xl`}>
+                        <div className="mb-6">{slides[currentSlide].icon}</div>
+                        <h3 className="text-5xl font-black text-white leading-none tracking-tighter mb-4">{slides[currentSlide].title}</h3>
+                        <p className="text-slate-400 mb-10 font-bold uppercase text-xs tracking-[0.3em]">{slides[currentSlide].subtitle}</p>
+                        <ul className="space-y-5">
+                          {slides[currentSlide].points.map((p, i) => (
+                            <li key={i} className="flex items-center gap-4 text-xl font-medium text-slate-200 tracking-tight">
+                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]" /> {p}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/10">
+                        <button onClick={() => setCurrentSlide(s => Math.max(0, s-1))} className="p-2 hover:bg-white/10 rounded-full transition-all disabled:opacity-20 text-white" disabled={currentSlide === 0}><Icons.ChevronLeft /></button>
+                        <div className="flex gap-2">
+                          {slides.map((_, i) => <div key={i} className={`h-1 w-10 rounded-full transition-all ${i === currentSlide ? 'bg-white' : 'bg-slate-800'}`} />)}
+                        </div>
+                        <button onClick={() => setCurrentSlide(s => Math.min(slides.length-1, s+1))} className="p-2 hover:bg-white/10 rounded-full transition-all disabled:opacity-20 text-white" disabled={currentSlide === slides.length - 1}><Icons.ChevronRight /></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. DRAWERS (The iOS 26 Edge Gesture System) */}
+                
+                {/* Scrim Overlay */}
+                <div 
+                  onClick={() => setActiveDrawer(null)}
+                  className={`absolute inset-0 bg-black/60 backdrop-blur-md transition-all z-[150] ${activeDrawer ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`} 
+                />
+
+                {/* Left Drawer: Element Communications (Display 1) */}
+                <div className={`absolute left-4 top-4 bottom-4 w-[min(500px,90vw)] bg-slate-950/80 backdrop-blur-2xl border border-red-500/20 rounded-[32px] z-[160] shadow-[0_0_50px_rgba(239,68,68,0.2)] transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] transform ${activeDrawer === 'left' ? 'translate-x-0 opacity-100' : '-translate-x-[110%] opacity-0'}`}>
+                  <div className="p-6 border-b border-white/5 flex justify-between items-center">
+                     <div className="flex flex-col">
+                        <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Display 1</span>
+                        <h3 className="font-black text-lg flex items-center gap-2 text-white">Element Hub</h3>
+                     </div>
+                     <button onClick={() => setActiveDrawer(null)} className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all text-white"><Icons.X size={18}/></button>
+                  </div>
+                  <div className="absolute inset-x-0 top-24 bottom-6 px-6">
+                     <div className="w-full h-full bg-black/40 rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center p-8">
+                        <Icons.MessageSquare size={48} className="text-red-500/20 mb-4" />
+                        <p className="text-slate-500 font-mono text-[10px] uppercase mb-1 tracking-[0.2em]">Secure Matrix Node Active</p>
+                        <p className="text-[11px] text-slate-600 italic leading-relaxed px-4">Bypassing iframe blocks via macOS native display routing. Full encrypted context maintained.</p>
+                        <button className="mt-8 bg-red-600 text-[10px] font-black uppercase px-6 py-2 rounded-lg hover:bg-red-500 transition-all text-white">Launch Native Tab</button>
+                     </div>
+                  </div>
+                </div>
+
+                {/* Right Drawer: Google Voice / Phone (Display 2) */}
+                <div className={`absolute right-4 top-4 bottom-4 w-[min(500px,90vw)] bg-slate-950/80 backdrop-blur-2xl border border-cyan-500/20 rounded-[32px] z-[160] shadow-[0_0_50px_rgba(6,182,212,0.2)] transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] transform ${activeDrawer === 'right' ? 'translate-x-0 opacity-100' : 'translate-x-[110%] opacity-0'}`}>
+                  <div className="p-6 border-b border-white/5 flex justify-between items-center">
+                     <div className="flex flex-col text-right">
+                        <span className="text-[10px] font-black text-cyan-500 uppercase tracking-widest">Display 2</span>
+                        <h3 className="font-black text-lg flex items-center justify-end gap-2 text-white">Voice & CRM</h3>
+                     </div>
+                     <button onClick={() => setActiveDrawer(null)} className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all order-first text-white"><Icons.X size={18}/></button>
+                  </div>
+                  <div className="absolute inset-x-0 top-24 bottom-6 px-6">
+                     <div className="w-full h-full bg-black/40 rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center p-8">
+                        <Icons.Phone size={48} className="text-cyan-500/20 mb-4 animate-pulse" />
+                        <p className="text-slate-500 font-mono text-[10px] uppercase mb-1 tracking-[0.2em]">Google Login Authenticated</p>
+                        <p className="text-[11px] text-slate-600 italic leading-relaxed px-4">Unblockable native OS integration. Loopback audio routing active for AI transcription.</p>
+                        <button className="mt-8 bg-cyan-600 text-[10px] font-black uppercase px-6 py-2 rounded-lg hover:bg-cyan-500 transition-all text-white">Open Dial Pad</button>
+                     </div>
+                  </div>
+                </div>
+
+                {/* Bottom Drawer: Grok Voice Assistant (Display 3) */}
+                <div className={`absolute bottom-4 left-4 right-4 h-[420px] bg-slate-950/80 backdrop-blur-3xl border border-yellow-500/20 rounded-[40px] z-[160] shadow-[0_-20px_60px_rgba(234,179,8,0.15)] transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] transform ${activeDrawer === 'bottom' ? 'translate-y-0 opacity-100' : 'translate-y-[110%] opacity-0'}`}>
+                  <div className="p-6 border-b border-white/5 flex justify-between items-center px-10">
+                     <div className="flex flex-col">
+                        <span className="text-[10px] font-black text-yellow-500 uppercase tracking-widest">Display 3</span>
+                        <h3 className="font-black text-lg flex items-center gap-2 text-white">Grok Voice Assistant</h3>
+                     </div>
+                     <button onClick={() => setActiveDrawer(null)} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all text-white"><Icons.X size={20}/></button>
+                  </div>
+                  <div className="absolute inset-x-10 top-24 bottom-10 flex gap-6">
+                     <div className="flex-grow bg-black/40 rounded-[28px] border border-white/5 flex flex-col items-center justify-center relative group overflow-hidden">
+                        <div className="absolute inset-0 bg-yellow-500/5 opacity-0 group-hover:opacity-100 transition-opacity blur-3xl rounded-full" />
+                        <div className="text-center z-10">
+                          <div className="flex justify-center gap-1.5 h-16 items-center mb-4">
+                            {[1,3,2,5,3,4,1,2,6,2,1].map((h, i) => (
+                              <div key={i} className="w-1 bg-yellow-500/60 rounded-full animate-wave" style={{height: `${h*15}%`, animationDelay: `${i*0.1}s`}} />
+                            ))}
+                          </div>
+                          <p className="text-yellow-500 font-black text-xs uppercase tracking-[0.4em]">Listening</p>
+                        </div>
+                     </div>
+                     <div className="w-[380px] bg-white/5 rounded-[28px] border border-white/5 p-6 overflow-y-auto shadow-inner">
+                        <div className="flex items-center gap-2 mb-4">
+                          <Icons.Activity size={12} className="text-yellow-500" />
+                          <h4 className="text-[10px] uppercase font-black text-slate-500 tracking-[0.2em]">Real-Time Transcript</h4>
+                        </div>
+                        <div className="space-y-4">
+                          <p className="text-[11px] text-slate-300 leading-relaxed font-medium">"Selfown OS: Initiating workflow audit. Redirecting Element messaging logs to VS Code workspace. Google Voice loopback initialized..."</p>
+                          <div className="flex gap-1.5">
+                            <div className="w-1 h-1 rounded-full bg-yellow-500/40 animate-pulse" />
+                            <div className="w-1 h-1 rounded-full bg-yellow-500/40 animate-pulse" style={{animationDelay: '0.2s'}} />
+                            <div className="w-1 h-1 rounded-full bg-yellow-500/40 animate-pulse" style={{animationDelay: '0.4s'}} />
+                          </div>
+                        </div>
+                     </div>
+                  </div>
+                </div>
+              </main>
+
+              {/* 4. STATUS BAR (iOS Style) */}
+              <footer className="h-8 bg-black/80 backdrop-blur-md border-t border-white/5 px-6 flex items-center justify-between shrink-0 text-[9px] font-black uppercase tracking-widest text-slate-500">
+                <div className="flex items-center gap-6">
+                    <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse"/> Unified Business Ecosystem</span>
+                    <span className="text-slate-700">|</span>
+                    <span>PWA Engine: v26.0.4-Swift-Ready</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="text-blue-500/80">ROI: +$12.3M Estimated</span>
+                  <span className="text-slate-700">|</span>
+                  <span className="flex items-center gap-1.5"><Icons.Rocket size={10} className="text-slate-600"/> Beta Waitlist: 844/1000 Slots</span>
+                </div>
+              </footer>
+            </div>
+          );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
